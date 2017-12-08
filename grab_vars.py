@@ -30,6 +30,18 @@ def get_ips(resource_group, instanceName):
         return (vm_ip, IPAddress(pip.ip_address), pip.dns_settings.fqdn)
     else:
         return (vm_ip, None, None)
+
+def get_ext_ips(resource_group, instanceName):
+    vm = compute_client.virtual_machines.get(resource_group,instanceName , expand='instanceview')
+    vm_nic = vm.network_profile.network_interfaces[1].id.split('/')[-1]
+    vm_ip =  IPAddress(network_client.network_interfaces.get(resource_group,vm_nic).ip_configurations[0].private_ip_address)
+    if network_client.network_interfaces.get(resource_group,vm_nic).ip_configurations[0].public_ip_address:
+        pip_name = network_client.network_interfaces.get(resource_group,vm_nic).ip_configurations[0].public_ip_address.id.split('/')[-1]
+        pip = network_client.public_ip_addresses.get(resource_group,pip_name)
+        return (vm_ip, IPAddress(pip.ip_address))
+    else:
+        return (vm_ip, None)
+
 #def enable_ip_forward(resource_group, instanceName):
 
 def get_pip(resource_group, pip_name):
@@ -217,12 +229,18 @@ jumphost_ip = IPAddress(network_client.network_interfaces.get(resource_group,nic
 (bigip_int1_ip, bigip_int1_pip, bigip_int1_fqdn) = get_ips(f5_int_resource_group, "%s-%s0" %(f5_int['dnsLabel'], f5_int['instanceName']))
 (bigip_int2_ip, bigip_int2_pip, bigip_int2_fqdn) = get_ips(f5_int_resource_group, "%s-%s1" %(f5_int['dnsLabel'], f5_int['instanceName']))
 
+(bigip_ext_ext1_ip, bigip_ext_ext1_pip) = get_ext_ips(f5_ext_resource_group, "%s-%s0" %(f5_ext['dnsLabel'], f5_ext['instanceName']))
+(bigip_ext_ext2_ip, bigip_ext_ext2_pip) = get_ext_ips(f5_ext_resource_group, "%s-%s1" %(f5_ext['dnsLabel'], f5_ext['instanceName']))
+(bigip_ext_int1_ip, bigip_ext_int1_pip) = get_ext_ips(f5_int_resource_group, "%s-%s0" %(f5_int['dnsLabel'], f5_int['instanceName']))
+(bigip_ext_int2_ip, bigip_ext_int2_pip) = get_ext_ips(f5_int_resource_group, "%s-%s1" %(f5_int['dnsLabel'], f5_int['instanceName']))
+
 bigip_ext1 = jumphost_ip+1
 bigip_ext2 = jumphost_ip+2
 bigip_int1 = jumphost_ip+3
 bigip_int2 = jumphost_ip+4
 
-#print get_pip(f5_ext_resource_group, "%s-ext-pip0" %(f5_ext['dnsLabel']))
+external_pip = get_pip(f5_ext_resource_group, "%s-ext-pip0" %(f5_ext['dnsLabel']))
+print external_pip
 
 # add 2 for now, needs to be fixed
 external_vip =  parameters['f5_Ext_Untrusted_IP']
@@ -240,6 +258,15 @@ if options.debug:
     print "create /net route mgmt network %s gw %s" %(parameters['management_SubnetPrefix'], IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1))
     print "create /net route vdms network %s gw %s" %(parameters['vdmS_SubnetPrefix'], IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1))
     print "create /ltm pool jumpbox_rdp_pool members replace-all-with { %s:3389}" %(jumphost_ip)
+
+    print "create /ltm virtual jumpbox_rdp_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(external_vip)
+    print "create /ltm virtual jumpbox_rdp_local_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(bigip_ext_ext1_ip)
+    print "create /ltm virtual jumpbox_rdp_local_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(bigip_ext_ext2_ip)
+    print "create /ltm pool bigip_ext1_ssh_pool members replace-all-with { %s:22}" %(bigip_ext1_ip)
+    print "create /ltm pool bigip_ext2_ssh_pool members replace-all-with { %s:22}" %(bigip_ext2_ip)
+    print "create /ltm pool bigip_int1_ssh_pool members replace-all-with { %s:22}" %(bigip_int1_ip)
+    print "create /ltm pool bigip_int2_ssh_pool members replace-all-with { %s:22}" %(bigip_int2_ip)
+
 routes= [{ 'name': 'mgmt',
           'destination': str(parameters['management_SubnetPrefix']), 
           'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
@@ -256,15 +283,11 @@ pool_members.append({'server': str(bigip_ext1_pip),
               'host': str(jumphost_ip),
               'name': str(jumphost_ip),
               'port': '3389'})
-#print "create /ltm virtual jumpbox_rdp_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(external_vip)
+
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'jumpbox_rdp_vs',
                  'command': "create /ltm virtual jumpbox_rdp_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(external_vip)})
 
-#print "create /ltm pool bigip_ext1_ssh_pool members replace-all-with { %s:22}" %(bigip_ext1_ip)
-#print "create /ltm pool bigip_ext2_ssh_pool members replace-all-with { %s:22}" %(bigip_ext2_ip)
-#print "create /ltm pool bigip_int1_ssh_pool members replace-all-with { %s:22}" %(bigip_int1_ip)
-#print "create /ltm pool bigip_int2_ssh_pool members replace-all-with { %s:22}" %(bigip_int2_ip)
 
 pools.append({'server': str(bigip_ext1_pip),
              'name': 'bigip_ext1_ssh_pool',
@@ -397,26 +420,40 @@ if options.action == "internal_setup":
     print json.dumps(output)
     sys.exit(0)
 
-print "\n\n#### Azure Infrastructure ####"
-print "az network route-table update --resource-group %s --name %s --set tags.f5_tg=traffic-group-1" %(resource_group,
-                                                                                                       parameters['f5_Int_Untrust_RouteTableName'])
-print "az network route-table update --resource-group %s --name %s --set tags.f5_ha=%s" %(resource_group,
+if options.debug:
+    print "\n\n#### Azure Infrastructure ####\n\n"
+    print "az network route-table update --resource-group %s --name %s --set tags.f5_tg=traffic-group-1" %(resource_group,
+                                                                                                           parameters['f5_Int_Untrust_RouteTableName'])
+    print "az network route-table update --resource-group %s --name %s --set tags.f5_ha=%s" %(resource_group,
                                                                                           parameters['f5_Int_Untrust_RouteTableName'],
                                                                                           f5_ext['routeTableTag'])
 
-print "az network route-table update --resource-group %s --name %s --set tags.f5_tg=traffic-group-1" %(resource_group,
-                                                                                                       parameters['internal_Subnets_RouteTableName'])
-print "az network route-table update --resource-group %s --name %s --set tags.f5_ha=%s" %(resource_group,
+    print "az network route-table update --resource-group %s --name %s --set tags.f5_tg=traffic-group-1" %(resource_group,
+                                                                                                    parameters['internal_Subnets_RouteTableName'])
+    print "az network route-table update --resource-group %s --name %s --set tags.f5_ha=%s" %(resource_group,
                                                                                           parameters['internal_Subnets_RouteTableName'],
                                                                                           f5_int['routeTableTag'])
 
-print """az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(external_rg)s --priority 1000 -n allow_http --destination-port-ranges 80 --protocol tcp
+    print """\n\naz network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(external_rg)s --priority 1000 -n allow_http --destination-port-ranges 80 --protocol tcp
 az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(external_rg)s --priority 1001 -n allow_https --destination-port-ranges 443 --protocol tcp
 az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(external_rg)s --priority 1002 -n allow_rdp --destination-port-ranges 3389 --protocol tcp
 az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(external_rg)s --priority 1003 -n allow_ssh --destination-port-ranges 22 --protocol tcp
 az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(external_rg)s --priority 1004 -n allow_moressh --destination-port-ranges 2200-2299 --protocol tcp""" %({'external_rg':f5_ext_resource_group,
                                                                                                                                                                                        'dnsLabel':f5_ext['dnsLabel']})
 
+    parameters['resource_group'] = resource_group
+    print "#external bigip to internal"
+    print "\n\naz network vnet subnet update --name %(f5_Ext_Trusted_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(f5_Ext_Trust_RouteTableName)s" %(parameters)
+    print "from internal bigip to external"
+    print "az network vnet subnet update --name %(f5_Int_Untrusted_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(f5_Int_Untrust_RouteTableName)s" %(parameters)
+    print "az network vnet subnet update --name %(vdmS_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(internal_Subnets_RouteTableName)s" %(parameters)
+    print "az network vnet subnet update --name %(management_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(internal_Subnets_RouteTableName)s" %(parameters)
+    
+    print "     External VIP: %s %s" %(external_pip[0],external_pip[1])
+    print "External BIG-IP 1: %s %s" %(bigip_ext_ext1_pip,bigip_ext_ext1_ip)
+    print "External BIG-IP 2: %s %s\n" %(bigip_ext_ext2_pip,bigip_ext_ext2_ip)
+    print "Internal BIG-IP 1: %s %s" %(bigip_ext_int1_pip,bigip_ext_int1_ip)
+    print "Internal BIG-IP 2: %s %s" %(bigip_ext_int2_pip,bigip_ext_int2_ip)
 
 # u'f5_Ext_Trusted_SubnetPrefix': IPNetwork('192.168.1.0/24'),
 # u'f5_Ext_Untrusted_SubnetPrefix': IPNetwork('192.168.0.0/24'),
