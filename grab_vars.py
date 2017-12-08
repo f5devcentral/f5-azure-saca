@@ -80,8 +80,8 @@ for deployment in resource_client.deployments.list_by_resource_group(resource_gr
             parameters[k] = IPNetwork(v)
         elif v and ipaddr_re.search(v):
             parameters[k] = IPAddress(v)
-
-#pprint.pprint(parameters)
+if options.debug:
+    pprint.pprint(parameters)
 
 jumphost_ip =  get_ips(resource_group, parameters['jumpBoxName'])[0]
 jumphostlinux_ip =  get_ips(resource_group, parameters['jumpBoxLinuxName'])[0]
@@ -154,11 +154,11 @@ if options.action == "internal":
       "restrictedSrcAddress":  "*",
       "allowUsageAnalytics": "Yes"
   }
-#  pprint.pprint(int_parameters)
+
   send_parameters = {k: {'value': v} for k, v in int_parameters.items()}
   print json.dumps(send_parameters)
   sys.exit(0)
-    
+
 f5_ext = None
 
 for deployment in resource_client.deployments.list_by_resource_group(f5_ext_resource_group):
@@ -177,6 +177,9 @@ for deployment in resource_client.deployments.list_by_resource_group(f5_ext_reso
 
 #pprint.pprint(f5_ext)
 
+if options.debug:
+    pprint.pprint(f5_ext)
+
 if not resource_client.resource_groups.check_existence(f5_int_resource_group):
 
   sys.exit(0)
@@ -194,15 +197,17 @@ for deployment in resource_client.deployments.list_by_resource_group(f5_int_reso
         if v and subnet_re.search(v):
             f5_int[k] = IPNetwork(v)
         elif v and ipaddr_re.search(v):
-            f5_intt[k] = IPAddress(v)
+            f5_int[k] = IPAddress(v)
 
-#pprint.pprint(f5_ext)
+if options.debug:
+    pprint.pprint(f5_int)
 
 
 #print "az vm show --name %s --resource-group \"%s\"  -d   --query \"privateIps\" -d" %(parameters['jumpBoxName'],resource_group)
 vm = compute_client.virtual_machines.get(resource_group, parameters['jumpBoxName'],expand='instanceview')
 nic = vm.network_profile.network_interfaces[0].id.split('/')[-1]
 jumphost_ip = IPAddress(network_client.network_interfaces.get(resource_group,nic).ip_configurations[0].private_ip_address)
+
 
 
 
@@ -349,7 +354,7 @@ if options.action == "external_setup":
     sys.exit(0)
 
 if options.debug:
-    print "### INTERNAL F5 ###"
+    print "\n\n### INTERNAL F5 ###"
     print "create /net self self_2nic_float address %s/%s vlan external traffic-group traffic-group-1" %(internal_vip,parameters['f5_Int_Untrusted_SubnetPrefix'].prefixlen)
     print "create /ltm pool ext_gw_pool members replace-all-with { %s:0}" %(internal_ext_gw)
     print "create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['management_SubnetPrefix'])
@@ -391,6 +396,28 @@ if options.action == "internal_setup":
     output['virtuals'] = virtuals
     print json.dumps(output)
     sys.exit(0)
+
+print "\n\n#### Azure Infrastructure ####"
+print "az network route-table update --resource-group %s --name %s --set tags.f5_tg=traffic-group-1" %(resource_group,
+                                                                                                       parameters['f5_Int_Untrust_RouteTableName'])
+print "az network route-table update --resource-group %s --name %s --set tags.f5_ha=%s" %(resource_group,
+                                                                                          parameters['f5_Int_Untrust_RouteTableName'],
+                                                                                          f5_ext['routeTableTag'])
+
+print "az network route-table update --resource-group %s --name %s --set tags.f5_tg=traffic-group-1" %(resource_group,
+                                                                                                       parameters['internal_Subnets_RouteTableName'])
+print "az network route-table update --resource-group %s --name %s --set tags.f5_ha=%s" %(resource_group,
+                                                                                          parameters['internal_Subnets_RouteTableName'],
+                                                                                          f5_int['routeTableTag'])
+
+print """az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(external_rg)s --priority 1000 -n allow_http --destination-port-ranges 80 --protocol tcp
+az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(external_rg)s --priority 1001 -n allow_https --destination-port-ranges 443 --protocol tcp
+az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(external_rg)s --priority 1002 -n allow_rdp --destination-port-ranges 3389 --protocol tcp
+az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(external_rg)s --priority 1003 -n allow_ssh --destination-port-ranges 22 --protocol tcp
+az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(external_rg)s --priority 1004 -n allow_moressh --destination-port-ranges 2200-2299 --protocol tcp""" %({'external_rg':f5_ext_resource_group,
+                                                                                                                                                                                       'dnsLabel':f5_ext['dnsLabel']})
+
+
 # u'f5_Ext_Trusted_SubnetPrefix': IPNetwork('192.168.1.0/24'),
 # u'f5_Ext_Untrusted_SubnetPrefix': IPNetwork('192.168.0.0/24'),
 # u'f5_Int_Trusted_SubnetPrefix': IPNetwork('192.168.3.0/24'),
