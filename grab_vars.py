@@ -220,13 +220,16 @@ bigip_int2 = jumphost_ip+4
 #print get_pip(f5_ext_resource_group, "%s-ext-pip0" %(f5_ext['dnsLabel']))
 
 # add 2 for now, needs to be fixed
-external_vip =  parameters['f5_Ext_Untrusted_IP']+2
-internal_vip =  parameters['f5_Int_Untrusted_IP']+2
+external_vip =  parameters['f5_Ext_Untrusted_IP']
+internal_vip =  parameters['f5_Int_Untrusted_IP']
 
 internal_ext_gw = IPAddress(parameters['f5_Int_Untrusted_SubnetPrefix'].first+1)
 internal_ext_gw = IPAddress(parameters['f5_Int_Untrusted_SubnetPrefix'].first+1)
 
-
+output = {}
+pools = []
+pool_members = []
+virtuals = []
 if options.debug:
     print "### EXTERNAL F5 ###"
     print "create /net route mgmt network %s gw %s" %(parameters['management_SubnetPrefix'], IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1))
@@ -235,31 +238,95 @@ if options.debug:
 routes= [{ 'name': 'mgmt',
           'destination': str(parameters['management_SubnetPrefix']), 
           'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
-          'server': str(bigip_ext1_ip), 'user': parameters['jumpBoxAdminUserName'], 
-          'password': f5_password },
+          'server': str(bigip_ext1_pip) },
          { 'name': 'vdms',
            'destination': str(parameters['vdmS_SubnetPrefix']), 
            'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
-           'server': str(bigip_ext1_ip), 'user': parameters['jumpBoxAdminUserName'], 
-           'password': f5_password }]
-if options.action == "setup":
-    output = {}
-    output['routes'] = routes
-    print json.dumps(output)
-sys.exit(0)
-print "create /ltm virtual jumpbox_rdp_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(external_vip)
+           'server': str(bigip_ext1_pip) }]
+pools.append({'server': str(bigip_ext1_pip),
+             'name': 'jumpbox_rdp_pool',
+              'partition':'Common'})
+pool_members.append({'server': str(bigip_ext1_pip),
+              'pool': 'jumpbox_rdp_pool',
+              'host': str(jumphost_ip),
+              'name': str(jumphost_ip),
+              'port': '3389'})
+#print "create /ltm virtual jumpbox_rdp_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(external_vip)
+virtuals.append({'server': str(bigip_ext1_pip),
+                 'name':'jumpbox_rdp_vs',
+                 'destination':"%s:3389" %(str(external_vip)),
+                 'pool': 'jumpbox_rdp_pool'})
 
-print "create /ltm pool bigip_ext1_ssh_pool members replace-all-with { %s:22}" %(bigip_ext1_ip)
-print "create /ltm pool bigip_ext2_ssh_pool members replace-all-with { %s:22}" %(bigip_ext2_ip)
-print "create /ltm pool bigip_int1_ssh_pool members replace-all-with { %s:22}" %(bigip_int1_ip)
-print "create /ltm pool bigip_int2_ssh_pool members replace-all-with { %s:22}" %(bigip_int2_ip)
+#print "create /ltm pool bigip_ext1_ssh_pool members replace-all-with { %s:22}" %(bigip_ext1_ip)
+#print "create /ltm pool bigip_ext2_ssh_pool members replace-all-with { %s:22}" %(bigip_ext2_ip)
+#print "create /ltm pool bigip_int1_ssh_pool members replace-all-with { %s:22}" %(bigip_int1_ip)
+#print "create /ltm pool bigip_int2_ssh_pool members replace-all-with { %s:22}" %(bigip_int2_ip)
+
+pools.append({'server': str(bigip_ext1_pip),
+             'name': 'bigip_ext1_ssh_pool',
+              'partition':'Common'})
+
+pool_members.append({'server': str(bigip_ext1_pip),
+                     'pool': 'bigip_ext1_ssh_pool',
+                     'host': str(bigip_ext1_ip),
+                     'name': str(bigip_ext1_ip),
+                     'port': '22'})
+
+pools.append({'server': str(bigip_ext1_pip),
+             'name': 'bigip_ext2_ssh_pool',
+              'partition':'Common'})
+
+pool_members.append({'server': str(bigip_ext1_pip),
+                     'pool': 'bigip_ext2_ssh_pool',
+                     'host': str(bigip_ext2_ip),
+                     'name': str(bigip_ext2_ip),
+                     'port': '22'})
+
+
+pools.append({'server': str(bigip_ext1_pip),
+             'name': 'bigip_int1_ssh_pool',
+              'partition':'Common'})
+
+pool_members.append({'server': str(bigip_ext1_pip),
+                     'pool': 'bigip_int1_ssh_pool',
+                     'host': str(bigip_int1_ip),
+                     'name': str(bigip_int1_ip),
+                     'port': '22'})
+
+
+
+pools.append({'server': str(bigip_ext1_pip),
+              'name': 'bigip_int2_ssh_pool',
+              'partition':'Common'})
+
+pool_members.append({'server': str(bigip_ext1_pip),
+                     'pool': 'bigip_int2_ssh_pool',
+                     'host': str(bigip_int2_ip),
+                     'name': str(bigip_int2_ip),
+                     'port': '22'})
+
+
 
 #print "create /ltm pool external_snat_pool members replace-all-with { %s:0}" %(external_vip)
 
-print "create /ltm virtual bigip1_ext1_ssh_vs destination %s:2200 profiles replace-all-with { loose_fastL4 } pool bigip_ext1_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)
-print "create /ltm virtual bigip1_ext2_ssh_vs destination %s:2201 profiles replace-all-with { loose_fastL4 } pool bigip_ext2_ssh_pool translate-address disabled translate-port disabled fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)
-print "create /ltm virtual bigip1_ext3_ssh_vs destination %s:2202 profiles replace-all-with { loose_fastL4 } pool bigip_ext3_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)
-print "create /ltm virtual bigip1_ext4_ssh_vs destination %s:2203 profiles replace-all-with { loose_fastL4 } pool bigip_ext4_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)
+if options.debug:
+    print "create /ltm virtual bigip1_ext1_ssh_vs destination %s:2200 profiles replace-all-with { loose_fastL4 } pool bigip_ext1_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)
+    print "create /ltm virtual bigip1_ext2_ssh_vs destination %s:2201 profiles replace-all-with { loose_fastL4 } pool bigip_ext2_ssh_pool translate-address disabled translate-port disabled fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)
+    print "create /ltm virtual bigip1_ext3_ssh_vs destination %s:2202 profiles replace-all-with { loose_fastL4 } pool bigip_ext3_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)
+    print "create /ltm virtual bigip1_ext4_ssh_vs destination %s:2203 profiles replace-all-with { loose_fastL4 } pool bigip_ext4_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)
+
+virtuals.append({'server': str(bigip_ext1_pip),
+                 'name':'bigip1_ext1_ssh_vs',
+                 'destination':"%s:2200" %(str(external_vip)),
+                 'pool': 'bigip_ext1_pool'})
+
+if options.action == "external_setup":
+    output['routes'] = routes
+    output['pools'] = pools
+    output['pool_members'] = pool_members
+    output['virtuals'] = virtuals
+    print json.dumps(output)
+sys.exit(0)
 
 print "create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }     source-address-translation { type automap  }" %(parameters['management_SubnetPrefix'])
 print "create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'])

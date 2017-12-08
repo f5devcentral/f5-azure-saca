@@ -20,13 +20,3 @@
       "{{parameters}}"
   register: output
   when: not output.ansible_facts.azure_resourcegroups
-- name: Add Routes
-  bigip_static_route:
-    destination: "{{item.destination}}"
-    gateway_address: "{{item.gateway_address}}"
-    name: "{{item.name}}"
-    server: "{{item.server}}"
-    user: "{{f5_username}}"
-    password: "{{f5_password}}"
-  with_items:
-     - { name: 'mgmt',destination: '172.16.0.0/24', gateway_address: '192.168.1.1', server: '52.247.171.80', user: "{{f5_username}}", password: "{{f5_password}}" }
