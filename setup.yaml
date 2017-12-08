@@ -30,3 +30,4 @@
       location:  "{{ansible_env.location}}"
       setup:
         "{{int_vars.stdout|from_json }}"        
+

@@ -16,3 +16,51 @@
 
   with_items:
     "{{setup.selfips}}"
+
+- name: Add Pools
+  bigip_pool:
+    name: "{{item.name}}"
+    server: "{{item.server}}"
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+  with_items:
+     "{{setup.pools}}"
+
+- name: Add Pool Members
+  bigip_pool_member:
+    name: "{{item.name}}"
+    server: "{{item.server}}"
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    pool: "{{item.pool}}"
+    host: "{{item.host}}"
+    port: "{{item.port}}"
+    name: "{{item.name}}"
+  with_items:
+     "{{setup.pool_members}}"
+- name: Check virtuals
+  bigip_command:
+    server: "{{item.server}}"
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    commands:
+      - tmsh show ltm virtual {{item.name}}
+  with_items:
+    "{{setup.virtuals}}"
+  register: result
+
+- name: check result
+  debug:
+    msg: "START{{result.results}}END"
+
+- name: Create Virtuals
+  bigip_command:
+    server: "{{item.item.server}}"
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    commands:
+      - tmsh {{item.item.command}}
+  with_items:
+    "{{result.results}}"
+  when: 
+    - '"was not found" in item.stdout|first'

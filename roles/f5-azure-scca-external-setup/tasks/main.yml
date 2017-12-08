@@ -53,7 +53,7 @@
     user: "{{f5_username}}"
     password: "{{f5_password}}"
     commands:
-      - tmsh create ltm virtual {{item.item.name}} destination {{item.item.destination}} profiles replace-all-with { loose_fastL4 } pool {{item.item.pool}}   fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }
+      - tmsh {{item.item.command}}
   with_items:
     "{{result.results}}"
   when: 

@@ -254,8 +254,7 @@ pool_members.append({'server': str(bigip_ext1_pip),
 #print "create /ltm virtual jumpbox_rdp_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(external_vip)
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'jumpbox_rdp_vs',
-                 'destination':"%s:3389" %(str(external_vip)),
-                 'pool': 'jumpbox_rdp_pool'})
+                 'command': "create /ltm virtual jumpbox_rdp_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(external_vip)})
 
 #print "create /ltm pool bigip_ext1_ssh_pool members replace-all-with { %s:22}" %(bigip_ext1_ip)
 #print "create /ltm pool bigip_ext2_ssh_pool members replace-all-with { %s:22}" %(bigip_ext2_ip)
@@ -317,23 +316,29 @@ if options.debug:
 
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'bigip_ext1_ssh_vs',
-                 'destination':"%s:2200" %(str(external_vip)),
-                 'pool': 'bigip_ext1_ssh_pool'})
+                 'command': "create /ltm virtual bigip1_ext1_ssh_vs destination %s:2200 profiles replace-all-with { loose_fastL4 } pool bigip_ext1_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)})
 
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'bigip_ext2_ssh_vs',
-                 'destination':"%s:2201" %(str(external_vip)),
-                 'pool': 'bigip_ext2_ssh_pool'})
+                 'command': "create /ltm virtual bigip1_ext2_ssh_vs destination %s:2201 profiles replace-all-with { loose_fastL4 } pool bigip_ext2_ssh_pool translate-address disabled translate-port disabled fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)})
 
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'bigip_int1_ssh_vs',
-                 'destination':"%s:2202" %(str(external_vip)),
-                 'pool': 'bigip_int1_ssh_pool'})
+                 'command': "create /ltm virtual bigip1_ext3_ssh_vs destination %s:2202 profiles replace-all-with { loose_fastL4 } pool bigip_ext3_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)})
 
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'bigip_int2_ssh_vs',
-                 'destination':"%s:2203" %(str(external_vip)),
-                 'pool': 'bigip_int2_ssh_pool'})
+                 'command': "create /ltm virtual bigip1_ext4_ssh_vs destination %s:2203 profiles replace-all-with { loose_fastL4 } pool bigip_ext4_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)})
+
+if options.debug:
+    print "create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }     source-address-translation { type automap  }" %(parameters['management_SubnetPrefix'])
+    print "create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'])
+virtuals.append({'server': str(bigip_ext1_pip),
+                 'name':'mgmt_outbound_vs',
+                 'command':"create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }     source-address-translation { type automap  }" %(parameters['management_SubnetPrefix'])})
+virtuals.append({'server': str(bigip_ext1_pip),
+                 'name':'vdms_outbound_vs',
+                 'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'])})
 
 if options.action == "external_setup":
     output['routes'] = routes
@@ -342,9 +347,6 @@ if options.action == "external_setup":
     output['virtuals'] = virtuals
     print json.dumps(output)
     sys.exit(0)
-if options.debug:
-    print "create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }     source-address-translation { type automap  }" %(parameters['management_SubnetPrefix'])
-    print "create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'])
 
 if options.debug:
     print "### INTERNAL F5 ###"
@@ -352,6 +354,30 @@ if options.debug:
     print "create /ltm pool ext_gw_pool members replace-all-with { %s:0}" %(internal_ext_gw)
     print "create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['management_SubnetPrefix'])
     print "create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['vdmS_SubnetPrefix'])
+output = {}
+virtuals = []
+pools = []
+pool_members = []
+
+pools.append({'server': str(bigip_int1_pip),
+              'name': 'ext_gw_pool',
+              'partition':'Common'})
+
+pool_members.append({'server': str(bigip_int1_pip),
+                     'pool': 'ext_gw_pool',
+                     'host': str(internal_ext_gw),
+                     'name': str(internal_ext_gw),
+                     'port': '0'})
+
+
+virtuals.append({'server': str(bigip_int1_pip),
+                 'name':'mgmt_outbound_vs',
+                 'command':"create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['management_SubnetPrefix'])})
+
+virtuals.append({'server': str(bigip_int1_pip),
+                 'name':'vdms_outbound_vs',
+                 'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['vdmS_SubnetPrefix'])})
+
 if options.action == "internal_setup":
     output['selfips'] = [{'name': 'self_2nic_float',
                          'address': str(internal_vip),
@@ -360,6 +386,9 @@ if options.action == "internal_setup":
                          'traffic_group':'traffic-group-1',
                          'server': str(bigip_int1_pip),
                      }]
+    output['pools'] = pools
+    output['pool_members'] = pool_members
+    output['virtuals'] = virtuals
     print json.dumps(output)
     sys.exit(0)
 # u'f5_Ext_Trusted_SubnetPrefix': IPNetwork('192.168.1.0/24'),
