@@ -1,2 +1,18 @@
 ---
 # tasks file for f5-azure-scca-internal-setup
+- name: debug output
+  debug:
+    msg: "{{setup}}"
+- name: add float self
+  bigip_selfip:
+    address: "{{item.address}}"
+    name: "{{item.name}}"
+    netmask: "{{item.netmask}}"
+    vlan: "{{item.vlan}}"
+    traffic_group: "{{item.traffic_group}}"
+    server: "{{item.server}}"
+    password: "{{f5_password}}"
+    user: "{{f5_username}}"
+
+  with_items:
+    "{{setup.selfips}}"
