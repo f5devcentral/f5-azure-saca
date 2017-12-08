@@ -1,0 +1,20 @@
+---
+# tasks file for f5-azure-scca
+- name: Check if resource group exists
+  azure_rm_resourcegroup_facts:
+    name: "{{resource_group}}"
+  register: output
+- name: Deploy SCCA Environnment
+  azure_rm_deployment:
+    state: present
+    location: "{{ location }}"
+    resource_group_name: "{{resource_group}}"
+    template: "{{ lookup('file','vdss.json') }}"
+
+    parameters:
+    JumpBoxAdminUserName:
+      value: "{{f5_username}}"
+    JumpBoxAdminPassword:
+      value: "{{f5_password}}"
+    register: output
+  when: not output.ansible_facts.azure_resourcegroups
