@@ -240,7 +240,7 @@ bigip_int1 = jumphost_ip+3
 bigip_int2 = jumphost_ip+4
 
 external_pip = get_pip(f5_ext_resource_group, "%s-ext-pip0" %(f5_ext['dnsLabel']))
-print external_pip
+#print external_pip
 
 # add 2 for now, needs to be fixed
 external_vip =  parameters['f5_Ext_Untrusted_IP']
@@ -255,8 +255,10 @@ pool_members = []
 virtuals = []
 if options.debug:
     print "### EXTERNAL F5 ###"
+    print "# Routes"
     print "create /net route mgmt network %s gw %s" %(parameters['management_SubnetPrefix'], IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1))
     print "create /net route vdms network %s gw %s" %(parameters['vdmS_SubnetPrefix'], IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1))
+    print "# MGMT Hosts"
     print "create /ltm pool jumpbox_rdp_pool members replace-all-with { %s:3389}" %(jumphost_ip)
 
     print "create /ltm virtual jumpbox_rdp_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(external_vip)
@@ -373,8 +375,8 @@ if options.action == "external_setup":
     output['pools'] = pools
     output['pool_members'] = pool_members
     output['virtuals'] = virtuals
-    print json.dumps(output)
-    sys.exit(0)
+#    print json.dumps(output)
+#    sys.exit(0)
 
 if options.debug:
     print "\n\n### INTERNAL F5 ###"
@@ -382,20 +384,6 @@ if options.debug:
     print "create /ltm pool ext_gw_pool members replace-all-with { %s:0}" %(internal_ext_gw)
     print "create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['management_SubnetPrefix'])
     print "create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['vdmS_SubnetPrefix'])
-output = {}
-virtuals = []
-pools = []
-pool_members = []
-
-pools.append({'server': str(bigip_int1_pip),
-              'name': 'ext_gw_pool',
-              'partition':'Common'})
-
-pool_members.append({'server': str(bigip_int1_pip),
-                     'pool': 'ext_gw_pool',
-                     'host': str(internal_ext_gw),
-                     'name': str(internal_ext_gw),
-                     'port': '0'})
 
 
 virtuals.append({'server': str(bigip_int1_pip),
@@ -407,6 +395,21 @@ virtuals.append({'server': str(bigip_int1_pip),
                  'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['vdmS_SubnetPrefix'])})
 
 if options.action == "internal_setup":
+    output = {}
+    virtuals = []
+    pools = []
+    pool_members = []
+
+    pools.append({'server': str(bigip_int1_pip),
+                  'name': 'ext_gw_pool',
+                  'partition':'Common'})
+
+    pool_members.append({'server': str(bigip_int1_pip),
+                         'pool': 'ext_gw_pool',
+                         'host': str(internal_ext_gw),
+                         'name': str(internal_ext_gw),
+                         'port': '0'})
+
     output['selfips'] = [{'name': 'self_2nic_float',
                          'address': str(internal_vip),
                          'netmask': str(parameters['f5_Int_Untrusted_SubnetPrefix'].netmask),
@@ -417,8 +420,8 @@ if options.action == "internal_setup":
     output['pools'] = pools
     output['pool_members'] = pool_members
     output['virtuals'] = virtuals
-    print json.dumps(output)
-    sys.exit(0)
+#    print json.dumps(output)
+#    sys.exit(0)
 
 if options.debug:
     print "\n\n#### Azure Infrastructure ####\n\n"
@@ -454,6 +457,23 @@ az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(e
     print "External BIG-IP 2: %s %s\n" %(bigip_ext_ext2_pip,bigip_ext_ext2_ip)
     print "Internal BIG-IP 1: %s %s" %(bigip_ext_int1_pip,bigip_ext_int1_ip)
     print "Internal BIG-IP 2: %s %s" %(bigip_ext_int2_pip,bigip_ext_int2_ip)
+
+if options.action == "external_setup":
+    output['route_tables'] = [{'resource_group':resource_group,
+                               'name':parameters['f5_Int_Untrust_RouteTableName'],
+                               'f5_ha':f5_ext['routeTableTag'],
+                               'f5_tg':'traffic-group-1'}]
+    output['servers'] = [{'server':str(bigip_ext1_pip)},{'server':str(bigip_ext2_pip)}]
+    print json.dumps(output)
+
+if options.action == "internal_setup":
+    output['route_tables'] = [{'resource_group':resource_group,
+                               'name':parameters['internal_Subnets_RouteTableName'],
+                               'f5_ha':f5_int['routeTableTag'],
+                               'f5_tg':'traffic-group-1'}]
+    output['servers'] = [{'server':str(bigip_int1_pip)},{'server':str(bigip_int2_pip)}]
+    print json.dumps(output)
+
 
 # u'f5_Ext_Trusted_SubnetPrefix': IPNetwork('192.168.1.0/24'),
 # u'f5_Ext_Untrusted_SubnetPrefix': IPNetwork('192.168.0.0/24'),
