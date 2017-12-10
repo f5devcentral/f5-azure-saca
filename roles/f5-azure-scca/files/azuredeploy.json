@@ -1,0 +1,630 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "VDSS_VNet",
+      "metadata": {
+        "description": "Name for the new VNet."
+      }
+    },
+    "vnetPrefix": {
+      "type": "string",
+      "defaultValue": "192.168.0.0/16",
+      "metadata": {
+        "description": "CIDR prefix for the VNet address space."
+      }
+
+    },
+    "vnetPrefix2": {
+      "type": "string",
+      "defaultValue": "172.16.0.0/23",
+      "metadata": {
+        "description": "CIDR prefix for the Second VNet address space."
+      }
+    },
+    "F5_Ext_Untrusted_SubnetName": {
+      "type": "string",
+      "defaultValue": "F5_Ext_Untrusted_Subnet",
+      "metadata": {
+        "description": "External F5 Control Plane Subnet."
+      }
+    },
+    "F5_Ext_Untrusted_SubnetPrefix": {
+      "type": "string",
+      "defaultValue": "192.168.0.0/24",
+      "metadata": {
+        "description": "CIDR address prefix for the External F5 Control Plane subnet."
+      }
+    },
+    "F5_Ext_Trusted_SubnetName": {
+      "type": "string",
+      "defaultValue": "F5_Ext_Trusted_Subnet",
+      "metadata": {
+        "description": "Name for the F5_Ext_Trusted_Subnet subnet."
+      }
+    },
+    "F5_Ext_Trusted_SubnetPrefix": {
+      "type": "string",
+      "defaultValue": "192.168.1.0/24",
+      "metadata": {
+        "description": "CIDR address prefix for the F5_External subnet."
+      }
+    },
+    "F5_Int_Untrusted_SubnetName": {
+      "type": "string",
+      "defaultValue": "F5_Int_Untrusted_Subnet",
+      "metadata": {
+        "description": "Name for the F5_Int_Untrusted subnet."
+      }
+    },
+    "F5_Int_Untrusted_SubnetPrefix": {
+      "type": "string",
+      "defaultValue": "192.168.2.0/24",
+      "metadata": {
+        "description": "CIDR address prefix for the F5_Int_Untrusted subnet."
+      }
+    },
+    "F5_Int_Trusted_SubnetName": {
+      "type": "string",
+      "defaultValue": "F5_Int_Trusted_Subnet",
+      "metadata": {
+        "description": "Name for the F5_Int_Trusted_Subnet."
+      }
+    },
+    "F5_Int_Trusted_SubnetPrefix": {
+      "type": "string",
+      "defaultValue": "192.168.3.0/24",
+      "metadata": {
+        "description": "CIDR address prefix for the F5_Internal subnet."
+      }
+    },
+    "Management_SubnetName": {
+      "type": "string",
+      "defaultValue": "Management_Subnet",
+      "metadata": {
+        "description": "Name for the Management_Subnet."
+      }
+    },
+    "Management_SubnetPrefix": {
+      "type": "string",
+      "defaultValue": "172.16.0.0/24",
+      "metadata": {
+        "description": "CIDR address prefix for the Management_Subnet."
+      }
+    },
+    "VDMS_SubnetName": {
+      "type": "string",
+      "defaultValue": "VDMS_Subnet",
+      "metadata": {
+        "description": "Name for the VDMS_Subnet."
+      }
+    },
+    "VDMS_SubnetPrefix": {
+      "type": "string",
+      "defaultValue": "172.16.1.0/24",
+      "metadata": {
+        "description": "CIDR address prefix for the VDMS_Subnet."
+      }
+    },
+    "GatewaySubnetName": {
+      "type": "string",
+      "defaultValue": "GatewaySubnet",
+      "metadata": {
+        "description": "Name for the GatewaySubnet (This must Stay Default Value)."
+      }
+    },
+    "GatewaySubnetPrefix": {
+      "type": "string",
+      "defaultValue": "192.168.255.224/27",
+      "metadata": {
+        "description": "CIDR address prefix for the GatewaySubnet."
+      }
+    },
+    "F5_Ext_Trusted_IP": {
+      "type": "string",
+      "defaultValue": "192.168.1.5",
+      "metadata": {
+        "description": "IP address for F5_Ext_Trusted_IP (For UDR Next Hop)."
+      }
+    },
+    "F5_Int_Trusted_IP": {
+      "type": "string",
+      "defaultValue": "192.168.3.5",
+      "metadata": {
+        "description": "IP address for F5_Int_Trusted_IP (For UDR Next Hop)."
+      }
+    },
+    "F5_Ext_Untrusted_IP": {
+      "type": "string",
+      "defaultValue": "192.168.0.7",
+      "metadata": {
+        "description": "IP address for F5_Ext_Untrusted_IP (For UDR Next Hop)."
+      }
+    },
+    "F5_Int_Untrusted_IP": {
+      "type": "string",
+      "defaultValue": "192.168.2.7",
+      "metadata": {
+        "description": "IP address for F5_Int_Untrusted_IP (For UDR Next Hop)."
+      }
+    },
+    "Gateway_RouteTableName": {
+      "type": "string",
+      "defaultValue": "Gateway_RouteTable",
+      "metadata": {
+        "description": "Name for Gateway_RouteTable."
+      }
+    },
+    "F5_Ext_Untrust_RouteTableName": {
+      "type": "string",
+      "defaultValue": "F5_Ext_Untrust_RouteTable",
+      "metadata": {
+        "description": "Name for F5_Ext_Untrust_RouteTable."
+      }
+    },
+    "F5_Int_Untrust_RouteTableName": {
+      "type": "string",
+      "defaultValue": "F5_Int_Untrust_RouteTable",
+      "metadata": {
+        "description": "Name for F5_Int_Untrust_RouteTable."
+      }
+    },
+    "F5_Ext_Trust_RouteTableName": {
+      "type": "string",
+      "defaultValue": "F5_Ext_Trust_RouteTable",
+      "metadata": {
+        "description": "Name for F5_Ext_Trust_RouteTable."
+      }
+    },
+    "Internal_Subnets_RouteTableName": {
+      "type": "string",
+      "defaultValue": "Internal_Subnets_RouteTable",
+      "metadata": {
+        "description": "Name for Internal_Subnets_RouteTable."
+      }
+    },
+    "JumpBox_Availability_SetName": {
+      "type": "string",
+      "defaultValue":  "JumpBox_AS",
+      "minLength": 1
+    },
+    "vdssstorageType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "JumpBoxName": {
+      "type": "string",
+      "defaultValue":  "JumpBox",
+      "minLength": 1
+    },
+    "JumpBoxAdminUserName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "JumpBoxAdminPassword": {
+      "type": "securestring"
+    },
+    "JumpBoxWindowsOSVersion": {
+      "type": "string",
+      "defaultValue": "2012-R2-Datacenter",
+      "allowedValues": [
+        "2008-R2-SP1",
+        "2012-Datacenter",
+        "2012-R2-Datacenter",
+        "Windows-Server-Technical-Preview"
+      ]
+    },
+    "JumpBoxLinuxName": {
+      "type": "string",
+      "defaultValue": "JumpBoxLinux",
+      "minLength": 1
+    },
+    "JumpBoxLinuxUbuntuOSVersion": {
+      "type": "string",
+      "defaultValue": "16.04-LTS",
+      "allowedValues": [
+        "12.04.5-LTS",
+        "14.04.2-LTS",
+        "16.04-LTS"
+      ]
+    }
+  },
+  "variables": {
+    "vdssstorageName": "[concat('vdssstorage', uniqueString(resourceGroup().id))]",
+    "JumpBoxImagePublisher": "MicrosoftWindowsServer",
+    "JumpBoxImageOffer": "WindowsServer",
+    "JumpBoxOSDiskName": "JumpBoxOSDisk",
+    "JumpBoxVmSize": "Standard_D2_v2",
+    "JumpBoxVnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+    "JumpBoxSubnetRef": "[concat(variables('JumpBoxVnetID'), '/subnets/', parameters('Management_SubnetName'))]",
+    "JumpBoxStorageAccountContainerName": "vhds",
+    "JumpBoxNicName": "[concat(parameters('JumpBoxName'), 'NetworkInterface')]",
+    "JumpBoxLinuxImagePublisher": "Canonical",
+    "JumpBoxLinuxImageOffer": "UbuntuServer",
+    "JumpBoxLinuxOSDiskName": "JumpBoxLinuxOSDisk",
+    "JumpBoxLinuxVmSize": "Standard_D2_v2",
+    "JumpBoxLinuxVnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+    "JumpBoxLinuxSubnetRef": "[concat(variables('JumpBoxLinuxVnetID'), '/subnets/', parameters('Management_SubnetName'))]",
+    "JumpBoxLinuxStorageAccountContainerName": "vhds",
+    "JumpBoxLinuxNicName": "[concat(parameters('JumpBoxLinuxName'), 'NetworkInterface')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/routeTables",
+      "name": "[parameters('Gateway_RouteTableName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Route Table - Gateway"
+      },
+      "properties": {
+        "routes": [
+          {
+            "name": "RouteToInternet",
+            "properties": {
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopType": "Internet"
+            }
+          },
+          {
+            "name": "RouteToManagement",
+            "properties": {
+              "addressPrefix": "[parameters('Management_SubnetPrefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[parameters('F5_Ext_Trusted_IP')]"
+            }
+          },
+          {
+            "name": "RouteToVDMS",
+            "properties": {
+              "addressPrefix": "[parameters('VDMS_SubnetPrefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[parameters('F5_Ext_Trusted_IP')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/routeTables",
+      "name": "[parameters('F5_Ext_Untrust_RouteTableName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Route Table - External F5 Untrust"
+      },
+      "properties": {
+        "routes": [
+          {
+            "name": "RouteToInternet",
+            "properties": {
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopType": "Internet"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/routeTables",
+      "name": "[parameters('F5_Ext_Trust_RouteTableName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Route Table - External F5 Trust"
+      },
+      "properties": {
+        "routes": [
+          {
+            "name": "RouteToVDMS",
+            "properties": {
+              "addressPrefix": "[parameters('VDMS_SubnetPrefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[parameters('F5_Int_Untrusted_IP')]"
+            }
+          },
+          {
+            "name": "RouteToManagement",
+            "properties": {
+              "addressPrefix": "[parameters('Management_SubnetPrefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[parameters('F5_Int_Untrusted_IP')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/routeTables",
+      "name": "[parameters('F5_Int_Untrust_RouteTableName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Route Table - Internal F5 Untrust"
+      },
+      "properties": {
+        "routes": [
+          {
+            "name": "RouteToInternet",
+            "properties": {
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[parameters('F5_Ext_Trusted_IP')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/routeTables",
+      "name": "[parameters('Internal_Subnets_RouteTableName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Route Table - Internal Subnets"
+      },
+      "properties": {
+        "routes": [
+          {
+            "name": "RouteToInternet",
+            "properties": {
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[parameters('F5_Int_Trusted_IP')]"
+            }
+          },
+          {
+            "name": "RouteToVDMS",
+            "properties": {
+              "addressPrefix": "[parameters('VDMS_SubnetPrefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[parameters('F5_Int_Trusted_IP')]"
+            }
+          },
+          {
+            "name": "RouteToManagement",
+            "properties": {
+              "addressPrefix": "[parameters('Management_SubnetPrefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[parameters('F5_Int_Trusted_IP')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[parameters('vnetName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "VNet"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('vnetPrefix')]",
+            "[parameters('vnetPrefix2')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[parameters('F5_Ext_Untrusted_SubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('F5_Ext_Untrusted_SubnetPrefix')]"
+            }
+          },
+          {
+            "name": "[parameters('F5_Ext_Trusted_SubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('F5_Ext_Trusted_SubnetPrefix')]"
+            }
+          },
+          {
+            "name": "[parameters('F5_Int_Untrusted_SubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('F5_Int_Untrusted_SubnetPrefix')]"
+            }
+          },
+          {
+            "name": "[parameters('F5_Int_Trusted_SubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('F5_Int_Trusted_SubnetPrefix')]"
+            }
+          },
+          {
+            "name": "[parameters('Management_SubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('Management_SubnetPrefix')]"
+            }
+          },
+          {
+            "name": "[parameters('VDMS_SubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('VDMS_SubnetPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('JumpBox_Availability_SetName')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "JumpBox_Availability_Set"
+      },
+      "properties": {
+        "platformUpdateDomainCount": 1,
+        "platformFaultDomainCount": 1
+      }
+    },
+    {
+      "name": "[variables('vdssstorageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[parameters('vdssstorageType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "vdssstorage"
+      },
+      "kind": "Storage"
+    },
+    {
+      "name": "[variables('JumpBoxNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+      ],
+      "tags": {
+        "displayName": "JumpBoxNic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('JumpBoxSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('JumpBoxName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('vdssstorageName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('JumpBoxNicName'))]"
+      ],
+      "tags": {
+        "displayName": "JumpBox"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('JumpBoxVmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('JumpBoxName')]",
+          "adminUsername": "[parameters('JumpBoxAdminUsername')]",
+          "adminPassword": "[parameters('JumpBoxAdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('JumpBoxImagePublisher')]",
+            "offer": "[variables('JumpBoxImageOffer')]",
+            "sku": "[parameters('JumpBoxWindowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "JumpBoxOSDisk",
+            "vhd": {
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('vdssstorageName')), '2016-01-01').primaryEndpoints.blob, variables('JumpBoxStorageAccountContainerName'), '/', variables('JumpBoxOSDiskName'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('JumpBoxNicName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "[variables('JumpBoxLinuxNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+      ],
+      "tags": {
+        "displayName": "JumpBoxLinuxNic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('JumpBoxLinuxSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('JumpBoxLinuxName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('vdssstorageName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('JumpBoxLinuxNicName'))]"
+      ],
+      "tags": {
+        "displayName": "JumpBoxLinux"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('JumpBoxLinuxVmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('JumpBoxLinuxName')]",
+          "adminUsername": "[parameters('JumpBoxAdminUsername')]",
+          "adminPassword": "[parameters('JumpBoxAdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('JumpBoxLinuxImagePublisher')]",
+            "offer": "[variables('JumpBoxLinuxImageOffer')]",
+            "sku": "[parameters('JumpBoxLinuxUbuntuOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "JumpBoxLinuxOSDisk",
+            "vhd": {
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('vdssstorageName')), '2016-01-01').primaryEndpoints.blob, variables('JumpBoxLinuxStorageAccountContainerName'), '/', variables('JumpBoxLinuxOSDiskName'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('JumpBoxLinuxNicName'))]"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
