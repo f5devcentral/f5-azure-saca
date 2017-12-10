@@ -16,5 +16,4 @@
         value: "{{jump_username}}"
       JumpBoxAdminPassword:
         value: "{{jump_password}}"
-    register: output
   when: not output.ansible_facts.azure_resourcegroups
