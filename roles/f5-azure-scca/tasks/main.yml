@@ -9,12 +9,12 @@
     state: present
     location: "{{ location }}"
     resource_group_name: "{{resource_group}}"
-    template: "{{ lookup('file','vdss.json') }}"
+    template: "{{ lookup('file','azuredeploy.json') }}"
 
     parameters:
     JumpBoxAdminUserName:
-      value: "{{f5_username}}"
+      value: "{{jump_username}}"
     JumpBoxAdminPassword:
-      value: "{{f5_password}}"
+      value: "{{jump_password}}"
     register: output
   when: not output.ansible_facts.azure_resourcegroups
