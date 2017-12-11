@@ -101,6 +101,8 @@ if options.debug:
 jumphost_ip =  get_ips(resource_group, parameters['jumpBoxName'])[0]
 jumphostlinux_ip =  get_ips(resource_group, parameters['jumpBoxLinuxName'])[0]
 
+mgmt_start_ip = IPAddress(parameters['management_SubnetPrefix'].first+10)
+
 #if not resource_client.resource_groups.check_existence(f5_ext_resource_group):
 if options.action == "external":
   ext_parameters = {
@@ -115,7 +117,7 @@ if options.action == "external":
       "vnetName": parameters['vnetName'],
       "vnetResourceGroupName": resource_group,
       "mgmtSubnetName": parameters['management_SubnetName'],
-      "mgmtIpAddressRangeStart":  str(jumphostlinux_ip + 1),
+      "mgmtIpAddressRangeStart":  str(mgmt_start_ip + 1),
       "externalSubnetName": parameters['f5_Ext_Untrusted_SubnetName'],
       "externalIpSelfAddressRangeStart":  str(parameters['f5_Ext_Untrusted_IP'] - 3),
       "externalIpAddressRangeStart": str(parameters['f5_Ext_Untrusted_IP'] - 1),
@@ -150,7 +152,7 @@ if options.action == "internal":
       "vnetName": parameters['vnetName'],
       "vnetResourceGroupName": resource_group,
       "mgmtSubnetName": parameters['management_SubnetName'],
-      "mgmtIpAddressRangeStart":  str(jumphostlinux_ip + 3),
+      "mgmtIpAddressRangeStart":  str(mgmt_start_ip + 3),
       "externalSubnetName": parameters['f5_Int_Untrusted_SubnetName'],
       "externalIpSelfAddressRangeStart":  str(parameters['f5_Int_Untrusted_IP'] - 3),
       "externalIpAddressRangeStart": str(parameters['f5_Int_Untrusted_IP'] - 1),
@@ -237,10 +239,10 @@ jumphost_ip = IPAddress(network_client.network_interfaces.get(resource_group,nic
 (bigip_ext_int1_ip, bigip_ext_int1_pip) = get_ext_ips(f5_int_resource_group, "%s-%s0" %(f5_int['dnsLabel'], f5_int['instanceName']))
 (bigip_ext_int2_ip, bigip_ext_int2_pip) = get_ext_ips(f5_int_resource_group, "%s-%s1" %(f5_int['dnsLabel'], f5_int['instanceName']))
 
-bigip_ext1 = jumphost_ip+1
-bigip_ext2 = jumphost_ip+2
-bigip_int1 = jumphost_ip+3
-bigip_int2 = jumphost_ip+4
+#bigip_ext1 = IPAddress(parameters['management_SubnetPrefix'].first+10)
+#bigip_ext2 = IPAddress(parameters['management_SubnetPrefix'].first+11)
+#bigip_int1 = IPAddress(parameters['management_SubnetPrefix'].first+12)
+#bigip_int2 = IPAddress(parameters['management_SubnetPrefix'].first+13)
 
 external_pip = get_pip(f5_ext_resource_group, "%s-ext-pip0" %(f5_ext['dnsLabel']))
 #print external_pip
