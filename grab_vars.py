@@ -336,6 +336,8 @@ pool_members.append({'server': str(bigip_ext1_pip),
 
 
 
+
+
 #print "create /ltm pool external_snat_pool members replace-all-with { %s:0}" %(external_vip)
 
 if options.debug:
@@ -354,21 +356,22 @@ virtuals.append({'server': str(bigip_ext1_pip),
 
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'bigip_int1_ssh_vs',
-                 'command': "create /ltm virtual bigip1_ext3_ssh_vs destination %s:2202 profiles replace-all-with { loose_fastL4 } pool bigip_ext3_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)})
+                 'command': "create /ltm virtual bigip1_int1_ssh_vs destination %s:2202 profiles replace-all-with { loose_fastL4 } pool bigip_int1_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)})
 
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'bigip_int2_ssh_vs',
-                 'command': "create /ltm virtual bigip1_ext4_ssh_vs destination %s:2203 profiles replace-all-with { loose_fastL4 } pool bigip_ext4_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)})
+                 'command': "create /ltm virtual bigip1_int2_ssh_vs destination %s:2203 profiles replace-all-with { loose_fastL4 } pool bigip_int2_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)})
 
-if options.debug:
-    print "create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }     source-address-translation { type automap  }" %(parameters['management_SubnetPrefix'])
-    print "create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'])
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'mgmt_outbound_vs',
                  'command':"create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }     source-address-translation { type automap  }" %(parameters['management_SubnetPrefix'])})
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'vdms_outbound_vs',
                  'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'])})
+
+if options.debug:
+    print "create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }     source-address-translation { type automap  }" %(parameters['management_SubnetPrefix'])
+    print "create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'])
 
 if options.action == "external_setup":
     output['routes'] = routes
@@ -386,14 +389,6 @@ if options.debug:
     print "create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['vdmS_SubnetPrefix'])
 
 
-virtuals.append({'server': str(bigip_int1_pip),
-                 'name':'mgmt_outbound_vs',
-                 'command':"create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['management_SubnetPrefix'])})
-
-virtuals.append({'server': str(bigip_int1_pip),
-                 'name':'vdms_outbound_vs',
-                 'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['vdmS_SubnetPrefix'])})
-
 if options.action == "internal_setup":
     output = {}
     virtuals = []
@@ -409,6 +404,15 @@ if options.action == "internal_setup":
                          'host': str(internal_ext_gw),
                          'name': str(internal_ext_gw),
                          'port': '0'})
+
+    virtuals.append({'server': str(bigip_int1_pip),
+                     'name':'mgmt_outbound_vs',
+                     'command':"create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['management_SubnetPrefix'])})
+
+    virtuals.append({'server': str(bigip_int1_pip),
+                     'name':'vdms_outbound_vs',
+                     'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['vdmS_SubnetPrefix'])})
+
 
     output['selfips'] = [{'name': 'self_2nic_float',
                          'address': str(internal_vip),
@@ -447,7 +451,7 @@ az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(e
     parameters['resource_group'] = resource_group
     print "#external bigip to internal"
     print "\n\naz network vnet subnet update --name %(f5_Ext_Trusted_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(f5_Ext_Trust_RouteTableName)s" %(parameters)
-    print "from internal bigip to external"
+    print "# from internal bigip to external"
     print "az network vnet subnet update --name %(f5_Int_Untrusted_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(f5_Int_Untrust_RouteTableName)s" %(parameters)
     print "az network vnet subnet update --name %(vdmS_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(internal_Subnets_RouteTableName)s" %(parameters)
     print "az network vnet subnet update --name %(management_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(internal_Subnets_RouteTableName)s" %(parameters)
