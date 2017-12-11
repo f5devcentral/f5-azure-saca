@@ -255,7 +255,8 @@
     "JumpBoxLinuxVnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
     "JumpBoxLinuxSubnetRef": "[concat(variables('JumpBoxLinuxVnetID'), '/subnets/', parameters('Management_SubnetName'))]",
     "JumpBoxLinuxStorageAccountContainerName": "vhds",
-    "JumpBoxLinuxNicName": "[concat(parameters('JumpBoxLinuxName'), 'NetworkInterface')]"
+    "JumpBoxLinuxNicName": "[concat(parameters('JumpBoxLinuxName'), 'NetworkInterface')]",
+    "linux-jumpbox-ipName": "linux-jumpbox-ip"
   },
   "resources": [
     {
@@ -561,7 +562,8 @@
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('linux-jumpbox-ipName'))]"
       ],
       "tags": {
         "displayName": "JumpBoxLinuxNic"
@@ -574,6 +576,9 @@
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
                 "id": "[variables('JumpBoxLinuxSubnetRef')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('linux-jumpbox-ipName'))]"
               }
             }
           }
@@ -599,7 +604,8 @@
         "osProfile": {
           "computerName": "[parameters('JumpBoxLinuxName')]",
           "adminUsername": "[parameters('JumpBoxAdminUsername')]",
-          "adminPassword": "[parameters('JumpBoxAdminPassword')]"
+          "adminPassword": "[parameters('JumpBoxAdminPassword')]",
+          "customData": "I2Nsb3VkLWNvbmZpZwp3cml0ZV9maWxlczoKCiAtIHBhdGg6IC9ldGMvYXB0L3NvdXJjZXMubGlzdC5kL2F6dXJlLWNsaS5saXN0CiAgIHBlcm1pc3Npb25zOiAnMDY0NCcKICAgb3duZXI6IHJvb3Q6cm9vdAogICBjb250ZW50OiB8CiAgICAgIGRlYiBbYXJjaD1hbWQ2NF0gaHR0cHM6Ly9wYWNrYWdlcy5taWNyb3NvZnQuY29tL3JlcG9zL2F6dXJlLWNsaS8gd2hlZXp5IG1haW4KcnVuY21kOgogIC0gc3VkbyBhcHQta2V5IGFkdiAtLWtleXNlcnZlciBwYWNrYWdlcy5taWNyb3NvZnQuY29tIC0tcmVjdi1rZXlzIDUyRTE2Rjg2RkVFMDRCOTc5QjA3RTI4REIwMkM0NkRGNDE3QTA4OTMKICAtIHN1ZG8gYXB0LWdldCBpbnN0YWxsIHNvZnR3YXJlLXByb3BlcnRpZXMtY29tbW9uCiAgLSBzdWRvIGFwdC1hZGQtcmVwb3NpdG9yeSAteSBwcGE6YW5zaWJsZS9hbnNpYmxlCiAgLSBzdWRvIGFwdC1nZXQgdXBkYXRlIC15CiAgLSBzdWRvIGFwdC1nZXQgaW5zdGFsbCAteSBhbnNpYmxlCiAgLSBzdWRvIGFwdC1nZXQgaW5zdGFsbCAteSBhcHQtdHJhbnNwb3J0LWh0dHBzCiAgLSBzdWRvIGFwdC1nZXQgdXBkYXRlICYmIHN1ZG8gYXB0LWdldCBpbnN0YWxsIC15IGF6dXJlLWNsaQogIC0gc3VkbyBhcHQtZ2V0IGluc3RhbGwgLXkgcHl0aG9uLXBpcAogIC0gc3VkbyBwaXAgaW5zdGFsbCBmNS1zZGsgYmlnc3VkcyBuZXRhZGRyIGRlZXBkaWZmCiAgLSBzdWRvIHBpcCBpbnN0YWxsIGFuc2libGVbYXp1cmVdCg=="
         },
         "storageProfile": {
           "imageReference": {
@@ -624,6 +630,19 @@
             }
           ]
         }
+      }
+    },
+    {
+      "name": "[variables('linux-jumpbox-ipName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "linux-jumpbox-ip"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic"
       }
     }
   ]

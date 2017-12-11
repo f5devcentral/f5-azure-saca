@@ -27,7 +27,10 @@ def get_ips(resource_group, instanceName):
     if network_client.network_interfaces.get(resource_group,vm_nic).ip_configurations[0].public_ip_address:
         pip_name = network_client.network_interfaces.get(resource_group,vm_nic).ip_configurations[0].public_ip_address.id.split('/')[-1]
         pip = network_client.public_ip_addresses.get(resource_group,pip_name)
-        return (vm_ip, IPAddress(pip.ip_address), pip.dns_settings.fqdn)
+        if pip.dns_settings:
+            return (vm_ip, IPAddress(pip.ip_address), pip.dns_settings.fqdn)
+        else:
+            return (vm_ip, IPAddress(pip.ip_address), None)
     else:
         return (vm_ip, None, None)
 
