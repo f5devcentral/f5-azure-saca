@@ -43,10 +43,6 @@
     "{{setup.virtuals}}"
   register: result
 
-- name: check result
-  debug:
-    msg: "START{{result.results}}END"
-
 - name: Create Virtuals
   bigip_command:
     server: "{{item.item.server}}"

@@ -462,6 +462,14 @@ if options.action == "internal_setup":
     output['pools'] = pools
     output['pool_members'] = pool_members
     output['virtuals'] = virtuals
+
+    routes= [{ 'name': 'exttrusted',
+           'destination': str(parameters['f5_Ext_Trusted_SubnetPrefix']), 
+           'gateway_address': str(IPAddress(parameters['f5_Int_Untrusted_SubnetPrefix'].first+1)), 
+           'server': str(bigip_int1_pip) }         
+     ]
+
+    output['routes'] = routes
 #    print json.dumps(output)
 #    sys.exit(0)
 
