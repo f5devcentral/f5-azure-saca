@@ -416,9 +416,6 @@
             {
                 "name": "[concat(variables('instanceName'), '-self-ipconfig')]", 
                 "properties": {
-                    "PublicIpAddress": {
-                        "Id": "[concat(variables('extSelfPublicIpAddressIdPrefix'), '0')]"
-                    }, 
                     "primary": true, 
                     "privateIPAddress": "[variables('extSubnetPrivateAddress')]", 
                     "privateIPAllocationMethod": "Static", 
@@ -430,9 +427,6 @@
             {
                 "name": "[concat(variables('instanceName'), '-self-ipconfig')]", 
                 "properties": {
-                    "PublicIpAddress": {
-                        "Id": "[concat(variables('extSelfPublicIpAddressIdPrefix'), '1')]"
-                    }, 
                     "primary": true, 
                     "privateIPAddress": "[variables('extSubnetPrivateAddress1')]", 
                     "privateIPAllocationMethod": "Static", 
@@ -900,88 +894,6 @@
     "resources": [
         {
             "apiVersion": "[variables('networkApiVersion')]", 
-            "location": "[variables('location')]", 
-            "name": "[concat(variables('mgmtPublicIPAddressName'), 0)]", 
-            "properties": {
-                "dnsSettings": {
-                    "domainNameLabel": "[concat(variables('dnsLabel'), '-0')]"
-                }, 
-                "idleTimeoutInMinutes": 30, 
-                "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
-            }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "f5": "[variables('f5Tag')]", 
-                "f5Template": "[variables('f5TemplateTag')]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
-            "type": "Microsoft.Network/publicIPAddresses"
-        }, 
-        {
-            "apiVersion": "[variables('networkApiVersion')]", 
-            "location": "[variables('location')]", 
-            "name": "[concat(variables('mgmtPublicIPAddressName'), 1)]", 
-            "properties": {
-                "dnsSettings": {
-                    "domainNameLabel": "[concat(variables('dnsLabel'), '-1')]"
-                }, 
-                "idleTimeoutInMinutes": 30, 
-                "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
-            }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "f5": "[variables('f5Tag')]", 
-                "f5Template": "[variables('f5TemplateTag')]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
-            "type": "Microsoft.Network/publicIPAddresses"
-        }, 
-        {
-            "apiVersion": "[variables('networkApiVersion')]", 
-            "location": "[variables('location')]", 
-            "name": "[concat(variables('extSelfPublicIpAddressNamePrefix'), '0')]", 
-            "properties": {
-                "idleTimeoutInMinutes": 30, 
-                "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
-            }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "f5": "[variables('f5Tag')]", 
-                "f5Template": "[variables('f5TemplateTag')]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
-            "type": "Microsoft.Network/publicIPAddresses"
-        }, 
-        {
-            "apiVersion": "[variables('networkApiVersion')]", 
-            "location": "[variables('location')]", 
-            "name": "[concat(variables('extSelfPublicIpAddressNamePrefix'), '1')]", 
-            "properties": {
-                "idleTimeoutInMinutes": 30, 
-                "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
-            }, 
-            "tags": {
-                "application": "[parameters('tagValues').application]", 
-                "costCenter": "[parameters('tagValues').cost]", 
-                "environment": "[parameters('tagValues').environment]", 
-                "f5": "[variables('f5Tag')]", 
-                "f5Template": "[variables('f5TemplateTag')]", 
-                "group": "[parameters('tagValues').group]", 
-                "owner": "[parameters('tagValues').owner]"
-            }, 
-            "type": "Microsoft.Network/publicIPAddresses"
-        }, 
-        {
-            "apiVersion": "[variables('networkApiVersion')]", 
             "copy": {
                 "count": "[variables('numberOfExternalIps')]", 
                 "name": "extpipcopy"
@@ -1013,7 +925,6 @@
             "apiVersion": "[variables('apiVersion')]", 
             "dependsOn": [
                 "[variables('mgmtNsgID')]", 
-                "[concat('Microsoft.Network/publicIPAddresses/', variables('mgmtPublicIPAddressName'), '0')]"
             ], 
             "location": "[variables('location')]", 
             "name": "[concat(variables('mgmtNicName'), '0')]", 
@@ -1022,9 +933,6 @@
                     {
                         "name": "[concat(variables('dnsLabel'), '-mgmt-ipconfig')]", 
                         "properties": {
-                            "PublicIpAddress": {
-                                "Id": "[resourceId('Microsoft.Network/publicIPAddresses/', concat(variables('mgmtPublicIPAddressName'), '0'))]"
-                            }, 
                             "privateIPAddress": "[variables('mgmtSubnetPrivateAddress')]", 
                             "privateIPAllocationMethod": "Static", 
                             "subnet": {
@@ -1052,7 +960,6 @@
             "apiVersion": "[variables('apiVersion')]", 
             "dependsOn": [
                 "[variables('mgmtNsgID')]", 
-                "[concat('Microsoft.Network/publicIPAddresses/', variables('mgmtPublicIPAddressName'), '1')]"
             ], 
             "location": "[variables('location')]", 
             "name": "[concat(variables('mgmtNicName'), '1')]", 
@@ -1061,9 +968,6 @@
                     {
                         "name": "[concat(variables('dnsLabel'), '-mgmt-ipconfig')]", 
                         "properties": {
-                            "PublicIpAddress": {
-                                "Id": "[resourceId('Microsoft.Network/publicIPAddresses/', concat(variables('mgmtPublicIPAddressName'), '1'))]"
-                            }, 
                             "privateIPAddress": "[variables('mgmtSubnetPrivateAddress1')]", 
                             "privateIPAllocationMethod": "Static", 
                             "subnet": {
@@ -1092,7 +996,6 @@
             "dependsOn": [
                 "[variables('extNsgID')]", 
                 "extpipcopy", 
-                "[concat('Microsoft.Network/publicIPAddresses/', variables('extSelfPublicIpAddressNamePrefix'), '0')]"
             ], 
             "location": "[variables('location')]", 
             "name": "[concat(variables('extNicName'), '0')]", 
@@ -1119,7 +1022,6 @@
             "dependsOn": [
                 "[variables('extNsgID')]", 
                 "extpipcopy", 
-                "[concat('Microsoft.Network/publicIPAddresses/', variables('extSelfPublicIpAddressNamePrefix'), '1')]"
             ], 
             "location": "[variables('location')]", 
             "name": "[concat(variables('extNicName'), '1')]", 
@@ -1567,13 +1469,5 @@
         }
     ], 
     "outputs": {
-        "GUI-URL": {
-            "type": "string", 
-            "value": "[concat('https://',reference(concat(variables('mgmtPublicIPAddressId'), '0')).dnsSettings.fqdn, ':', variables('bigIpMgmtPort'))]"
-        }, 
-        "SSH-URL": {
-            "type": "string", 
-            "value": "[concat(reference(concat(variables('mgmtPublicIPAddressId'), '0')).dnsSettings.fqdn,' ',22)]"
-        }
     }
 }

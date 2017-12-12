@@ -340,6 +340,14 @@
               "nextHopType": "VirtualAppliance",
               "nextHopIpAddress": "[parameters('F5_Int_Untrusted_IP')]"
             }
+          },
+          {
+            "name": "RouteToIntTrusted",
+            "properties": {
+              "addressPrefix": "[parameters('F5_Int_Trusted_SubnetPrefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[parameters('F5_Int_Untrusted_IP')]"
+            }
           }
         ]
       }
@@ -398,9 +406,25 @@
               "nextHopType": "VirtualAppliance",
               "nextHopIpAddress": "[parameters('F5_Int_Trusted_IP')]"
             }
+          },
+          {
+            "name": "RouteToExtUnTrust",
+            "properties": {
+              "addressPrefix": "[parameters('F5_Ext_Untrusted_SubnetPrefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[parameters('F5_Int_Trusted_IP')]"
+            }
+          },
+          {
+            "name": "RouteToExtTrust",
+            "properties": {
+              "addressPrefix": "[parameters('F5_Ext_Trusted_SubnetPrefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[parameters('F5_Int_Trusted_IP')]"
+            }
           }
-        ]
-      }
+              ]
+            }
     },
     {
       "apiVersion": "2015-06-15",
@@ -605,7 +629,7 @@
           "computerName": "[parameters('JumpBoxLinuxName')]",
           "adminUsername": "[parameters('JumpBoxAdminUsername')]",
           "adminPassword": "[parameters('JumpBoxAdminPassword')]",
-          "customData": "I2Nsb3VkLWNvbmZpZwp3cml0ZV9maWxlczoKCiAtIHBhdGg6IC9ldGMvYXB0L3NvdXJjZXMubGlzdC5kL2F6dXJlLWNsaS5saXN0CiAgIHBlcm1pc3Npb25zOiAnMDY0NCcKICAgb3duZXI6IHJvb3Q6cm9vdAogICBjb250ZW50OiB8CiAgICAgIGRlYiBbYXJjaD1hbWQ2NF0gaHR0cHM6Ly9wYWNrYWdlcy5taWNyb3NvZnQuY29tL3JlcG9zL2F6dXJlLWNsaS8gd2hlZXp5IG1haW4KcnVuY21kOgogIC0gc3VkbyBhcHQta2V5IGFkdiAtLWtleXNlcnZlciBwYWNrYWdlcy5taWNyb3NvZnQuY29tIC0tcmVjdi1rZXlzIDUyRTE2Rjg2RkVFMDRCOTc5QjA3RTI4REIwMkM0NkRGNDE3QTA4OTMKICAtIHN1ZG8gYXB0LWdldCBpbnN0YWxsIHNvZnR3YXJlLXByb3BlcnRpZXMtY29tbW9uCiAgLSBzdWRvIGFwdC1hZGQtcmVwb3NpdG9yeSAteSBwcGE6YW5zaWJsZS9hbnNpYmxlCiAgLSBzdWRvIGFwdC1nZXQgdXBkYXRlIC15CiAgLSBzdWRvIGFwdC1nZXQgaW5zdGFsbCAteSBhbnNpYmxlCiAgLSBzdWRvIGFwdC1nZXQgaW5zdGFsbCAteSBhcHQtdHJhbnNwb3J0LWh0dHBzCiAgLSBzdWRvIGFwdC1nZXQgdXBkYXRlICYmIHN1ZG8gYXB0LWdldCBpbnN0YWxsIC15IGF6dXJlLWNsaQogIC0gc3VkbyBhcHQtZ2V0IGluc3RhbGwgLXkgcHl0aG9uLXBpcAogIC0gc3VkbyBwaXAgaW5zdGFsbCBmNS1zZGsgYmlnc3VkcyBuZXRhZGRyIGRlZXBkaWZmCiAgLSBzdWRvIHBpcCBpbnN0YWxsIGFuc2libGVbYXp1cmVdCg=="
+          "customData": "I2Nsb3VkLWNvbmZpZwp3cml0ZV9maWxlczoKCiAtIHBhdGg6IC9ldGMvYXB0L3NvdXJjZXMubGlzdC5kL2F6dXJlLWNsaS5saXN0CiAgIHBlcm1pc3Npb25zOiAnMDY0NCcKICAgb3duZXI6IHJvb3Q6cm9vdAogICBjb250ZW50OiB8CiAgICAgIGRlYiBbYXJjaD1hbWQ2NF0gaHR0cHM6Ly9wYWNrYWdlcy5taWNyb3NvZnQuY29tL3JlcG9zL2F6dXJlLWNsaS8gd2hlZXp5IG1haW4KcnVuY21kOgogIC0gc3VkbyBhcHQta2V5IGFkdiAtLWtleXNlcnZlciBwYWNrYWdlcy5taWNyb3NvZnQuY29tIC0tcmVjdi1rZXlzIDUyRTE2Rjg2RkVFMDRCOTc5QjA3RTI4REIwMkM0NkRGNDE3QTA4OTMKICAtIHN1ZG8gYXB0LWdldCBpbnN0YWxsIHNvZnR3YXJlLXByb3BlcnRpZXMtY29tbW9uCiAgLSBzdWRvIGFwdC1hZGQtcmVwb3NpdG9yeSAteSBwcGE6YW5zaWJsZS9hbnNpYmxlCiAgLSBzdWRvIGFwdC1nZXQgdXBkYXRlIC15CiAgLSBzdWRvIGFwdC1nZXQgaW5zdGFsbCAteSBhbnNpYmxlCiAgLSBzdWRvIGFwdC1nZXQgaW5zdGFsbCAteSBhcHQtdHJhbnNwb3J0LWh0dHBzCiAgLSBzdWRvIGFwdC1nZXQgdXBkYXRlICYmIHN1ZG8gYXB0LWdldCBpbnN0YWxsIC15IGF6dXJlLWNsaQogIC0gc3VkbyBhcHQtZ2V0IGluc3RhbGwgLXkgcHl0aG9uLXBpcAogIC0gc3VkbyBwaXAgaW5zdGFsbCBmNS1zZGsgYmlnc3VkcyBuZXRhZGRyIGRlZXBkaWZmCiAgLSBzdWRvIHBpcCBpbnN0YWxsIGFuc2libGVbYXp1cmVdCiAgLSBzdWRvIGFwdC1nZXQgaW5zdGFsbCAteSBkb2NrZXIuaW8KICAtIHN1ZG8gZG9ja2VyIHJ1biAtZCAtcCA4MDo4MCAtLW5ldD1ob3N0IC0tcmVzdGFydCB1bmxlc3Mtc3RvcHBlZCAtZSBGNURFTU9fQVBQPXdlYnNpdGUgLWUgRjVERU1PX0NPTE9SPWEwYmYzNyAtZSBGNURFTU9fTk9ERU5BTUU9J0Y1IEF6dXJlIFNDQ0EnIGNoZW4yMy9mNS1kZW1vLWFwcDpzc2wK"
         },
         "storageProfile": {
           "imageReference": {
