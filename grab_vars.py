@@ -400,12 +400,12 @@ if options.debug:
 #                  'name':'bigip_int2_ssh_vs',
 #                  'command': "create /ltm virtual bigip1_int2_ssh_vs destination %s:2203 profiles replace-all-with { loose_fastL4 } pool bigip_int2_ssh_pool  fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)})
 
-# virtuals.append({'server': str(bigip_ext1_pip),
-#                  'name':'mgmt_outbound_vs',
-#                  'command':"create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }     source-address-translation { type automap  }" %(parameters['management_SubnetPrefix'])})
-# virtuals.append({'server': str(bigip_ext1_pip),
-#                  'name':'vdms_outbound_vs',
-#                  'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'])})
+virtuals.append({'server': str(bigip_ext1_pip),
+                  'name':'mgmt_outbound_vs',
+                  'command':"create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }     source-address-translation { type automap  }" %(parameters['management_SubnetPrefix'])})
+virtuals.append({'server': str(bigip_ext1_pip),
+                  'name':'vdms_outbound_vs',
+                  'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'])})
 
 if options.debug:
     print "create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }     source-address-translation { type automap  }" %(parameters['management_SubnetPrefix'])
