@@ -293,7 +293,13 @@ routes= [{ 'name': 'mgmt',
          { 'name': 'vdms',
            'destination': str(parameters['vdmS_SubnetPrefix']), 
            'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
-           'server': str(bigip_ext1_pip) }]
+           'server': str(bigip_ext1_pip) },
+         { 'name': 'internalvips',
+           'destination': str(parameters['f5_Int_Untrusted_SubnetPrefix']), 
+           'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
+           'server': str(bigip_ext1_pip) }
+         
+     ]
 pools.append({'server': str(bigip_ext1_pip),
              'name': 'jumpbox_rdp_pool',
               'partition':'Common'})
