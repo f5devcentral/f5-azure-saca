@@ -316,7 +316,7 @@ pool_members.append({'server': str(bigip_ext1_pip),
               'pool': 'jumpbox_ssh_pool',
               'host': str(jumphostlinux_ip),
               'name': str(jumphostlinux_ip),
-              'port': '3389'})
+              'port': '22'})
 
 
 virtuals.append({'server': str(bigip_ext1_pip),
