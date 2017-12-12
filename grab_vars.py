@@ -309,6 +309,16 @@ pool_members.append({'server': str(bigip_ext1_pip),
               'name': str(jumphost_ip),
               'port': '3389'})
 
+pools.append({'server': str(bigip_ext1_pip),
+             'name': 'jumpbox_ssh_pool',
+              'partition':'Common'})
+pool_members.append({'server': str(bigip_ext1_pip),
+              'pool': 'jumpbox_ssh_pool',
+              'host': str(jumphostlinux_ip),
+              'name': str(jumphostlinux_ip),
+              'port': '3389'})
+
+
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'jumpbox_rdp_vs',
                  'command': "create /ltm virtual jumpbox_rdp_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(external_vip)})
