@@ -295,7 +295,7 @@ routes= [{ 'name': 'mgmt',
            'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
            'server': str(bigip_ext1_pip) },
          { 'name': 'internalvips',
-           'destination': str(parameters['f5_Int_Untrusted_SubnetPrefix']), 
+           'destination': str(parameters['f5_Int_Trusted_SubnetPrefix']), 
            'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
            'server': str(bigip_ext1_pip) }
          
