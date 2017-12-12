@@ -325,7 +325,7 @@ virtuals.append({'server': str(bigip_ext1_pip),
 
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'jumpbox_ssh_vs',
-                 'command': "create /ltm virtual jumpbox_rdp_vs destination %s:22 profiles replace-all-with { loose_fastL4 } pool jumpbox_ssh_pool source-address-translation { type automap }" %(external_vip)})
+                 'command': "create /ltm virtual jumpbox_ssh_vs destination %s:22 profiles replace-all-with { loose_fastL4 } pool jumpbox_ssh_pool source-address-translation { type automap }" %(external_vip)})
 
 
 
