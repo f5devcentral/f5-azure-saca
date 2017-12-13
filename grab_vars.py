@@ -84,8 +84,8 @@ tenant_id=os.environ['AZURE_TENANT']
 cloud_environment=AZURE_US_GOV_CLOUD
 
 for deployment in resource_client.deployments.list_by_resource_group(resource_group):
-#    if deployment.name != 'Microsoft.Template':
-#        continue
+    if deployment.name != 'Microsoft.Template':
+        continue
     data = deployment.as_dict()
 #    print deployment.name
 
