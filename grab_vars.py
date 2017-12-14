@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from azure.common.credentials import ServicePrincipalCredentials
 from azure.mgmt.resource import ResourceManagementClient
 
