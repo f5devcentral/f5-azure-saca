@@ -662,6 +662,8 @@ class AzureInventory(object):
                             host_vars['public_ip_id'] = public_ip_address.id
                             if public_ip_address.dns_settings:
                                 host_vars['fqdn'] = public_ip_address.dns_settings.fqdn
+                        else:
+                            host_vars['ansible_host'] = host_vars['private_ip']
 
             self._add_host(host_vars)
 
