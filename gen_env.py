@@ -62,6 +62,7 @@ export AZURE_SECRET="%(client_secret)s"
 export AZURE_TENANT="%(tenant_id)s"
 export AZURE_CLOUD_ENVIRONMENT="AzureUSGovernment"
 export AZURE_RESOURCE_GROUP="%(resource_group)s"
+export AZURE_RESOURCE_GROUPS=${AZURE_RESOURCE_GROUP}_F5_External,${AZURE_RESOURCE_GROUP}_F5_Internal
 export location="%(location)s"
 
 export f5_unique_short_name="%(resource_group)sext"
