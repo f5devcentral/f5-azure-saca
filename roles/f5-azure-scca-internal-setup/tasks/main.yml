@@ -1,5 +1,38 @@
 ---
 # tasks file for f5-azure-scca-internal-setup
+- name: Provision modules
+  bigip_provision:
+    server: "{{item.server}}"    
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    module: "{{item.module}}"
+    level: "{{item.level}}"
+  with_items:
+     "{{setup.modules}}"
+
+- name: Check commands
+  bigip_command:
+    server: "{{item.server}}"
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    commands:
+       - "{{item.check}}"
+  with_items:
+    "{{setup.commands}}"
+  register: result
+- name: Run commands
+  bigip_command:
+    server: "{{item.item.server}}"
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    commands:
+      - "{{item.item.command}}"
+  with_items:
+    "{{result.results}}"
+  when: 
+    - '"was not found" in item.stdout|first'
+
+
 - name: Add Routes
   bigip_static_route:
     destination: "{{item.destination}}"

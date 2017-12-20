@@ -41,6 +41,7 @@
     name: "{{item.name}}"
   with_items:
      "{{setup.pool_members}}"
+
 - name: Check commands
   bigip_command:
     server: "{{item.server}}"
