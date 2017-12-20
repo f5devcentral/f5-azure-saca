@@ -4,10 +4,10 @@
   azure_rm_resourcegroup_facts:
     name: "{{resource_group}}"
   register: output
-- name: debug
-  debug:
-    msg: "{{parameters}}"
-  when: not output.ansible_facts.azure_resourcegroups
+# - name: debug
+#   debug:
+#     msg: "{{parameters}}"
+#   when: not output.ansible_facts.azure_resourcegroups
 - name: Deploy Internal Environnment
   azure_rm_deployment:
     state: present
@@ -19,4 +19,4 @@
     parameters:
       "{{parameters}}"
   register: output
-  when: not output.ansible_facts.azure_resourcegroups
+#  when: not output.ansible_facts.azure_resourcegroups

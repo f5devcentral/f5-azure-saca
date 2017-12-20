@@ -85,10 +85,13 @@ tenant_id=os.environ['AZURE_TENANT']
 cloud_environment=AZURE_US_GOV_CLOUD
 
 for deployment in resource_client.deployments.list_by_resource_group(resource_group):
-    if deployment.name != 'Microsoft.Template':
-        continue
-    data = deployment.as_dict()
+#    if deployment.name != 'Microsoft.Template':
+#        continue
+#    data = deployment.as_dict()
 #    print deployment.name
+#    print data
+    if "f5_Ext_Untrusted_SubnetName" not in deployment.properties.parameters.keys():
+        continue
 
     deployment.properties.parameters
     parameters = dict([(x,deployment.properties.parameters[x].get('value')) for x in deployment.properties.parameters])
@@ -125,11 +128,11 @@ if options.action == "external":
       "externalIpAddressRangeStart": str(parameters['f5_Ext_Untrusted_IP'] - 1),
       "internalSubnetName": parameters['f5_Ext_Trusted_SubnetName'],
       "internalIpAddressRangeStart":  str(parameters['f5_Ext_Trusted_IP'] - 1),
-      "tenantId": tenant_id,
-      "clientId": client_id,
-      "servicePrincipalSecret": client_secret,
-      "managedRoutes": "0.0.0.0/0",
-      "routeTableTag": "%sRouteTag" %(f5_unique_short_name),
+#      "tenantId": tenant_id,
+#      "clientId": client_id,
+#      "servicePrincipalSecret": client_secret,
+#      "managedRoutes": "0.0.0.0/0",
+#      "routeTableTag": "%sRouteTag" %(f5_unique_short_name),
       "ntpServer": "0.pool.ntp.org",
       "timeZone": "UTC",
       "restrictedSrcAddress":  "*",
@@ -260,7 +263,8 @@ external_pip = get_pip(f5_ext_resource_group, "%s-ext-pip0" %(f5_ext['dnsLabel']
 #print external_pip
 
 # add 2 for now, needs to be fixed
-external_vip =  parameters['f5_Ext_Untrusted_IP']
+#external_vip =  parameters['f5_Ext_Untrusted_IP']
+external_vip = str(external_pip[0])
 internal_vip =  parameters['f5_Int_Untrusted_IP']
 
 internal_ext_gw = IPAddress(parameters['f5_Int_Untrusted_SubnetPrefix'].first+1)
@@ -417,6 +421,29 @@ if options.action == "external_setup":
     output['pools'] = pools
     output['pool_members'] = pool_members
     output['virtuals'] = virtuals
+    modules = []
+    modules.append({'module':'afm',
+                    'level':'nominal',
+                    'server':str(bigip_ext1_pip)})
+    modules.append({'module':'afm',
+                    'level':'nominal',
+                    'server':str(bigip_ext2_pip)})
+    output['modules'] = modules
+        
+    commands = []
+    commands.append({'check':'tmsh list /ltm profile fastl4 loose_fastL4',
+                     'command':'tmsh create /ltm profile fastl4 loose_fastL4 defaults-from fastL4 loose-close enabled loose-initialization enabled idle-timeout 300 reset-on-timeout disabled',
+                     'server':str(bigip_ext1_pip)})
+    commands.append({'check':'tmsh list /security log profile local-afm-log',
+                     'command':'tmsh create /security log profile local-afm-log { network replace-all-with { local-afm-log { publisher local-db-publisher filter { log-acl-match-accept enabled log-acl-match-drop enabled log-acl-match-reject enabled } } } }',
+                     'server':str(bigip_ext1_pip)})
+    commands.append({'check':'tmsh list /security firewall policy log_all_afm',
+                     'command':'tmsh create /security firewall policy log_all_afm rules add { allow_all  { action accept log yes place-before first } deny_all { action reject log yes place-after allow_all  }}',
+                     'server':str(bigip_ext1_pip)})
+
+
+    output['commands'] = commands
+
 #    print json.dumps(output)
 #    sys.exit(0)
 
@@ -471,16 +498,55 @@ if options.action == "internal_setup":
      ]
 
     output['routes'] = routes
+    modules = []
+    modules.append({'module':'afm',
+                    'level':'nominal',
+                    'server':str(bigip_int1_pip)})
+    modules.append({'module':'afm',
+                    'level':'nominal',
+                    'server':str(bigip_int2_pip)})
+
+    modules.append({'module':'asm',
+                    'level':'nominal',
+                    'server':str(bigip_int1_pip)})
+    modules.append({'module':'asm',
+                    'level':'nominal',
+                    'server':str(bigip_int2_pip)})
+
+
+    modules.append({'module':'apm',
+                    'level':'nominal',
+                    'server':str(bigip_int1_pip)})
+    modules.append({'module':'apm',
+                    'level':'nominal',
+                    'server':str(bigip_int2_pip)})
+
+    output['modules'] = modules
+        
+    commands = []
+    commands.append({'check':'tmsh list /ltm profile fastl4 loose_fastL4',
+                     'command':'tmsh create /ltm profile fastl4 loose_fastL4 defaults-from fastL4 loose-close enabled loose-initialization enabled idle-timeout 300 reset-on-timeout disabled',
+                     'server':str(bigip_int1_pip)})
+    commands.append({'check':'tmsh list /security log profile local-afm-log',
+                     'command':'tmsh create /security log profile local-afm-log { network replace-all-with { local-afm-log { publisher local-db-publisher filter { log-acl-match-accept enabled log-acl-match-drop enabled log-acl-match-reject enabled } } } }',
+                     'server':str(bigip_int1_pip)})
+    commands.append({'check':'tmsh list /security firewall policy log_all_afm',
+                     'command':'tmsh create /security firewall policy log_all_afm rules add { allow_all  { action accept log yes place-before first } deny_all { action reject log yes place-after allow_all  }}',
+                     'server':str(bigip_int1_pip)})
+
+
+    output['commands'] = commands
+
 #    print json.dumps(output)
 #    sys.exit(0)
 
 if options.debug:
     print "\n\n#### Azure Infrastructure ####\n\n"
-    print "az network route-table update --resource-group %s --name %s --set tags.f5_tg=traffic-group-1" %(resource_group,
-                                                                                                           parameters['f5_Int_Untrust_RouteTableName'])
-    print "az network route-table update --resource-group %s --name %s --set tags.f5_ha=%s" %(resource_group,
-                                                                                          parameters['f5_Int_Untrust_RouteTableName'],
-                                                                                          f5_ext['routeTableTag'])
+    # print "az network route-table update --resource-group %s --name %s --set tags.f5_tg=traffic-group-1" %(resource_group,
+    #                                                                                                        parameters['f5_Int_Untrust_RouteTableName'])
+    # print "az network route-table update --resource-group %s --name %s --set tags.f5_ha=%s" %(resource_group,
+    #                                                                                       parameters['f5_Int_Untrust_RouteTableName'],
+    #                                                                                       f5_ext['routeTableTag'])
 
     print "az network route-table update --resource-group %s --name %s --set tags.f5_tg=traffic-group-1" %(resource_group,
                                                                                                     parameters['internal_Subnets_RouteTableName'])
@@ -512,8 +578,9 @@ az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(e
 if options.action == "external_setup":
     output['route_tables'] = [{'resource_group':resource_group,
                                'name':parameters['f5_Int_Untrust_RouteTableName'],
-                               'f5_ha':f5_ext['routeTableTag'],
-                               'f5_tg':'traffic-group-1'}]
+#                               'f5_ha':f5_ext['routeTableTag'],
+#                               'f5_tg':'traffic-group-1'}
+                           }]
     output['servers'] = [{'server':str(bigip_ext1_pip)},{'server':str(bigip_ext2_pip)}]
     print json.dumps(output)
 

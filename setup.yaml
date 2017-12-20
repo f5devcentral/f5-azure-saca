@@ -19,15 +19,15 @@
   - name: Get Internal variables
     command: python grab_vars.py --action internal_setup
     register: int_vars
-  - name: debug output
-    debug:
-      msg: "{{int_vars.stdout|from_json }}"
-  - name: Deploy Internal F5
-    import_role:
-      name: f5-azure-scca-internal-setup
-    vars:
-      resource_group: "{{ansible_env.AZURE_RESOURCE_GROUP}}_F5_Internal"
-      location:  "{{ansible_env.location}}"
-      setup:
-        "{{int_vars.stdout|from_json }}"        
+  # - name: debug output
+  #   debug:
+  #     msg: "{{int_vars.stdout|from_json }}"
+  # - name: Deploy Internal F5
+  #   import_role:
+  #     name: f5-azure-scca-internal-setup
+  #   vars:
+  #     resource_group: "{{ansible_env.AZURE_RESOURCE_GROUP}}_F5_Internal"
+  #     location:  "{{ansible_env.location}}"
+  #     setup:
+  #       "{{int_vars.stdout|from_json }}"        
 

@@ -7,9 +7,9 @@
   - name: Get External variables
     command: python grab_vars.py --action external
     register: ext_vars
-  - name: debug output
-    debug:
-      msg: "{{ext_vars.stdout|from_json }}"
+  # - name: debug output
+  #   debug:
+  #     msg: "{{ext_vars.stdout|from_json }}"
   - name: Deploy External F5
     import_role:
       name: f5-azure-scca-external
@@ -22,9 +22,9 @@
   - name: Get Internal variables
     command: python grab_vars.py --action internal
     register: int_vars
-  - name: debug output
-    debug:
-      msg: "{{int_vars.stdout|from_json }}"
+  # - name: debug output
+  #   debug:
+  #     msg: "{{int_vars.stdout|from_json }}"
   - name: Deploy Internal F5
     import_role:
       name: f5-azure-scca-internal
