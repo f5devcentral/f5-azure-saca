@@ -51,7 +51,10 @@ def get_ext_ips(resource_group, instanceName):
 
 def get_pip(resource_group, pip_name):
     pip = network_client.public_ip_addresses.get(resource_group,pip_name)
-    return (IPAddress(pip.ip_address), pip.dns_settings.fqdn)
+    if pip.dns_settings:
+        return (IPAddress(pip.ip_address), pip.dns_settings.fqdn)
+    else:
+        return (IPAddress(pip.ip_address), None)
 
 subnet_re=re.compile('/\d\d?$')
 ipaddr_re=re.compile('\d+\.\d+\.\d+\.\d+')
@@ -261,12 +264,12 @@ if not bigip_int2_pip:
 #bigip_int1 = IPAddress(parameters['management_SubnetPrefix'].first+12)
 #bigip_int2 = IPAddress(parameters['management_SubnetPrefix'].first+13)
 
-external_pip = get_pip(f5_ext_resource_group, "%s-ext-pip0" %(f5_ext['dnsLabel']))
+external_pip = get_pip(resource_group, "f5-alb-ext-pip0")
 #print external_pip
 
 # add 2 for now, needs to be fixed
 #external_vip =  parameters['f5_Ext_Untrusted_IP']
-#external_vip = str(external_pip[0])
+external_vip = str(external_pip[0])
 #internal_vip =  parameters['f5_Int_Untrusted_IP']
 
 internal_ext_gw = IPAddress(parameters['f5_Int_Untrusted_SubnetPrefix'].first+1)
@@ -285,7 +288,7 @@ if options.debug:
     print "create /ltm pool jumpbox_rdp_pool members replace-all-with { %s:3389}" %(jumphost_ip)
     print "create /ltm pool jumpbox_rdp_pool members replace-all-with { %s:22}" %(jumphostlinux_ip)
 
-    print "create /ltm virtual jumpbox_rdp_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(external_vip)
+#    print "create /ltm virtual jumpbox_rdp_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(external_vip)
     print "create /ltm virtual jumpbox_rdp_local_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(bigip_ext_ext1_ip)
     print "create /ltm virtual jumpbox_rdp_local_vs destination %s:3389 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_pool source-address-translation { type automap }" %(bigip_ext_ext2_ip)
     print "create /ltm pool bigip_ext1_ssh_pool members replace-all-with { %s:22}" %(bigip_ext1_ip)
@@ -334,7 +337,17 @@ virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'jumpbox_ssh_vs',
                  'command': "create /ltm virtual jumpbox_ssh_vs destination %s:22 profiles replace-all-with { loose_fastL4 } pool jumpbox_ssh_pool source-address-translation { type automap }" %(external_vip)})
 
+virtuals.append({'server': str(bigip_ext1_pip),
+                 'name':'float_is_alive_vs',
+                 'command': "create /ltm virtual float_is_alive_vs destination %s:80 profiles replace-all-with { http } rules { is_alive } fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(str(parameters['f5_Ext_Untrusted_IP']))})
 
+virtuals.append({'server': str(bigip_ext1_pip),
+                 'name':'is_alive_vs',
+                 'command': "create /ltm virtual is_alive_vs destination %s:80 profiles replace-all-with { http } rules { virtual_is_alive } fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(str(bigip_ext_ext1_ip))})
+
+virtuals.append({'server': str(bigip_ext2_pip),
+                 'name':'is_alive_vs',
+                 'command': "create /ltm virtual is_alive_vs destination %s:80 profiles replace-all-with { http }  rules { virtual_is_alive } fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(str(bigip_ext_ext2_ip))})
 
 pools.append({'server': str(bigip_ext1_pip),
              'name': 'bigip_ext1_ssh_pool',
@@ -431,6 +444,13 @@ if options.action == "external_setup":
                     'level':'nominal',
                     'server':str(bigip_ext2_pip)})
     output['modules'] = modules
+
+    output['irules'] = [{'name':'is_alive',
+                         'content': "when HTTP_REQUEST {\n    HTTP::respond 200 content \"OK\"\n}\n",
+                         'server':str(bigip_ext1_pip)},
+                        {'name':'virtual_is_alive',
+                         'content': "when CLIENT_ACCEPTED {\n    virtual float_is_alive_vs\n}\n",
+                         'server':str(bigip_ext1_pip)}]
         
     commands = []
     commands.append({'check':'tmsh list /ltm profile fastl4 loose_fastL4',
@@ -482,13 +502,14 @@ if options.action == "internal_setup":
                      'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['vdmS_SubnetPrefix'])})
 
 
-    output['selfips'] = [{'name': 'self_2nic_float',
-                         'address': str(internal_vip),
-                         'netmask': str(parameters['f5_Int_Untrusted_SubnetPrefix'].netmask),
-                         'vlan': 'external',
-                         'traffic_group':'traffic-group-1',
-                         'server': str(bigip_int1_pip),
-                     }]
+    # output['selfips'] = [{'name': 'self_2nic_float',
+    #                      'address': str(internal_vip),
+    #                      'netmask': str(parameters['f5_Int_Untrusted_SubnetPrefix'].netmask),
+    #                      'vlan': 'external',
+    #                      'traffic_group':'traffic-group-1',
+    #                      'server': str(bigip_int1_pip),
+    #                  }]
+    output['selfips'] = []
     output['pools'] = pools
     output['pool_members'] = pool_members
     output['virtuals'] = virtuals
@@ -580,15 +601,19 @@ az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(e
 if options.action == "external_setup":
     output['route_tables'] = [{'resource_group':resource_group,
                                'name':parameters['f5_Int_Untrust_RouteTableName'],
-#                               'f5_ha':f5_ext['routeTableTag'],
-#                               'f5_tg':'traffic-group-1'}
-                           }]
+                               'f5_ha':f5_ext['routeTableTag'],
+                               'f5_tg':'traffic-group-1'}
+                           ]
     output['servers'] = [{'server':str(bigip_ext1_pip)},{'server':str(bigip_ext2_pip)}]
     print json.dumps(output)
 
 if options.action == "internal_setup":
     output['route_tables'] = [{'resource_group':resource_group,
                                'name':parameters['internal_Subnets_RouteTableName'],
+                               'f5_ha':f5_int['routeTableTag'],
+                               'f5_tg':'traffic-group-1'},
+                              {'resource_group':resource_group,
+                               'name':parameters['f5_Ext_Trust_RouteTableName'],
                                'f5_ha':f5_int['routeTableTag'],
                                'f5_tg':'traffic-group-1'}]
     output['servers'] = [{'server':str(bigip_int1_pip)},{'server':str(bigip_int2_pip)}]
