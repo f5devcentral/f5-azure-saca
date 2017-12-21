@@ -145,7 +145,7 @@
     },
     "F5_Int_Untrusted_IP": {
       "type": "string",
-      "defaultValue": "192.168.2.7",
+      "defaultValue": "192.168.2.5",
       "metadata": {
         "description": "IP address for F5_Int_Untrusted_IP (For UDR Next Hop)."
       }
@@ -206,6 +206,13 @@
       "defaultValue":  "JumpBox",
       "minLength": 1
     },
+    "JumpBoxIp": {
+      "type": "string",
+      "defaultValue": "172.16.0.4",
+      "metadata": {
+        "description": "IP address for JumpBox."
+      }
+    },
     "JumpBoxAdminUserName": {
       "type": "string",
       "minLength": 1
@@ -227,6 +234,13 @@
       "type": "string",
       "defaultValue": "JumpBoxLinux",
       "minLength": 1
+    },
+    "JumpBoxLinuxIp": {
+      "type": "string",
+      "defaultValue": "172.16.0.5",
+      "metadata": {
+        "description": "IP address for Linux JumpBox."
+      }
     },
     "JumpBoxLinuxUbuntuOSVersion": {
       "type": "string",
@@ -525,7 +539,8 @@
           {
             "name": "ipconfig1",
             "properties": {
-              "privateIPAllocationMethod": "Dynamic",
+              "privateIPAddress": "[parameters('JumpBoxIp')]",
+              "privateIPAllocationMethod": "Static",
               "subnet": {
                 "id": "[variables('JumpBoxSubnetRef')]"
               }
@@ -597,7 +612,8 @@
           {
             "name": "ipconfig1",
             "properties": {
-              "privateIPAllocationMethod": "Dynamic",
+              "privateIPAddress": "[parameters('JumpBoxLinuxIp')]",
+              "privateIPAllocationMethod": "Static",
               "subnet": {
                 "id": "[variables('JumpBoxLinuxSubnetRef')]"
               },
