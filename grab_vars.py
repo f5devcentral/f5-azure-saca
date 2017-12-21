@@ -119,6 +119,7 @@ if options.action == "external":
       "bigIpVersion":"13.0.0300",
       "licenseKey1": f5_license_key_1,
       "licenseKey2": f5_license_key_2,
+      "numberOfExternalIps": 0,
       "vnetName": parameters['vnetName'],
       "vnetResourceGroupName": resource_group,
       "mgmtSubnetName": parameters['management_SubnetName'],
@@ -128,11 +129,11 @@ if options.action == "external":
       "externalIpAddressRangeStart": str(parameters['f5_Ext_Untrusted_IP'] - 1),
       "internalSubnetName": parameters['f5_Ext_Trusted_SubnetName'],
       "internalIpAddressRangeStart":  str(parameters['f5_Ext_Trusted_IP'] - 1),
-#      "tenantId": tenant_id,
-#      "clientId": client_id,
-#      "servicePrincipalSecret": client_secret,
-#      "managedRoutes": "0.0.0.0/0",
-#      "routeTableTag": "%sRouteTag" %(f5_unique_short_name),
+      "tenantId": tenant_id,
+      "clientId": client_id,
+      "servicePrincipalSecret": client_secret,
+      "managedRoutes": "0.0.0.0/0",
+      "routeTableTag": "%sRouteTag" %(f5_unique_short_name),
       "ntpServer": "0.pool.ntp.org",
       "timeZone": "UTC",
       "restrictedSrcAddress":  "*",
@@ -154,6 +155,7 @@ if options.action == "internal":
       "bigIpVersion":"13.0.0300",
       "licenseKey1": f5_license_key_3,
       "licenseKey2": f5_license_key_4,
+      "numberOfExternalIps": 0,
       "vnetName": parameters['vnetName'],
       "vnetResourceGroupName": resource_group,
       "mgmtSubnetName": parameters['management_SubnetName'],
@@ -264,8 +266,8 @@ external_pip = get_pip(f5_ext_resource_group, "%s-ext-pip0" %(f5_ext['dnsLabel']
 
 # add 2 for now, needs to be fixed
 #external_vip =  parameters['f5_Ext_Untrusted_IP']
-external_vip = str(external_pip[0])
-internal_vip =  parameters['f5_Int_Untrusted_IP']
+#external_vip = str(external_pip[0])
+#internal_vip =  parameters['f5_Int_Untrusted_IP']
 
 internal_ext_gw = IPAddress(parameters['f5_Int_Untrusted_SubnetPrefix'].first+1)
 internal_ext_gw = IPAddress(parameters['f5_Int_Untrusted_SubnetPrefix'].first+1)
@@ -449,7 +451,7 @@ if options.action == "external_setup":
 
 if options.debug:
     print "\n\n### INTERNAL F5 ###"
-    print "create /net self self_2nic_float address %s/%s vlan external traffic-group traffic-group-1" %(internal_vip,parameters['f5_Int_Untrusted_SubnetPrefix'].prefixlen)
+#    print "create /net self self_2nic_float address %s/%s vlan external traffic-group traffic-group-1" %(internal_vip,parameters['f5_Int_Untrusted_SubnetPrefix'].prefixlen)
     print "create /ltm pool ext_gw_pool members replace-all-with { %s:0}" %(internal_ext_gw)
     print "create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['management_SubnetPrefix'])
     print "create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['vdmS_SubnetPrefix'])
@@ -542,11 +544,11 @@ if options.action == "internal_setup":
 
 if options.debug:
     print "\n\n#### Azure Infrastructure ####\n\n"
-    # print "az network route-table update --resource-group %s --name %s --set tags.f5_tg=traffic-group-1" %(resource_group,
-    #                                                                                                        parameters['f5_Int_Untrust_RouteTableName'])
-    # print "az network route-table update --resource-group %s --name %s --set tags.f5_ha=%s" %(resource_group,
-    #                                                                                       parameters['f5_Int_Untrust_RouteTableName'],
-    #                                                                                       f5_ext['routeTableTag'])
+    print "az network route-table update --resource-group %s --name %s --set tags.f5_tg=traffic-group-1" %(resource_group,
+                                                                                                           parameters['f5_Int_Untrust_RouteTableName'])
+    print "az network route-table update --resource-group %s --name %s --set tags.f5_ha=%s" %(resource_group,
+                                                                                          parameters['f5_Int_Untrust_RouteTableName'],
+                                                                                          f5_ext['routeTableTag'])
 
     print "az network route-table update --resource-group %s --name %s --set tags.f5_tg=traffic-group-1" %(resource_group,
                                                                                                     parameters['internal_Subnets_RouteTableName'])
@@ -569,7 +571,7 @@ az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(e
     print "az network vnet subnet update --name %(vdmS_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(internal_Subnets_RouteTableName)s" %(parameters)
     print "az network vnet subnet update --name %(management_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(internal_Subnets_RouteTableName)s" %(parameters)
     
-    print "     External VIP: %s %s" %(external_pip[0],external_pip[1])
+#    print "     External VIP: %s %s" %(external_pip[0],external_pip[1])
     print "External BIG-IP 1: %s %s" %(bigip_ext_ext1_pip,bigip_ext_ext1_ip)
     print "External BIG-IP 2: %s %s\n" %(bigip_ext_ext2_pip,bigip_ext_ext2_ip)
     print "Internal BIG-IP 1: %s %s" %(bigip_ext_int1_pip,bigip_ext_int1_ip)
