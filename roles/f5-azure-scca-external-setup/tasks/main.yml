@@ -20,6 +20,19 @@
   with_items:
      "{{setup.routes}}"
 
+- name: Add iRules
+  bigip_irule:
+      content: "{{item.content}}"
+      module: "ltm"
+      name: "{{item.name}}"
+      password: "{{f5_password}}"
+      server: "{{item.server}}"
+      state: "present"
+      user: "{{f5_username}}"
+  delegate_to: localhost
+  with_items:
+     "{{setup.irules}}"
+
 - name: Add Pools
   bigip_pool:
     name: "{{item.name}}"

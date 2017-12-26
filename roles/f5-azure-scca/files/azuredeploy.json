@@ -145,7 +145,7 @@
     },
     "F5_Int_Untrusted_IP": {
       "type": "string",
-      "defaultValue": "192.168.2.5",
+      "defaultValue": "192.168.2.7",
       "metadata": {
         "description": "IP address for F5_Int_Untrusted_IP (For UDR Next Hop)."
       }
