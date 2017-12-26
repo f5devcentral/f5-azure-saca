@@ -264,7 +264,7 @@ if not bigip_int2_pip:
 #bigip_int1 = IPAddress(parameters['management_SubnetPrefix'].first+12)
 #bigip_int2 = IPAddress(parameters['management_SubnetPrefix'].first+13)
 
-external_pip = get_pip(resource_group, "f5-alb-ext-pip0")
+external_pip = get_pip(resource_group+"_F5_External", "f5-alb-ext-pip0")
 #print external_pip
 
 # add 2 for now, needs to be fixed
@@ -585,6 +585,25 @@ az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(e
                                                                                                                                                                                        'dnsLabel':f5_ext['dnsLabel']})
 
     parameters['resource_group'] = resource_group
+    print "az network lb create --resource-group %s_F5_External --public-ip-address f5-alb-ext-pip0 --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-ext-alb" %(resource_group)
+    print "az network lb probe create  --lb-name f5-ext-alb  -g %s_F5_External  --name is_alive --port 80 --protocol Http --path /" %(resource_group)
+#    print "az network lb address-pool create -g %s --lb-name f5-ext-alb --name LoadBalancerBackEnd" %(resource_group)
+    print "az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext0 --lb-name f5-ext-alb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])
+    print "az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext1 --lb-name f5-ext-alb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])
+    print "az network lb rule create --backend-port 22 --frontend-port 22  --lb-name f5-ext-alb  -g %s_F5_External  --name ssh_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)
+
+    subnet = network_client.subnets.get(resource_group,str(f5_ext["vnetName"]),str(f5_ext["externalSubnetName"]))
+    subnet.id
+
+    print "az network lb create --resource-group %s_F5_External --private-ip-address %s --subnet %s --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-ext-ilb" %(resource_group, 
+                                                                                                                                                                                                                        str(parameters['f5_Ext_Untrusted_IP']),subnet.id)
+    print "az network lb probe create  --lb-name f5-ext-ilb  -g %s_F5_External  --name is_alive --port 80 --protocol Http --path /" %(resource_group)
+    print "az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext0 --lb-name f5-ext-ilb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])
+    print "az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext1 --lb-name f5-ext-ilb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])
+    print "az network lb rule create --backend-port 22 --frontend-port 22  --lb-name f5-ext-ilb  -g %s_F5_External  --name ssh_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)
+
+
+
     print "#external bigip to internal"
     print "\n\naz network vnet subnet update --name %(f5_Ext_Trusted_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(f5_Ext_Trust_RouteTableName)s" %(parameters)
     print "# from internal bigip to external"
@@ -615,7 +634,8 @@ if options.action == "internal_setup":
                               {'resource_group':resource_group,
                                'name':parameters['f5_Ext_Trust_RouteTableName'],
                                'f5_ha':f5_int['routeTableTag'],
-                               'f5_tg':'traffic-group-1'}]
+                               'f5_tg':'traffic-group-1',
+                               'f5_self':'self_2nic'}]
     output['servers'] = [{'server':str(bigip_int1_pip)},{'server':str(bigip_int2_pip)}]
     print json.dumps(output)
 
