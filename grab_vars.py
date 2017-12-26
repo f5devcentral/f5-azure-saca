@@ -307,6 +307,14 @@ routes= [{ 'name': 'mgmt',
          { 'name': 'internalvips',
            'destination': str(parameters['f5_Int_Trusted_SubnetPrefix']), 
            'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
+           'server': str(bigip_ext1_pip) },
+         { 'name': 'private10',
+           'destination': '10.0.0.0/8',
+           'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
+           'server': str(bigip_ext1_pip) },
+         { 'name': 'private172',
+           'destination': '172.16.0.0/16', 
+           'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
            'server': str(bigip_ext1_pip) }
          
      ]
@@ -501,6 +509,11 @@ if options.action == "internal_setup":
                      'name':'vdms_outbound_vs',
                      'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['vdmS_SubnetPrefix'])})
 
+    virtuals.append({'server': str(bigip_int1_pip),
+                     'name':'forward_vs',
+                     'command':"create /ltm virtual forward_vs destination 0.0.0.0:0 mask 0.0.0.0  profiles replace-all-with { loose_fastL4 } fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" })
+
+
 
     # output['selfips'] = [{'name': 'self_2nic_float',
     #                      'address': str(internal_vip),
@@ -514,10 +527,24 @@ if options.action == "internal_setup":
     output['pool_members'] = pool_members
     output['virtuals'] = virtuals
 
-    routes= [{ 'name': 'exttrusted',
+    routes= [
+         { 'name': 'default',
+           'destination': 'default',
+           'gateway_address': str(IPAddress(parameters['f5_Int_Trusted_SubnetPrefix'].first+1)), 
+           'server': str(bigip_int1_pip) },
+        { 'name': 'exttrusted',
            'destination': str(parameters['f5_Ext_Trusted_SubnetPrefix']), 
            'gateway_address': str(IPAddress(parameters['f5_Int_Untrusted_SubnetPrefix'].first+1)), 
-           'server': str(bigip_int1_pip) }         
+           'server': str(bigip_int1_pip) },
+         { 'name': 'private10',
+           'destination': '10.0.0.0/8',
+           'gateway_address': str(IPAddress(parameters['f5_Int_Trusted_SubnetPrefix'].first+1)), 
+           'server': str(bigip_int1_pip) },
+         { 'name': 'private172',
+           'destination': '172.16.0.0/16', 
+           'gateway_address': str(IPAddress(parameters['f5_Int_Trusted_SubnetPrefix'].first+1)), 
+           'server': str(bigip_int1_pip) }
+
      ]
 
     output['routes'] = routes
