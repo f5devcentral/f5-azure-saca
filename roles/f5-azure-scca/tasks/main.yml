@@ -17,3 +17,19 @@
       JumpBoxAdminPassword:
         value: "{{jump_password}}"
   when: not output.ansible_facts.azure_resourcegroups
+- name: Create a public ip address
+  azure_rm_publicipaddress:
+    resource_group: "{{resource_group}}"
+    name: f5-alb-ext-pip0
+    allocation_method: Static
+# - name: Deploy ALB
+#   azure_rm_loadbalancer:
+#     name: f5-ext-alb
+#     location: "{{ location }}"
+#     resource_group: "{{resource_group}}"
+#     probe_protocol: Http
+#     probe_port: 80
+#     probe_request_path: /
+#     load_distribution: Default
+#     idle_timeout: 4
+#     public_ip_address: f5-alb-ext-pip0
