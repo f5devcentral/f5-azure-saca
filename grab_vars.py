@@ -107,15 +107,15 @@ for deployment in resource_client.deployments.list_by_resource_group(resource_gr
 if options.debug:
     pprint.pprint(parameters)
 
-jumphost_ip =  get_ips(resource_group, parameters['jumpBoxName'])[0]
-jumphostlinux_ip =  get_ips(resource_group, parameters['jumpBoxLinuxName'])[0]
+jumphost_ip =  get_ips(resource_group, parameters['vdssJumpBoxName'])[0]
+jumphostlinux_ip =  get_ips(resource_group, parameters['vdssJumpBoxLinuxName'])[0]
 
 mgmt_start_ip = IPAddress(parameters['management_SubnetPrefix'].first+10)
 
 #if not resource_client.resource_groups.check_existence(f5_ext_resource_group):
 if options.action == "external":
   ext_parameters = {
-      "adminUsername": parameters['jumpBoxAdminUserName'],
+      "adminUsername": parameters['vdssJumpBoxAdminUserName'],
       "adminPassword": f5_password,
       "dnsLabel": f5_unique_short_name,
       "instanceName": f5_unique_short_name,
@@ -151,7 +151,7 @@ if options.action == "external":
 if options.action == "internal":
 #                                               deployment_properties)
   int_parameters = {
-      "adminUsername": parameters['jumpBoxAdminUserName'],
+      "adminUsername": parameters['vdssJumpBoxAdminUserName'],
       "adminPassword": f5_password,
       "dnsLabel": f5_unique_short_name2,
       "instanceName": f5_unique_short_name2,
@@ -262,7 +262,7 @@ if options.debug:
 
 
 #print "az vm show --name %s --resource-group \"%s\"  -d   --query \"privateIps\" -d" %(parameters['jumpBoxName'],resource_group)
-vm = compute_client.virtual_machines.get(resource_group, parameters['jumpBoxName'],expand='instanceview')
+vm = compute_client.virtual_machines.get(resource_group, parameters['vdssJumpBoxName'],expand='instanceview')
 nic = vm.network_profile.network_interfaces[0].id.split('/')[-1]
 jumphost_ip = IPAddress(network_client.network_interfaces.get(resource_group,nic).ip_configurations[0].private_ip_address)
 
@@ -810,8 +810,10 @@ az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(e
     print "\n\n### Route Table Assocations ###"
     print "#external bigip to internal"
     print "\n\naz network vnet subnet update --name %(f5_Ext_Trusted_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(f5_Ext_Trust_RouteTableName)s" %(parameters)
+    print "az network vnet subnet update --name %(ipS_Trusted_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(ipS_Trust_RouteTableName)s" %(parameters)
     print "# from internal bigip to external"
     print "az network vnet subnet update --name %(f5_Int_Untrusted_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(f5_Int_Untrust_RouteTableName)s" %(parameters)
+    print "az network vnet subnet update --name %(ipS_Untrusted_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(ipS_Untrust_RouteTableName)s" %(parameters)
     print "az network vnet subnet update --name %(vdmS_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(internal_Subnets_RouteTableName)s" %(parameters)
     print "az network vnet subnet update --name %(management_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(internal_Subnets_RouteTableName)s" %(parameters)
     
@@ -822,8 +824,13 @@ az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(e
     print "Internal BIG-IP 2: %s %s" %(bigip_ext_int2_pip,bigip_ext_int2_ip)
 
 if options.action == "external_setup":
-    output['route_tables'] = [{'resource_group':resource_group,
-                               'name':parameters['f5_Int_Untrust_RouteTableName'],
+    output['route_tables'] = [
+#        {'resource_group':resource_group,
+#         'name':parameters['f5_Int_Untrust_RouteTableName'],
+#         'f5_ha':f5_ext['routeTableTag'],
+#         'f5_tg':'traffic-group-1'},
+                              {'resource_group':resource_group,
+                               'name':parameters['ipS_Untrust_RouteTableName'],
                                'f5_ha':f5_ext['routeTableTag'],
                                'f5_tg':'traffic-group-1'}
                            ]
@@ -835,8 +842,13 @@ if options.action == "internal_setup":
                                'name':parameters['internal_Subnets_RouteTableName'],
                                'f5_ha':f5_int['routeTableTag'],
                                'f5_tg':'traffic-group-1'},
+#                              {'resource_group':resource_group,
+#                               'name':parameters['f5_Ext_Trust_RouteTableName'],
+#                               'f5_ha':f5_int['routeTableTag'],
+#                               'f5_tg':'traffic-group-1',
+#                               'f5_self':'self_2nic'},
                               {'resource_group':resource_group,
-                               'name':parameters['f5_Ext_Trust_RouteTableName'],
+                               'name':parameters['ipS_Trust_RouteTableName'],
                                'f5_ha':f5_int['routeTableTag'],
                                'f5_tg':'traffic-group-1',
                                'f5_self':'self_2nic'}]
