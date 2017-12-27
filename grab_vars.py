@@ -19,6 +19,7 @@ import pprint
 import re
 import sys
 import json
+import time
 
 from netaddr import IPNetwork, IPAddress
 
@@ -188,19 +189,33 @@ if options.action == "internal":
 
 f5_ext = None
 
-for deployment in resource_client.deployments.list_by_resource_group(f5_ext_resource_group):
-    data = deployment.as_dict()
+waiting = True
+while waiting:
 
-
-    deployment.properties.parameters
-    f5_ext = dict([(x,deployment.properties.parameters[x].get('value')) for x in deployment.properties.parameters])
-    for (k,v) in f5_ext.items():
-        if not isinstance(v,str):
+    for deployment in resource_client.deployments.list_by_resource_group(f5_ext_resource_group):
+        data = deployment.as_dict()
+        if 'externalIpSelfAddressRangeStart' not in deployment.properties.parameters:
             continue
-        if v and subnet_re.search(v):
-            f5_ext[k] = IPNetwork(v)
-        elif v and ipaddr_re.search(v):
-            f5_ext[k] = IPAddress(v)
+        # print data['name']
+        # print data['properties']['provisioning_state']
+        # print data['properties'].keys()
+        # print deployment.properties.parameters
+        if data['properties']['provisioning_state'] == 'Deploying':
+        #if data['properties']['provisioning_state'] == 'Succeeded':
+            waiting = True
+        else:
+            waiting = False
+        f5_ext = dict([(x,deployment.properties.parameters[x].get('value')) for x in deployment.properties.parameters])
+        for (k,v) in f5_ext.items():
+            if not isinstance(v,str):
+                continue
+            if v and subnet_re.search(v):
+                f5_ext[k] = IPNetwork(v)
+            elif v and ipaddr_re.search(v):
+                f5_ext[k] = IPAddress(v)
+    if waiting:
+        # print 'waiting'
+        time.sleep(30)
 
 #pprint.pprint(f5_ext)
 
@@ -212,19 +227,35 @@ if not resource_client.resource_groups.check_existence(f5_int_resource_group):
   sys.exit(0)
 
 f5_int = None
-for deployment in resource_client.deployments.list_by_resource_group(f5_int_resource_group):
-    data = deployment.as_dict()
+waiting = True
 
+while waiting:
 
-    deployment.properties.parameters
-    f5_int = dict([(x,deployment.properties.parameters[x].get('value')) for x in deployment.properties.parameters])
-    for (k,v) in f5_int.items():
-        if not isinstance(v,str):
+    for deployment in resource_client.deployments.list_by_resource_group(f5_int_resource_group):
+        if 'externalIpSelfAddressRangeStart' not in deployment.properties.parameters:
             continue
-        if v and subnet_re.search(v):
-            f5_int[k] = IPNetwork(v)
-        elif v and ipaddr_re.search(v):
-            f5_int[k] = IPAddress(v)
+
+        data = deployment.as_dict()
+
+
+        deployment.properties.parameters
+        if data['properties']['provisioning_state'] == 'Deploying':
+        #if data['properties']['provisioning_state'] == 'Succeeded':
+            waiting = True
+        else:
+            waiting = False
+
+        f5_int = dict([(x,deployment.properties.parameters[x].get('value')) for x in deployment.properties.parameters])
+        for (k,v) in f5_int.items():
+            if not isinstance(v,str):
+                continue
+            if v and subnet_re.search(v):
+                f5_int[k] = IPNetwork(v)
+            elif v and ipaddr_re.search(v):
+                f5_int[k] = IPAddress(v)
+    if waiting:
+        # print 'waiting'
+        time.sleep(30)
 
 if options.debug:
     pprint.pprint(f5_int)
