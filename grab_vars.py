@@ -696,7 +696,7 @@ if options.action == "internal_setup":
 
     localcommands = []
     try:
-        network_client.load_balancers.get('chen_F5_External','f5-ext-alb')
+        network_client.load_balancers.get('%s_F5_External' %(resource_group),'f5-ext-alb')
     except:
         localcommands.append({'check':'az network lb show -g %s_F5_External --name f5-ext-alb' %(resource_group),
                      'command':"az network lb create --resource-group %s_F5_External --public-ip-address f5-alb-ext-pip0 --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-ext-alb" %(resource_group)
