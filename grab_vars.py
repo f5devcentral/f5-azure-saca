@@ -200,7 +200,7 @@ while waiting:
         # print data['properties']['provisioning_state']
         # print data['properties'].keys()
         # print deployment.properties.parameters
-        if data['properties']['provisioning_state'] == 'Deploying':
+        if data['properties']['provisioning_state'] == 'Running':
         #if data['properties']['provisioning_state'] == 'Succeeded':
             waiting = True
         else:
@@ -239,7 +239,7 @@ while waiting:
 
 
         deployment.properties.parameters
-        if data['properties']['provisioning_state'] == 'Deploying':
+        if data['properties']['provisioning_state'] == 'Running':
         #if data['properties']['provisioning_state'] == 'Succeeded':
             waiting = True
         else:

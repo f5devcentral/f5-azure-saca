@@ -55,6 +55,7 @@ except:
     pass
 
 output['f5_username'] = os.environ.get('USER','')
+output['f5_password'] = os.environ.get('f5_password','')
 
 TEMPLATE="""export AZURE_SUBSCRIPTION_ID="%(subscription_id)s"
 export AZURE_CLIENT_ID="%(client_id)s"
@@ -74,7 +75,7 @@ export f5_license_key_3="%(key3)s"
 export f5_license_key_4="%(key4)s"
 
 export f5_username="%(f5_username)s"
-export f5_password=""
+export f5_password="%(f5_password)s"
 
 export F5_VALIDATE_CERTS=no
 
