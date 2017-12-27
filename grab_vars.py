@@ -319,10 +319,13 @@ routes= [{ 'name': 'mgmt',
            'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
            'server': str(bigip_ext1_pip) },
          { 'name': 'private172',
-           'destination': '172.16.0.0/16', 
+           'destination': '172.16.0.0/12', 
            'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
-           'server': str(bigip_ext1_pip) }
-         
+           'server': str(bigip_ext1_pip) },
+         { 'name': 'private192',
+           'destination': '192.168.0.0/16', 
+           'gateway_address': str(IPAddress(parameters['f5_Ext_Trusted_SubnetPrefix'].first+1)), 
+           'server': str(bigip_ext1_pip) }         
      ]
 pools.append({'server': str(bigip_ext1_pip),
              'name': 'jumpbox_rdp_pool',
@@ -527,6 +530,14 @@ if options.action == "internal_setup":
     pools = []
     pool_members = []
 
+    output['irules'] = [{'name':'is_alive',
+                         'content': "when HTTP_REQUEST {\n    HTTP::respond 200 content \"OK\"\n}\n",
+                         'server':str(bigip_int1_pip)},
+                        {'name':'virtual_is_alive',
+                         'content': "when CLIENT_ACCEPTED {\n    virtual float_is_alive_vs\n}\n",
+                         'server':str(bigip_int1_pip)}]
+
+
     pools.append({'server': str(bigip_int1_pip),
                   'name': 'ext_gw_pool',
                   'partition':'Common'})
@@ -565,6 +576,18 @@ if options.action == "internal_setup":
                      'name':'http_vs',
                      'command':"create /ltm virtual http_vs destination %s:80  profiles replace-all-with { http serverssl } pool https_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(str(parameters['f5_Int_Untrusted_IP']))})
 
+    virtuals.append({'server': str(bigip_int1_pip),
+                 'name':'float_is_alive_vs',
+                 'command': "create /ltm virtual float_is_alive_vs destination %s:9999 profiles replace-all-with { http } rules { is_alive } fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(str(parameters['f5_Int_Untrusted_IP']))})
+
+    virtuals.append({'server': str(bigip_int1_pip),
+                 'name':'is_alive_vs',
+                 'command': "create /ltm virtual is_alive_vs destination %s:80 profiles replace-all-with { http } rules { virtual_is_alive } fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(str(bigip_ext_int1_ip))})
+
+    virtuals.append({'server': str(bigip_int2_pip),
+                 'name':'is_alive_vs',
+                 'command': "create /ltm virtual is_alive_vs destination %s:80 profiles replace-all-with { http }  rules { virtual_is_alive } fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(str(bigip_ext_int2_ip))})
+
 
 
 
@@ -594,7 +617,7 @@ if options.action == "internal_setup":
            'gateway_address': str(IPAddress(parameters['f5_Int_Trusted_SubnetPrefix'].first+1)), 
            'server': str(bigip_int1_pip) },
          { 'name': 'private172',
-           'destination': '172.16.0.0/16', 
+           'destination': '172.16.0.0/12', 
            'gateway_address': str(IPAddress(parameters['f5_Int_Trusted_SubnetPrefix'].first+1)), 
            'server': str(bigip_int1_pip) }
 
@@ -676,7 +699,7 @@ if options.action == "internal_setup":
         network_client.load_balancers.get('%s_F5_Internal' %(resource_group),'f5-int-ilb')
     except:
         localcommands.append({'check':None,
-                              'command':"az network lb create --resource-group %s_F5_External --private-ip-address %s --subnet %s --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-int-ilb" %(resource_group, 
+                              'command':"az network lb create --resource-group %s_F5_Internal --private-ip-address %s --subnet %s --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-int-ilb" %(resource_group, 
                                                                                                                                                                                                                                         str(parameters['f5_Int_Untrusted_IP']),internalsubnet.id)})
         pass
 
