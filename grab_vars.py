@@ -270,6 +270,12 @@ external_pip = get_pip(resource_group+"_F5_External", "f5-alb-ext-pip0")
 # add 2 for now, needs to be fixed
 #external_vip =  parameters['f5_Ext_Untrusted_IP']
 external_vip = str(external_pip[0])
+
+subnet = network_client.subnets.get(resource_group,str(f5_ext["vnetName"]),str(f5_ext["externalSubnetName"]))
+subnet.id
+internalsubnet = network_client.subnets.get(resource_group,str(f5_int["vnetName"]),str(f5_int["externalSubnetName"]))
+internalsubnet.id
+
 #internal_vip =  parameters['f5_Int_Untrusted_IP']
 
 internal_ext_gw = IPAddress(parameters['f5_Int_Untrusted_SubnetPrefix'].first+1)
@@ -328,6 +334,15 @@ pool_members.append({'server': str(bigip_ext1_pip),
               'port': '3389'})
 
 pools.append({'server': str(bigip_ext1_pip),
+             'name': 'jumpbox_rdp_gw_pool',
+              'partition':'Common'})
+pool_members.append({'server': str(bigip_ext1_pip),
+              'pool': 'jumpbox_rdp_gw_pool',
+              'host': str(jumphost_ip),
+              'name': str(jumphost_ip),
+              'port': '443'})
+
+pools.append({'server': str(bigip_ext1_pip),
              'name': 'jumpbox_ssh_pool',
               'partition':'Common'})
 pool_members.append({'server': str(bigip_ext1_pip),
@@ -335,6 +350,17 @@ pool_members.append({'server': str(bigip_ext1_pip),
               'host': str(jumphostlinux_ip),
               'name': str(jumphostlinux_ip),
               'port': '22'})
+
+pools.append({'server': str(bigip_ext1_pip),
+             'name': 'http_pool',
+              'partition':'Common'})
+
+pool_members.append({'server': str(bigip_ext1_pip),
+              'pool': 'http_pool',
+              'host': str(parameters['f5_Int_Untrusted_IP']),
+              'name': str(parameters['f5_Int_Untrusted_IP']),
+              'port': '80'})
+
 
 
 virtuals.append({'server': str(bigip_ext1_pip),
@@ -344,6 +370,16 @@ virtuals.append({'server': str(bigip_ext1_pip),
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'jumpbox_ssh_vs',
                  'command': "create /ltm virtual jumpbox_ssh_vs destination %s:22 profiles replace-all-with { loose_fastL4 } pool jumpbox_ssh_pool source-address-translation { type automap }" %(external_vip)})
+
+virtuals.append({'server': str(bigip_ext1_pip),
+                 'name':'jumpbox_rdp_gw_vs',
+                 'command': "create /ltm virtual jumpbox_rdp_gw_vs destination %s:443 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_gw_pool source-address-translation { type automap }" %(external_vip)})
+
+
+virtuals.append({'server': str(bigip_ext1_pip),
+                 'name':'https_vs',
+                 'command': "create /ltm virtual https_vs destination %s:8443 profiles replace-all-with { clientssl http } pool http_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)})
+
 
 virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'float_is_alive_vs',
@@ -495,11 +531,23 @@ if options.action == "internal_setup":
                   'name': 'ext_gw_pool',
                   'partition':'Common'})
 
+    pools.append({'server': str(bigip_int1_pip),
+                  'name': 'https_pool',
+                  'partition':'Common'})
+
+
     pool_members.append({'server': str(bigip_int1_pip),
                          'pool': 'ext_gw_pool',
                          'host': str(internal_ext_gw),
                          'name': str(internal_ext_gw),
                          'port': '0'})
+
+    pool_members.append({'server': str(bigip_int1_pip),
+                         'pool': 'https_pool',
+                         'host': str(jumphostlinux_ip),
+                         'name': str(jumphostlinux_ip),
+                         'port': '443'})
+
 
     virtuals.append({'server': str(bigip_int1_pip),
                      'name':'mgmt_outbound_vs',
@@ -512,6 +560,11 @@ if options.action == "internal_setup":
     virtuals.append({'server': str(bigip_int1_pip),
                      'name':'forward_vs',
                      'command':"create /ltm virtual forward_vs destination 0.0.0.0:0 mask 0.0.0.0  profiles replace-all-with { loose_fastL4 } fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" })
+
+    virtuals.append({'server': str(bigip_int1_pip),
+                     'name':'http_vs',
+                     'command':"create /ltm virtual http_vs destination %s:80  profiles replace-all-with { http serverssl } pool https_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(str(parameters['f5_Int_Untrusted_IP']))})
+
 
 
 
@@ -587,6 +640,76 @@ if options.action == "internal_setup":
 
     output['commands'] = commands
 
+    localcommands = []
+    try:
+        network_client.load_balancers.get('chen_F5_External','f5-ext-alb')
+    except:
+        localcommands.append({'check':'az network lb show -g %s_F5_External --name f5-ext-alb' %(resource_group),
+                     'command':"az network lb create --resource-group %s_F5_External --public-ip-address f5-alb-ext-pip0 --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-ext-alb" %(resource_group)
+                     })
+        pass
+
+    localcommands.append({'check':None,
+                          'command':"az network lb probe create  --lb-name f5-ext-alb  -g %s_F5_External  --name is_alive --port 80 --protocol Http --path /" %(resource_group)})
+
+    localcommands.append({'check':None,
+                          'command':"az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext0 --lb-name f5-ext-alb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])})
+    localcommands.append({'check':None,
+                          'command':"az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext1 --lb-name f5-ext-alb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])})
+    localcommands.append({'check':None,
+                          'command':"az network lb rule create --backend-port 22 --frontend-port 22  --lb-name f5-ext-alb  -g %s_F5_External  --name ssh_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
+    localcommands.append({'check':None,
+                          'command':"az network lb rule create --backend-port 443 --frontend-port 443  --lb-name f5-ext-alb  -g %s_F5_External  --name rdp_gw_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
+    localcommands.append({'check':None,
+                          'command':"az network lb rule create --backend-port 8443 --frontend-port 8443  --lb-name f5-ext-alb  -g %s_F5_External  --name https_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
+
+
+    try:
+        network_client.load_balancers.get('%s_F5_External' %(resource_group),'f5-ext-ilb')
+    except:
+        localcommands.append({'check':None,
+                              'command':"az network lb create --resource-group %s_F5_External --private-ip-address %s --subnet %s --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-ext-ilb" %(resource_group, 
+                                                                                                                                                                                                                                        str(parameters['f5_Ext_Untrusted_IP']),subnet.id)})
+        pass
+
+    try:
+        network_client.load_balancers.get('%s_F5_Internal' %(resource_group),'f5-int-ilb')
+    except:
+        localcommands.append({'check':None,
+                              'command':"az network lb create --resource-group %s_F5_External --private-ip-address %s --subnet %s --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-int-ilb" %(resource_group, 
+                                                                                                                                                                                                                                        str(parameters['f5_Int_Untrusted_IP']),internalsubnet.id)})
+        pass
+
+
+    localcommands.append({'check':None,
+                          'command':"az network lb probe create  --lb-name f5-ext-ilb  -g %s_F5_External  --name is_alive --port 80 --protocol Http --path /" %(resource_group)})
+
+    localcommands.append({'check':None,
+                          'command':"az network lb probe create  --lb-name f5-int-ilb  -g %s_F5_Internal  --name is_alive --port 80 --protocol Http --path /" %(resource_group)})
+
+    localcommands.append({'check':None,
+                          'command':"az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext0 --lb-name f5-ext-ilb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])})
+    localcommands.append({'check':None,
+                          'command':"az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext1 --lb-name f5-ext-ilb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])})
+
+    localcommands.append({'check':None,
+                          'command':"az network nic ip-config address-pool add --resource-group %s_F5_Internal --nic-name %s-ext0 --lb-name f5-int-ilb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_int['dnsLabel'],f5_int['dnsLabel'])})
+    localcommands.append({'check':None,
+                          'command':"az network nic ip-config address-pool add --resource-group %s_F5_Internal --nic-name %s-ext1 --lb-name f5-int-ilb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_int['dnsLabel'],f5_int['dnsLabel'])})
+
+    localcommands.append({'check':None,
+                          'command':"az network lb rule create --backend-port 22 --frontend-port 22  --lb-name f5-ext-ilb  -g %s_F5_External  --name ssh_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
+    localcommands.append({'check':None,
+                          'command':"az network lb rule create --backend-port 80 --frontend-port 80  --lb-name f5-int-ilb  -g %s_F5_Internal  --name http_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
+    localcommands.append({'check':None,
+                          'command':"az network lb rule create --backend-port 443 --frontend-port 443  --lb-name f5-ext-ilb  -g %s_F5_External  --name rdp_gw_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
+    localcommands.append({'check':None,
+                          'command':"az network lb rule create --backend-port 8443 --frontend-port 8443  --lb-name f5-ext-ilb  -g %s_F5_External  --name https_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
+
+    output['localcommands'] = localcommands
+
+    
+
 #    print json.dumps(output)
 #    sys.exit(0)
 
@@ -619,8 +742,6 @@ az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(e
     print "az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext1 --lb-name f5-ext-alb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])
     print "az network lb rule create --backend-port 22 --frontend-port 22  --lb-name f5-ext-alb  -g %s_F5_External  --name ssh_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)
 
-    subnet = network_client.subnets.get(resource_group,str(f5_ext["vnetName"]),str(f5_ext["externalSubnetName"]))
-    subnet.id
 
     print "az network lb create --resource-group %s_F5_External --private-ip-address %s --subnet %s --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-ext-ilb" %(resource_group, 
                                                                                                                                                                                                                         str(parameters['f5_Ext_Untrusted_IP']),subnet.id)
@@ -630,7 +751,7 @@ az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(e
     print "az network lb rule create --backend-port 22 --frontend-port 22  --lb-name f5-ext-ilb  -g %s_F5_External  --name ssh_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)
 
 
-
+    print "\n\n### Route Table Assocations ###"
     print "#external bigip to internal"
     print "\n\naz network vnet subnet update --name %(f5_Ext_Trusted_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(f5_Ext_Trust_RouteTableName)s" %(parameters)
     print "# from internal bigip to external"
@@ -638,7 +759,7 @@ az network nsg rule create --nsg-name %(dnsLabel)s-ext-nsg  --resource-group %(e
     print "az network vnet subnet update --name %(vdmS_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(internal_Subnets_RouteTableName)s" %(parameters)
     print "az network vnet subnet update --name %(management_SubnetName)s --vnet-name %(vnetName)s --resource-group %(resource_group)s  --route-table %(internal_Subnets_RouteTableName)s" %(parameters)
     
-#    print "     External VIP: %s %s" %(external_pip[0],external_pip[1])
+    print "\n\n     External VIP: %s %s" %(external_pip[0],external_pip[1])
     print "External BIG-IP 1: %s %s" %(bigip_ext_ext1_pip,bigip_ext_ext1_ip)
     print "External BIG-IP 2: %s %s\n" %(bigip_ext_ext2_pip,bigip_ext_ext2_ip)
     print "Internal BIG-IP 1: %s %s" %(bigip_ext_int1_pip,bigip_ext_int1_ip)
