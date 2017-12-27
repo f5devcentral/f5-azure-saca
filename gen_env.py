@@ -56,7 +56,8 @@ except:
 
 output['f5_username'] = os.environ.get('USER','')
 output['f5_password'] = os.environ.get('f5_password','')
-
+if os.path.exists('.password.txt'):
+    output['f5_password'] = "`cat .password.txt`"
 TEMPLATE="""export AZURE_SUBSCRIPTION_ID="%(subscription_id)s"
 export AZURE_CLIENT_ID="%(client_id)s"
 export AZURE_SECRET="%(client_secret)s"
