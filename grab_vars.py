@@ -715,6 +715,9 @@ if options.action == "internal_setup":
     localcommands.append({'check':None,
                           'command':"az network lb rule create --backend-port 443 --frontend-port 443  --lb-name f5-ext-alb  -g %s_F5_External  --name rdp_gw_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
     localcommands.append({'check':None,
+                          'command':"az network lb rule create --backend-port 3389 --frontend-port 3389  --lb-name f5-ext-alb  -g %s_F5_External  --name rdp_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
+
+    localcommands.append({'check':None,
                           'command':"az network lb rule create --backend-port 8443 --frontend-port 8443  --lb-name f5-ext-alb  -g %s_F5_External  --name https_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
 
 
