@@ -1,5 +1,6 @@
 #!/bin/bash
 cd $HOME/f5-azure-scca
+./gen_env.py > env.sh
 source env.sh
 #env
 ansible-playbook deploy.yaml
