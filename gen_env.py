@@ -4,9 +4,10 @@ import json
 import sys
 import os
 import re
+import random
 
 is_regkey = re.compile("([A-Z]{5}-[A-Z]{5}-[A-Z]{5}-[A-Z]{5}-[A-Z]{7})",re.M)
-
+is_valid_dnsname = re.compile("^[a-z][a-z0-9-]{1,61}[a-z0-9]$")
 session = requests.Session()
 headers = {'user-agent':'f5-gen-env/0.1','Metadata':'true'}
 METADATA_URL="http://169.254.169.254/metadata/instance?api-version=2017-08-01"
@@ -56,6 +57,16 @@ except:
 
 output['f5_username'] = os.environ.get('USER','')
 output['f5_password'] = os.environ.get('f5_password','')
+
+shortname = output['resource_group'].lower()
+
+if shortname.endswith("_rg"):
+    shortname = shortname[:-3]
+if "_" in shortname:
+    shortname = shortname.replace('_','-')
+if not is_valid_dnsname.match(shortname):
+    shortname = "f5-" + str(int(random.random() * 1000))
+output['shortname'] = shortname
 if os.path.exists('.password.txt'):
     output['f5_password'] = "`cat .password.txt`"
 TEMPLATE="""export AZURE_SUBSCRIPTION_ID="%(subscription_id)s"
@@ -67,8 +78,8 @@ export AZURE_RESOURCE_GROUP="%(resource_group)s"
 export AZURE_RESOURCE_GROUPS="${AZURE_RESOURCE_GROUP}_F5_External,${AZURE_RESOURCE_GROUP}_F5_Internal"
 export location="%(location)s"
 
-export f5_unique_short_name="%(resource_group)sext"
-export f5_unique_short_name2="%(resource_group)sint"
+export f5_unique_short_name="%(shortname)sext"
+export f5_unique_short_name2="%(shortname)sint"
 
 export f5_license_key_1="%(key1)s"
 export f5_license_key_2="%(key2)s"
