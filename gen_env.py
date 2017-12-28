@@ -68,7 +68,7 @@ if not is_valid_dnsname.match(shortname):
     shortname = "f5-" + str(int(random.random() * 1000))
 output['shortname'] = shortname
 if os.path.exists('.password.txt'):
-    output['f5_password'] = "`cat .password.txt`"
+    output['f5_password'] = "`base64 --decode .password.txt`"
 TEMPLATE="""export AZURE_SUBSCRIPTION_ID="%(subscription_id)s"
 export AZURE_CLIENT_ID="%(client_id)s"
 export AZURE_SECRET="%(client_secret)s"
