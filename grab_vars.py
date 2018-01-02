@@ -141,7 +141,7 @@ if options.action == "external":
       "ntpServer": "0.pool.ntp.org",
       "timeZone": "UTC",
       "restrictedSrcAddress":  "*",
-      "allowUsageAnalytics": "Yes"
+      "allowUsageAnalytics": "No"
   }
 
 
@@ -180,7 +180,7 @@ if options.action == "internal":
       "ntpServer": "0.pool.ntp.org",
       "timeZone": "UTC",
       "restrictedSrcAddress":  "*",
-      "allowUsageAnalytics": "Yes"
+      "allowUsageAnalytics": "No"
   }
 
   send_parameters = {k: {'value': v} for k, v in int_parameters.items()}
