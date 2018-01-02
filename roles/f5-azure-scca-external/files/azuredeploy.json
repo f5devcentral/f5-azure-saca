@@ -275,7 +275,7 @@
                 "Yes", 
                 "No"
             ], 
-            "defaultValue": "Yes", 
+            "defaultValue": "No", 
             "metadata": {
                 "description": "This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **No** statistics are not sent."
             }, 
