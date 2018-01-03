@@ -57,17 +57,15 @@
 - name: Add http iApp 
   bigip_iapp_template:
     content: "{{ lookup('file','f5.http.v1.2.0rc7.tmpl') }}"
-    server: "{{item.server}}"    
+    server: "{{setup.server1}}"    
     user: "{{f5_username}}"
     password: "{{f5_password}}"
     state: present
-  with_items:
-    "{{setup.oms}}"
 
 - name: Add policy iApp 
   bigip_iapp_template:
     content: "{{ lookup('file','f5.policy_creator.tmpl') }}"
-    server: "{{item.server}}"    
+    server: "{{setup.server1}}"    
     user: "{{f5_username}}"
     password: "{{f5_password}}"
     state: present
@@ -92,12 +90,10 @@
     name: "BasicPolicy"
     template: "f5.policy_creator"
     parameters: "{{ lookup('template','f5.policy.params.json') }}"
-    server: "{{item.server}}"    
+    server: "{{setup.server1}}"    
     user: "{{f5_username}}"
     password: "{{f5_password}}"
     state: present
-  with_items:
-    "{{setup.oms}}"
 
 - name: Add iApp HTTP Service
   bigip_iapp_service:
@@ -109,7 +105,7 @@
     password: "{{f5_password}}"
     state: present
   with_items:
-    "{{setup.oms}}"
+    "{{setup.http_iapps}}"
 
 # - name: debug output
 #   debug:

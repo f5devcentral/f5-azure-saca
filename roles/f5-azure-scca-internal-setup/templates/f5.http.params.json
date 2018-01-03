@@ -54,7 +54,7 @@
     {
       "name": "afm__security_logging",
       "encrypted": "no",
-      "value": "OMS.app/OMS_remote_logging"
+      "value": "{{item.logging}}"
     },
     {
       "name": "afm__staging_policy",

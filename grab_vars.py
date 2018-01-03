@@ -5,7 +5,7 @@ from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.resource.resources.models import DeploymentMode
-from azure.mgmt.loganalytics import LogAnalyticsManagementClient
+
 from msrestazure.azure_cloud import AZURE_US_GOV_CLOUD
 from optparse import OptionParser
 
@@ -24,8 +24,14 @@ import time
 
 from netaddr import IPNetwork, IPAddress
 
-LOG_PROFILE="OMS.app/OMS_remote_logging"
-#LOG_PROFILE="local-afm-log"
+USE_OMS = os.environ.get('USE_OMS','False') == 'True'
+if os.path.exists('.use_oms'):
+    USE_OMS=True
+if USE_OMS:
+    LOG_PROFILE="OMS.app/OMS_remote_logging"
+    from azure.mgmt.loganalytics import LogAnalyticsManagementClient
+else:
+    LOG_PROFILE="local-afm-log"
 
 def get_ips(resource_group, instanceName):
     vm = compute_client.virtual_machines.get(resource_group,instanceName , expand='instanceview')
@@ -76,7 +82,10 @@ f5_int_resource_group = "%s_F5_Internal" %(resource_group)
 resource_client = ResourceManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
 compute_client = ComputeManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
 network_client = NetworkManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
-loganalytics_client = LogAnalyticsManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
+
+if USE_OMS:
+    loganalytics_client = LogAnalyticsManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
+
 parameters = None
 
 f5_password = os.environ['f5_password']
@@ -549,12 +558,20 @@ if options.debug:
     print "create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { %s } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'], LOG_PROFILE)
 
 if options.action == "external_setup":
-    ws = loganalytics_client.workspaces.get(resource_group,resource_group.replace('_','-') + '-oms') 
-    keys = loganalytics_client.workspaces.get_shared_keys(resource_group,resource_group.replace('_','-') + '-oms') 
-    output['oms'] = [{'customer_id':ws.customer_id,
-                      'key':keys.primary_shared_key,
-                      'server':str(bigip_ext1_pip)}]
 
+    if USE_OMS:
+        ws = loganalytics_client.workspaces.get(resource_group,resource_group.replace('_','-') + '-oms') 
+        keys = loganalytics_client.workspaces.get_shared_keys(resource_group,resource_group.replace('_','-') + '-oms') 
+        output['oms'] = [{'customer_id':ws.customer_id,
+                          'key':keys.primary_shared_key,
+                          'server':str(bigip_ext1_pip)}]
+    else:
+        output['oms'] = []
+#    output['iapps'] = [{'template_file':
+#                        'template_params':
+#                          'server':str(bigip_ext1_pip)}]
+    output['server1'] = str(bigip_ext1_pip)
+    output['server2'] = str(bigip_ext2_pip)
     output['routes'] = routes
     output['pools'] = pools
     output['pool_members'] = pool_members
@@ -615,11 +632,20 @@ if options.debug:
 if options.action == "internal_setup":
     output = {}
 
-    ws = loganalytics_client.workspaces.get(resource_group,resource_group.replace('_','-') + '-oms') 
-    keys = loganalytics_client.workspaces.get_shared_keys(resource_group,resource_group.replace('_','-') + '-oms') 
-    output['oms'] = [{'customer_id':ws.customer_id,
-                      'key':keys.primary_shared_key,
-                      'server':str(bigip_int1_pip)}]
+    if USE_OMS:
+        ws = loganalytics_client.workspaces.get(resource_group,resource_group.replace('_','-') + '-oms') 
+        keys = loganalytics_client.workspaces.get_shared_keys(resource_group,resource_group.replace('_','-') + '-oms') 
+        output['oms'] = [{'customer_id':ws.customer_id,
+                          'key':keys.primary_shared_key,
+                          'server':str(bigip_int1_pip)}]
+    else:
+        output['oms'] = []
+
+    output['server1'] = str(bigip_int1_pip)
+    output['server2'] = str(bigip_int2_pip)
+
+    output['http_iapps'] = [{'logging': LOG_PROFILE,
+                             'server':str(bigip_int1_pip)}]
 
     virtuals = []
     pools = []

@@ -32,4 +32,4 @@
         value: "{{location}}"
       sku:
         value: "free"
-  when: not output.ansible_facts.azure_resourcegroups
+  when: use_oms
