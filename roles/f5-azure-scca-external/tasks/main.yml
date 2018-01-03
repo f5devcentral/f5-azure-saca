@@ -25,6 +25,13 @@
     resource_group: "{{resource_group}}"
     name: f5-alb-ext-pip0
     allocation_method: Static
+
+- name: Create a public ip address #2
+  azure_rm_publicipaddress:
+    resource_group: "{{resource_group}}"
+    name: f5-alb-ext-pip1
+    allocation_method: Static
+
 # - name: Deploy ALB
 #   azure_rm_loadbalancer:
 #     name: f5-ext-alb
