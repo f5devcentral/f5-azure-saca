@@ -9,6 +9,30 @@
     level: "{{item.level}}"
   with_items:
      "{{setup.modules}}"
+
+- name: Add iApp
+  bigip_iapp_template:
+    content: "{{ lookup('file','f5.cloud_logger.v1.0.0.tmpl') }}"
+    server: "{{item.server}}"    
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    state: present
+  with_items:
+    "{{setup.oms}}"
+
+- name: Add iApp Service
+  bigip_iapp_service:
+    name: "OMS"
+    template: "f5.cloud_logger.v1.0.0"
+    parameters: "{{ lookup('template','f5.cloud_logger.params.json') }}"
+    server: "{{item.server}}"    
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    state: present
+  with_items:
+    "{{setup.oms}}"
+
+
 - name: Add Routes
   bigip_static_route:
     destination: "{{item.destination}}"
