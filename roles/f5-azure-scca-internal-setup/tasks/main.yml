@@ -44,6 +44,50 @@
   with_items:
      "{{setup.routes}}"
 
+- name: Add Cloud Logger iApp 
+  bigip_iapp_template:
+    content: "{{ lookup('file','f5.cloud_logger.v1.0.0.tmpl') }}"
+    server: "{{item.server}}"    
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    state: present
+  with_items:
+    "{{setup.oms}}"
+
+- name: Add http iApp 
+  bigip_iapp_template:
+    content: "{{ lookup('file','f5.http.v1.2.0rc7.tmpl') }}"
+    server: "{{item.server}}"    
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    state: present
+  with_items:
+    "{{setup.oms}}"
+
+- name: Add policy iApp 
+  bigip_iapp_template:
+    content: "{{ lookup('file','f5.policy_creator.tmpl') }}"
+    server: "{{item.server}}"    
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    state: present
+  with_items:
+    "{{setup.oms}}"
+
+
+- name: Add iApp Service
+  bigip_iapp_service:
+    name: "OMS"
+    template: "f5.cloud_logger.v1.0.0"
+    parameters: "{{ lookup('template','f5.cloud_logger.params.json') }}"
+    server: "{{item.server}}"    
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    state: present
+  with_items:
+    "{{setup.oms}}"
+
+
 # - name: debug output
 #   debug:
 #     msg: "{{setup}}"
