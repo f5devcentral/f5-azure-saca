@@ -75,7 +75,7 @@
     "{{setup.oms}}"
 
 
-- name: Add iApp Service
+- name: Add iApp OMS Service
   bigip_iapp_service:
     name: "OMS"
     template: "f5.cloud_logger.v1.0.0"
@@ -87,6 +87,29 @@
   with_items:
     "{{setup.oms}}"
 
+- name: Add iApp Policy Service
+  bigip_iapp_service:
+    name: "BasicPolicy"
+    template: "f5.policy_creator"
+    parameters: "{{ lookup('template','f5.policy.params.json') }}"
+    server: "{{item.server}}"    
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    state: present
+  with_items:
+    "{{setup.oms}}"
+
+- name: Add iApp HTTP Service
+  bigip_iapp_service:
+    name: "http_protected_vs"
+    template: "f5.http.v1.2.0rc7"
+    parameters: "{{ lookup('template','f5.http.params.json') }}"
+    server: "{{item.server}}"    
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    state: present
+  with_items:
+    "{{setup.oms}}"
 
 # - name: debug output
 #   debug:
