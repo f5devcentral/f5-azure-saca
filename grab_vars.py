@@ -5,6 +5,7 @@ from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.resource.resources.models import DeploymentMode
+from azure.mgmt.loganalytics import LogAnalyticsManagementClient
 from msrestazure.azure_cloud import AZURE_US_GOV_CLOUD
 from optparse import OptionParser
 
@@ -72,6 +73,7 @@ f5_int_resource_group = "%s_F5_Internal" %(resource_group)
 resource_client = ResourceManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
 compute_client = ComputeManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
 network_client = NetworkManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
+loganalytics_client = LogAnalyticsManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
 parameters = None
 
 f5_password = os.environ['f5_password']
@@ -296,11 +298,13 @@ if not bigip_int2_pip:
 #bigip_int2 = IPAddress(parameters['management_SubnetPrefix'].first+13)
 
 external_pip = get_pip(resource_group+"_F5_External", "f5-alb-ext-pip0")
+external_pip2 = get_pip(resource_group+"_F5_External", "f5-alb-ext-pip1")
 #print external_pip
 
 # add 2 for now, needs to be fixed
 #external_vip =  parameters['f5_Ext_Untrusted_IP']
 external_vip = str(external_pip[0])
+external_vip2 = str(external_pip2[0])
 
 subnet = network_client.subnets.get(resource_group,str(f5_ext["vnetName"]),str(f5_ext["externalSubnetName"]))
 subnet.id
@@ -391,6 +395,27 @@ pools.append({'server': str(bigip_ext1_pip),
 
 pool_members.append({'server': str(bigip_ext1_pip),
               'pool': 'http_pool',
+              'host': str(jumphostlinux_ip),
+              'name': str(jumphostlinux_ip),
+              'port': '80'})
+
+pools.append({'server': str(bigip_ext1_pip),
+             'name': 'https_pool',
+              'partition':'Common'})
+
+pool_members.append({'server': str(bigip_ext1_pip),
+              'pool': 'https_pool',
+              'host': str(jumphostlinux_ip),
+              'name': str(jumphostlinux_ip),
+              'port': '443'})
+
+
+pools.append({'server': str(bigip_ext1_pip),
+             'name': 'ssl_visible_http_pool',
+              'partition':'Common'})
+
+pool_members.append({'server': str(bigip_ext1_pip),
+              'pool': 'ssl_visible_http_pool',
               'host': str(parameters['f5_Int_Untrusted_IP']),
               'name': str(parameters['f5_Int_Untrusted_IP']),
               'port': '80'})
@@ -409,10 +434,17 @@ virtuals.append({'server': str(bigip_ext1_pip),
                  'name':'jumpbox_rdp_gw_vs',
                  'command': "create /ltm virtual jumpbox_rdp_gw_vs destination %s:443 profiles replace-all-with { loose_fastL4 } pool jumpbox_rdp_gw_pool source-address-translation { type automap }" %(external_vip)})
 
+virtuals.append({'server': str(bigip_ext1_pip),
+                 'name':'http_vs',
+                 'command': "create /ltm virtual http_vs destination %s:80 profiles replace-all-with {  http } pool http_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip2)})
 
 virtuals.append({'server': str(bigip_ext1_pip),
-                 'name':'https_vs',
-                 'command': "create /ltm virtual https_vs destination %s:8443 profiles replace-all-with { clientssl http } pool http_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip)})
+                 'name':'ssl_visible_vs',
+                 'command': "create /ltm virtual ssl_visible_vs destination %s:443 profiles replace-all-with { clientssl http } pool ssl_visible_http_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip2)})
+
+virtuals.append({'server': str(bigip_ext1_pip),
+                 'name':'ssl_not_visible_vs',
+                 'command': "create /ltm virtual ssl_not_visible_vs destination %s:8443 profiles replace-all-with { loose_fastL4 } pool https_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(external_vip2)})
 
 
 virtuals.append({'server': str(bigip_ext1_pip),
@@ -504,12 +536,22 @@ virtuals.append({'server': str(bigip_ext1_pip),
 virtuals.append({'server': str(bigip_ext1_pip),
                   'name':'vdms_outbound_vs',
                   'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'])})
+virtuals.append({'server': str(bigip_ext1_pip),
+                  'name':'mo_outbound_vs',
+                  'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source 10.0.0.0/8 profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log } source-address-translation { type automap }" })
+
 
 if options.debug:
     print "create /ltm virtual mgmt_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }     source-address-translation { type automap  }" %(parameters['management_SubnetPrefix'])
     print "create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'])
 
 if options.action == "external_setup":
+    ws = loganalytics_client.workspaces.get(resource_group,resource_group.replace('_','-') + '-oms') 
+    keys = loganalytics_client.workspaces.get_shared_keys(resource_group,resource_group.replace('_','-') + '-oms') 
+    output['oms'] = [{'customer_id':ws.customer_id,
+                      'key':keys.primary_shared_key,
+                      'server':str(bigip_ext1_pip)}]
+
     output['routes'] = routes
     output['pools'] = pools
     output['pool_members'] = pool_members
@@ -539,6 +581,18 @@ if options.action == "external_setup":
                      'server':str(bigip_ext1_pip)})
     commands.append({'check':'tmsh list /security firewall policy log_all_afm',
                      'command':'tmsh create /security firewall policy log_all_afm rules add { allow_all  { action accept log yes place-before first } deny_all { action reject log yes place-after allow_all  }}',
+                     'server':str(bigip_ext1_pip)})
+
+    commands.append({'check':'tmsh list /ltm virtual-address 0.0.0.0',
+                     'command':'create /ltm virtual-address 0.0.0.0 traffic-group none',
+                     'server':str(bigip_ext1_pip)})
+
+    commands.append({'check':'tmsh list /ltm virtual-address %s' %(external_vip),
+                     'command':'create /ltm virtual-address %s traffic-group none' %(external_vip),
+                     'server':str(bigip_ext1_pip)})
+
+    commands.append({'check':'tmsh list /ltm virtual-address %s' %(external_vip2),
+                     'command':'create /ltm virtual-address %s traffic-group none' %(external_vip2),
                      'server':str(bigip_ext1_pip)})
 
 
@@ -600,6 +654,11 @@ if options.action == "internal_setup":
                      'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(parameters['vdmS_SubnetPrefix'])})
 
     virtuals.append({'server': str(bigip_int1_pip),
+                     'name':'mo_outbound_vs',
+                     'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source 10.0.0.0/8 profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" })
+
+
+    virtuals.append({'server': str(bigip_int1_pip),
                      'name':'forward_vs',
                      'command':"create /ltm virtual forward_vs destination 0.0.0.0:0 mask 0.0.0.0  profiles replace-all-with { loose_fastL4 } fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" })
 
@@ -609,7 +668,7 @@ if options.action == "internal_setup":
 
     virtuals.append({'server': str(bigip_int1_pip),
                  'name':'float_is_alive_vs',
-                 'command': "create /ltm virtual float_is_alive_vs destination %s:9999 profiles replace-all-with { http } rules { is_alive } fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(str(parameters['f5_Int_Untrusted_IP']))})
+                     'command': "create /ltm virtual float_is_alive_vs destination %s:9999 profiles replace-all-with { http } rules { is_alive } fw-enforced-policy log_all_afm security-log-profiles replace-all-with { local-afm-log }" %(str(parameters['f5_Int_Untrusted_IP']-1))})
 
     virtuals.append({'server': str(bigip_int1_pip),
                  'name':'is_alive_vs',
@@ -691,6 +750,13 @@ if options.action == "internal_setup":
                      'command':'tmsh create /security firewall policy log_all_afm rules add { allow_all  { action accept log yes place-before first } deny_all { action reject log yes place-after allow_all  }}',
                      'server':str(bigip_int1_pip)})
 
+    commands.append({'check':'tmsh list /ltm virtual-address 0.0.0.0',
+                     'command':'create /ltm virtual-address 0.0.0.0 traffic-group none',
+                     'server':str(bigip_int1_pip)})
+
+    commands.append({'check':'tmsh list /ltm virtual-address %s' %(str(parameters['f5_Int_Untrusted_IP'])),
+                     'command':'create /ltm virtual-address %s traffic-group none' %(str(parameters['f5_Int_Untrusted_IP'])),
+                     'server':str(bigip_int1_pip)})
 
     output['commands'] = commands
 
@@ -702,7 +768,8 @@ if options.action == "internal_setup":
                      'command':"az network lb create --resource-group %s_F5_External --public-ip-address f5-alb-ext-pip0 --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-ext-alb" %(resource_group)
                      })
         pass
-
+    localcommands.append({'check':None,
+                          'command': "az network lb frontend-ip create --name loadBalancerFrontEnd1 --lb-name f5-ext-alb -g %s_F5_External  --public-ip-address f5-alb-ext-pip1" %(resource_group)})
     localcommands.append({'check':None,
                           'command':"az network lb probe create  --lb-name f5-ext-alb  -g %s_F5_External  --name is_alive --port 80 --protocol Http --path /" %(resource_group)})
 
@@ -718,7 +785,14 @@ if options.action == "internal_setup":
                           'command':"az network lb rule create --backend-port 3389 --frontend-port 3389  --lb-name f5-ext-alb  -g %s_F5_External  --name rdp_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
 
     localcommands.append({'check':None,
-                          'command':"az network lb rule create --backend-port 8443 --frontend-port 8443  --lb-name f5-ext-alb  -g %s_F5_External  --name https_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
+                          'command':"az network lb rule create --backend-port 80 --frontend-port 80  --lb-name f5-ext-alb  -g %s_F5_External  --name http_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd1 --probe-name is_alive" %(resource_group)})
+
+    localcommands.append({'check':None,
+                          'command':"az network lb rule create --backend-port 443 --frontend-port 443  --lb-name f5-ext-alb  -g %s_F5_External  --name ssl_visible_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd1 --probe-name is_alive" %(resource_group)})
+
+    localcommands.append({'check':None,
+                          'command':"az network lb rule create --backend-port 8443 --frontend-port 8443  --lb-name f5-ext-alb  -g %s_F5_External  --name ssl_not_visible_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd1 --probe-name is_alive" %(resource_group)})
+
 
 
     try:
