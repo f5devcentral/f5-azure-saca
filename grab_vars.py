@@ -698,9 +698,9 @@ if options.action == "internal_setup":
                      'name':'forward_vs',
                      'command':"create /ltm virtual forward_vs destination 0.0.0.0:0 mask 0.0.0.0  profiles replace-all-with { loose_fastL4 } fw-enforced-policy log_all_afm security-log-profiles replace-all-with { %s }" %(LOG_PROFILE) })
 
-    virtuals.append({'server': str(bigip_int1_pip),
-                     'name':'http_vs',
-                     'command':"create /ltm virtual http_vs destination %s:80  profiles replace-all-with { http serverssl } pool https_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { %s }" %(str(parameters['f5_Int_Untrusted_IP']), LOG_PROFILE)})
+    # virtuals.append({'server': str(bigip_int1_pip),
+    #                  'name':'http_vs',
+    #                  'command':"create /ltm virtual http_vs destination %s:80  profiles replace-all-with { http serverssl } pool https_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { %s }" %(str(parameters['f5_Int_Untrusted_IP']), LOG_PROFILE)})
 
     virtuals.append({'server': str(bigip_int1_pip),
                  'name':'float_is_alive_vs',

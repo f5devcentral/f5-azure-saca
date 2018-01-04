@@ -67,6 +67,11 @@ if "_" in shortname:
 if not is_valid_dnsname.match(shortname):
     shortname = "f5-" + str(int(random.random() * 1000))
 output['shortname'] = shortname
+output['use_oms'] = 'False'
+
+if os.path.exists('.use_oms'):
+    output['use_oms'] = 'True'
+    
 if os.path.exists('.password.txt'):
     output['f5_password'] = "`base64 --decode .password.txt`"
 TEMPLATE="""export AZURE_SUBSCRIPTION_ID="%(subscription_id)s"
@@ -88,6 +93,8 @@ export f5_license_key_4="%(key4)s"
 
 export f5_username="%(f5_username)s"
 export f5_password="%(f5_password)s"
+
+export use_oms="%(use_oms)s"
 
 export F5_VALIDATE_CERTS=no
 
