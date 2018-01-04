@@ -4,9 +4,9 @@
   azure_rm_resourcegroup_facts:
     name: "{{resource_group}}"
   register: output
-- name: Debug External Parameters
-  debug:
-    msg: "{{parameters}}"
+#- name: Debug External Parameters
+#  debug:
+#    msg: "{{parameters}}"
 #  when: not output.ansible_facts.azure_resourcegroups
 - name: Deploy External Environnment
   azure_rm_deployment:
