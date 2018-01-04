@@ -32,4 +32,4 @@
         value: "{{location}}"
       sku:
         value: "free"
-  when: use_oms
+  when: use_oms == True
