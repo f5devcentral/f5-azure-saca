@@ -24,7 +24,7 @@ import time
 
 from netaddr import IPNetwork, IPAddress
 
-USE_OMS = os.environ.get('USE_OMS','False') == 'True'
+USE_OMS = os.environ.get('use_oms','False') == 'True'
 if os.path.exists('.use_oms'):
     USE_OMS=True
 if USE_OMS:
