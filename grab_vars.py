@@ -560,8 +560,8 @@ if options.debug:
 if options.action == "external_setup":
 
     if USE_OMS:
-        ws = loganalytics_client.workspaces.get(resource_group,resource_group.replace('_','-') + '-oms') 
-        keys = loganalytics_client.workspaces.get_shared_keys(resource_group,resource_group.replace('_','-') + '-oms') 
+        ws = loganalytics_client.workspaces.get(resource_group,'oms-logs') 
+        keys = loganalytics_client.workspaces.get_shared_keys(resource_group,'oms-logs') 
         output['oms'] = [{'customer_id':ws.customer_id,
                           'key':keys.primary_shared_key,
                           'server':str(bigip_ext1_pip)}]
@@ -633,8 +633,9 @@ if options.action == "internal_setup":
     output = {}
 
     if USE_OMS:
-        ws = loganalytics_client.workspaces.get(resource_group,resource_group.replace('_','-') + '-oms') 
-        keys = loganalytics_client.workspaces.get_shared_keys(resource_group,resource_group.replace('_','-') + '-oms') 
+        ws = loganalytics_client.workspaces.get(resource_group,'oms-logs') 
+        keys = loganalytics_client.workspaces.get_shared_keys(resource_group,'oms-logs') 
+
         output['oms'] = [{'customer_id':ws.customer_id,
                           'key':keys.primary_shared_key,
                           'server':str(bigip_int1_pip)}]
