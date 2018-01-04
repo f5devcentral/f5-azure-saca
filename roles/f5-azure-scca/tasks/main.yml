@@ -27,7 +27,7 @@
 
     parameters:
       name:
-        value: "{{resource_group|replace("_","-")}}-oms"
+        value: "oms-logs"
       location:
         value: "{{location}}"
       sku:
