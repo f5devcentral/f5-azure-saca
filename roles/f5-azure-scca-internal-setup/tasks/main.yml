@@ -69,9 +69,6 @@
     user: "{{f5_username}}"
     password: "{{f5_password}}"
     state: present
-  with_items:
-    "{{setup.oms}}"
-
 
 - name: Add iApp OMS Service
   bigip_iapp_service:
@@ -94,18 +91,6 @@
     user: "{{f5_username}}"
     password: "{{f5_password}}"
     state: present
-
-- name: Add iApp HTTP Service
-  bigip_iapp_service:
-    name: "http_protected_vs"
-    template: "f5.http.v1.2.0rc7"
-    parameters: "{{ lookup('template','f5.http.params.json') }}"
-    server: "{{item.server}}"    
-    user: "{{f5_username}}"
-    password: "{{f5_password}}"
-    state: present
-  with_items:
-    "{{setup.http_iapps}}"
 
 # - name: debug output
 #   debug:
@@ -181,6 +166,18 @@
     "{{result.results}}"
   when: 
     - '"was not found" in item.stdout|first'
+
+- name: Add iApp HTTP Service
+  bigip_iapp_service:
+    name: "http_protected_vs"
+    template: "f5.http.v1.2.0rc7"
+    parameters: "{{ lookup('template','f5.http.params.json') }}"
+    server: "{{item.server}}"    
+    user: "{{f5_username}}"
+    password: "{{f5_password}}"
+    state: present
+  with_items:
+    "{{setup.http_iapps}}"
 
 - name: Check Route tags f5_ha
   command: az network route-table show --resource-group "{{item.resource_group}}" --name "{{item.name}}" --query tags.f5_ha
