@@ -1,5 +1,5 @@
-Getting Started
----------------
+Deploying F5 Azure SCCA ARM Template
+------------------------------------
 
 To complete this guide requires that you have an Azure US Government account.
 
