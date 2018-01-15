@@ -11,7 +11,11 @@ This is [F5 Contributed Software](https://support.f5.com/csp/article/K80012344)
 
 ### Requirements
 
-   Azure Government Account
+* Azure Government Subscription
+
+### Documentation
+
+* http://f5-azure-scca.readthedocs.io/en/latest/
 
 ### Authored By
 
