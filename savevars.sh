@@ -12,7 +12,7 @@ KEY4=$9
 umask 007
 
 cd /home/$USER
-git clone -b master https://github.com/chen23/f5-azure-scca.git /home/$USER/f5-azure-scca
+git clone -b master https://github.com/f5devcentral/f5-azure-scca.git /home/$USER/f5-azure-scca
 cd /home/$USER/f5-azure-scca
 
 cat > /home/$USER/f5-azure-scca/.password.txt <<EOF
