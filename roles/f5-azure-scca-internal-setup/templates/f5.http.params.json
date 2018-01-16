@@ -6,7 +6,7 @@
       "name": "asm__security_logging",
       "encrypted": "no",
       "value": [
-        "Log illegal requests"
+        "Log all requests"
       ]
     }
   ],
