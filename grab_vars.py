@@ -186,7 +186,7 @@ if options.action == "internal":
       "tenantId": tenant_id,
       "clientId": client_id,
       "servicePrincipalSecret": client_secret,
-      "managedRoutes": "0.0.0.0/0,%s,%s,%s,%s" %(str(parameters['management_SubnetPrefix']),
+      "managedRoutes": "0.0.0.0/0,%s,%s,%s,%s,10.0.0.0/22" %(str(parameters['management_SubnetPrefix']),
                                                  str(parameters['vdmS_SubnetPrefix']),
                                                  parameters['f5_Ext_Untrusted_SubnetPrefix'],
                                                  parameters['f5_Ext_Trusted_SubnetPrefix']),
@@ -550,7 +550,7 @@ virtuals.append({'server': str(bigip_ext1_pip),
                   'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source %s profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { %s } source-address-translation { type automap }" %(parameters['vdmS_SubnetPrefix'], LOG_PROFILE)})
 virtuals.append({'server': str(bigip_ext1_pip),
                   'name':'mo_outbound_vs',
-                  'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source 10.0.0.0/8 profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { %s } source-address-translation { type automap }" %(LOG_PROFILE) })
+                  'command':"create /ltm virtual mo_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source 10.0.0.0/8 profiles replace-all-with { loose_fastL4 } ip-forward fw-enforced-policy log_all_afm security-log-profiles replace-all-with { %s } source-address-translation { type automap }" %(LOG_PROFILE) })
 
 
 if options.debug:
@@ -692,7 +692,7 @@ if options.action == "internal_setup":
 
     virtuals.append({'server': str(bigip_int1_pip),
                      'name':'mo_outbound_vs',
-                     'command':"create /ltm virtual vdms_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source 10.0.0.0/8 profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { %s }" %(LOG_PROFILE) })
+                     'command':"create /ltm virtual mo_outbound_vs destination 0.0.0.0:0 mask 0.0.0.0 source 10.0.0.0/8 profiles replace-all-with { loose_fastL4 } pool ext_gw_pool fw-enforced-policy log_all_afm security-log-profiles replace-all-with { %s }" %(LOG_PROFILE) })
 
 
     virtuals.append({'server': str(bigip_int1_pip),
