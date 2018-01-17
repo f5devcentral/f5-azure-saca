@@ -21,4 +21,4 @@ This is [F5 Contributed Software](https://support.f5.com/csp/article/K80012344)
 
 [Eric Chen](https://devcentral.f5.com/users/123940) | [@chen23](https://github.com/chen23)
 
-[@Jahender](https://gitub.com/Jahender)
+[@Jahender](https://github.com/Jahender)
