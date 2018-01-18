@@ -73,7 +73,7 @@ echo "Add IL5MO Route to Internal_Subnets_RouteTable"
 az network route-table route create --address-prefix $IL5MissionOwnerVNetPrefix   \
    --name $RouteToIL5MissionOwnerName \
    --next-hop-type VirtualAppliance \
-   --next-hop-ip-address $F5IntUntrustedIP \
+   --next-hop-ip-address $F5IntTrustedIP \
    --resource-group $SCCAinfrastructureRGname \
    --route-table-name $Internal_Subnets_RouteTableName
 
