@@ -40,7 +40,8 @@ echo "Peer VNet1 to VNet2."
 az network vnet peering create -n VDSStoIL5MissionOWner \
      --remote-vnet-id $IL5vNet \
      --resource-group $SCCAinfrastructureRGname \
-     --vnet-name $SCCAinfrastructureVNetName
+     --vnet-name $SCCAinfrastructureVNetName \
+     --allow-vnet-access 
 
 # Peer VNet2 to VNet1.
 echo "Peer VNet2 to VNet1."
@@ -48,6 +49,7 @@ az network vnet peering create -n IL5MissionOwnerToVDSS \
      --remote-vnet-id $SCCAvnet \
      --resource-group $IL5MissionOwnerRGName \
      --vnet-name $IL5MissionOwnerVNetName \
+     --allow-vnet-access \
      --allow-forwarded-traffic
 
 
