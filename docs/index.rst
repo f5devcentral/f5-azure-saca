@@ -22,6 +22,7 @@ This is `F5 Contributed Software <https://support.f5.com/csp/article/K80012344>`
    overview*
    intro*
    architecture*
+   details*
 ..   class*/class*
 ..   examples
 ..   markdown

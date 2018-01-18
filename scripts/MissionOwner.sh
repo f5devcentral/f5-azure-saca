@@ -33,7 +33,7 @@ IL5vNet=$(az network vnet show -g $IL5MissionOwnerRGName  -n $IL5MissionOwnerVNe
 
 #Create Subnet in IL5 VNet and assign Internal_Subnets_RouteTable
 echo "Create Subnet in IL5 VNet and assign Internal_Subnets_RouteTable"
-az network vnet subnet create -n $IL5MissionOwnerSubnet1Name --address-prefix $IL5MissionOwnerSubnet1Prefix -g $IL5MissionOwnerRGName --vnet-name $IL5MissionOwnerVNetName --route-table $Internal_Subnets_RouteTableName
+az network vnet subnet create -n $IL5MissionOwnerSubnet1Name --address-prefix $IL5MissionOwnerSubnet1Prefix -g $IL5MissionOwnerRGName --vnet-name $IL5MissionOwnerVNetName --route-table $IInternalSubnetsRouteTable
 
 # Peer VNet1 to VNet2.
 echo "Peer VNet1 to VNet2."
