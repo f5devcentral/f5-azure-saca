@@ -47,7 +47,8 @@ echo "Peer VNet2 to VNet1."
 az network vnet peering create -n IL5MissionOwnerToVDSS \
      --remote-vnet-id $SCCAvnet \
      --resource-group $IL5MissionOwnerRGName \
-     --vnet-name $IL5MissionOwnerVNetName
+     --vnet-name $IL5MissionOwnerVNetName \
+     --allow-forwarded-traffic
 
 
 #Add IL5MO Route to F5_Ext_Trust_RouteTable
