@@ -2,7 +2,7 @@
 # Change Values in these Variables to match your environment!!!!!
 IL5MissionOwnerRGName="${AZURE_RESOURCE_GROUP}_IL5-1"
 location=$location
-SCCAinfrastructureRGname=$AZURE_RESOURCE_GROUP
+SCCAinfrastructureRGname="$AZURE_RESOURCE_GROUP"
 SCCAinfrastructureVNetName='VDSS_VNet'
 F5_Ext_Trust_RouteTableName='F5_Ext_Trust_RouteTable'
 IPS_Trust_RouteTableName='IPS_Trust_RouteTable'
@@ -38,7 +38,7 @@ case $1 in
 
 	    #Create Subnet in IL5 VNet and assign Internal_Subnets_RouteTable
 	    echo "Create Subnet in IL5 VNet and assign Internal_Subnets_RouteTable"
-	    az network vnet subnet create -n $IL5MissionOwnerSubnet1Name --address-prefix $IL5MissionOwnerSubnet1Prefix -g $IL5MissionOwnerRGName --vnet-name $IL5MissionOwnerVNetName --route-table $IInternalSubnetsRouteTable
+	    az network vnet subnet create -n $IL5MissionOwnerSubnet1Name --address-prefix $IL5MissionOwnerSubnet1Prefix -g $IL5MissionOwnerRGName --vnet-name $IL5MissionOwnerVNetName --route-table $InternalSubnetsRouteTable
 
 	    # Peer VNet1 to VNet2.
 	    echo "Peer VNet1 to VNet2."
@@ -83,12 +83,12 @@ case $1 in
 	       --next-hop-ip-address $F5IntTrustedIP \
 	       --resource-group $SCCAinfrastructureRGname \
 	       --route-table-name $Internal_Subnets_RouteTableName
-	    az network public-ip create  -g $(SCCAinfrastructureRGname)_F5_External -n f5-alb-ext-pip2 --allocation-method static
-	    az network lb frontend-ip create --name loadBalancerFrontEnd2 --lb-name f5-ext-alb -g $(SCCAinfrastructureRGname)_F5_External  --public-ip-address f5-alb-ext-pip2
+	    az network public-ip create  -g ${SCCAinfrastructureRGname}_F5_External -n f5-alb-ext-pip2 --allocation-method static
+	    az network lb frontend-ip create --name loadBalancerFrontEnd2 --lb-name f5-ext-alb -g ${SCCAinfrastructureRGname}_F5_External  --public-ip-address f5-alb-ext-pip2
 
-	    az network lb rule create --backend-port 80 --frontend-port 80  --lb-name f5-ext-alb  -g $(SCCAinfrastructureRGname)_F5_External  --name mo_http_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd2 --probe-name is_alive
+	    az network lb rule create --backend-port 80 --frontend-port 80  --lb-name f5-ext-alb  -g ${SCCAinfrastructureRGname}_F5_External  --name mo_http_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd2 --probe-name is_alive
 
-            az network lb rule create --backend-port 443 --frontend-port 443  --lb-name f5-ext-alb  -g $(SCCAinfrastructureRGname)_F5_External  --name mo_https_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd2 --probe-name is_alive
+            az network lb rule create --backend-port 443 --frontend-port 443  --lb-name f5-ext-alb  -g ${SCCAinfrastructureRGname}_F5_External  --name mo_https_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd2 --probe-name is_alive
 
 
     ;;
