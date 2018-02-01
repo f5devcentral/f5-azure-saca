@@ -1,5 +1,5 @@
-F5 Azure SCCA
-=============
+F5 Secure Azure Computing Architecture for DoD (SACA)
+=====================================================
 
 ### About
 
@@ -15,7 +15,7 @@ This is [F5 Contributed Software](https://support.f5.com/csp/article/K80012344)
 
 ### Documentation
 
-* http://f5-azure-scca.readthedocs.io/en/latest/
+* http://f5-azure-saca.readthedocs.io/en/latest/
 
 ### Authored By
 

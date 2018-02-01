@@ -1,7 +1,12 @@
-About F5 Azure SCCA
+About F5 Azure SACA
 -------------------
 
 The following is a guide of some of the terms that will be used in this document as well as a reference to resources for additional information.
+
+SACA
+~~~~
+
+Secure Azure Computing Architecture for DoD (SACA) is a notional deployment of SCCA.
 
 SCCA
 ~~~~
