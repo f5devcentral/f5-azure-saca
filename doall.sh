@@ -1,5 +1,5 @@
 #!/bin/bash
-cd $HOME/f5-azure-scca
+cd $HOME/f5-azure-saca
 ./gen_env.py > env.sh
 source env.sh
 #env

@@ -12,14 +12,14 @@ KEY4=$9
 umask 007
 
 cd /home/$USER
-git clone -b master https://github.com/f5devcentral/f5-azure-scca.git /home/$USER/f5-azure-scca
-cd /home/$USER/f5-azure-scca
+git clone -b master https://github.com/f5devcentral/f5-azure-saca.git /home/$USER/f5-azure-saca
+cd /home/$USER/f5-azure-saca
 
-cat > /home/$USER/f5-azure-scca/.password.txt <<EOF
+cat > /home/$USER/f5-azure-saca/.password.txt <<EOF
 ${PASSWORD}
 EOF
 
-cat > /home/$USER/f5-azure-scca/sp.json <<EOF
+cat > /home/$USER/f5-azure-saca/sp.json <<EOF
 {
   "appId": "${APPID}",
   "password": "${SECRET}",
@@ -27,7 +27,7 @@ cat > /home/$USER/f5-azure-scca/sp.json <<EOF
 }
 EOF
 
-cat > /home/$USER/f5-azure-scca/keys.txt <<EOF
+cat > /home/$USER/f5-azure-saca/keys.txt <<EOF
 $KEY1
 $KEY2
 $KEY3
@@ -36,4 +36,4 @@ EOF
 
 USER=$USER ./gen_env.py > env.sh
 
-chown -R $USER /home/$USER/f5-azure-scca
+chown -R $USER /home/$USER/f5-azure-saca
