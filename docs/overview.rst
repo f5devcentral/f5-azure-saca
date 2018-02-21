@@ -11,7 +11,7 @@ Secure Azure Computing Architecture for DoD (SACA) is a notional deployment of S
 SCCA
 ~~~~
 
-SCCA is an abrievation for Secure Cloud Computing Archicture that is outlined in the following document: https://iasecontent.disa.mil/stigs/pdf/SCCA_FRD_v2-9.pdf
+SCCA is an abrievation for Secure Cloud Computing Architecture that is outlined in the following document: https://iasecontent.disa.mil/stigs/pdf/SCCA_FRD_v2-9.pdf
 
 This architecture provides guidance on requirements for securing Cloud Computing Environments based on US DoD experience.
 
