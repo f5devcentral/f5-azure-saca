@@ -78,7 +78,6 @@ TEMPLATE="""export AZURE_SUBSCRIPTION_ID="%(subscription_id)s"
 export AZURE_CLIENT_ID="%(client_id)s"
 export AZURE_SECRET="%(client_secret)s"
 export AZURE_TENANT="%(tenant_id)s"
-export AZURE_CLOUD_ENVIRONMENT="AzureUSGovernment"
 export AZURE_RESOURCE_GROUP="%(resource_group)s"
 export AZURE_RESOURCE_GROUPS="${AZURE_RESOURCE_GROUP}_F5_External,${AZURE_RESOURCE_GROUP}_F5_Internal"
 export location="%(location)s"
@@ -112,6 +111,7 @@ fi
 if [ $is_gov == 1 ]
   then
   az cloud set -n AzureUSGovernment;
+  export AZURE_CLOUD_ENVIRONMENT="AzureUSGovernment";
 fi
 
 which az
