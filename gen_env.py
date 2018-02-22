@@ -120,5 +120,7 @@ az login \
 -u "$AZURE_CLIENT_ID" \
 -p "$AZURE_SECRET" \
 --tenant "$AZURE_TENANT"
+
+az account set -s $AZURE_SUBSCRIPTION_ID
 """
 print TEMPLATE %(output)
