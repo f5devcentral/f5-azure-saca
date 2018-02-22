@@ -98,7 +98,21 @@ export use_oms="%(use_oms)s"
 
 export F5_VALIDATE_CERTS=no
 
-az cloud set -n AzureUSGovernment
+location=$(curl -H metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" --stderr /dev/null |jq .compute.location)
+
+echo $location | grep -E "(gov|dod)" > /dev/null;
+#echo $?
+if [ $? == 0 ]
+  then
+  export is_gov=1;
+  else
+  export is_gov=0;
+fi
+
+if [ $is_gov == 1 ]
+  then
+  az cloud set -n AzureUSGovernment;
+fi
 
 which az
 az login \
