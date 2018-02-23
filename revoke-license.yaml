@@ -7,28 +7,28 @@
   connection: local
   gather_facts: yes
   tasks:
-    - name: check failover status
+    - name: check license
       bigip_command:
        server: "{{ ansible_host }}"
        user: "{{f5_username}}"
        password: "{{f5_password}}"
        commands:
-        - show /sys failover
-      register: failover
+        - show /sys license
+      register: license
 
-#    - debug: msg="{{failover.stdout}}"
+#    - debug: msg="{{license.stdout}}"
 #      when:
 #       - '"active" in failover.stdout|first'
 
-    - name: trigger failover
+    - name: revoke license
       bigip_command:
        server: "{{ ansible_host }}"
        user: "{{f5_username}}"
        password: "{{f5_password}}"
        commands:
-        - run /sys failover standby traffic-group traffic-group-1
+        - revoke /sys license
       when:
-       - '"active" in failover.stdout|first'
+       - '"t load license, may not be operational" not in license.stdout|first'
 
 #    - debug: msg="{{ inventory_hostname }} has powerstate {{ powerstate }}"
 #    - shell: "f5-rest-node /config/cloud/azure/node_modules/f5-cloud-libs/node_modules/f5-cloud-libs-azure/scripts/failoverProvider.js"

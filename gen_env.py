@@ -78,7 +78,6 @@ TEMPLATE="""export AZURE_SUBSCRIPTION_ID="%(subscription_id)s"
 export AZURE_CLIENT_ID="%(client_id)s"
 export AZURE_SECRET="%(client_secret)s"
 export AZURE_TENANT="%(tenant_id)s"
-export AZURE_CLOUD_ENVIRONMENT="AzureUSGovernment"
 export AZURE_RESOURCE_GROUP="%(resource_group)s"
 export AZURE_RESOURCE_GROUPS="${AZURE_RESOURCE_GROUP}_F5_External,${AZURE_RESOURCE_GROUP}_F5_Internal"
 export location="%(location)s"
@@ -98,7 +97,22 @@ export use_oms="%(use_oms)s"
 
 export F5_VALIDATE_CERTS=no
 
-az cloud set -n AzureUSGovernment
+loc=$(curl -H metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" --stderr /dev/null |jq .compute.location)
+
+echo $loc | grep -E "(gov|dod)" > /dev/null;
+#echo $?
+if [ $? == 0 ]
+  then
+  export is_gov=1;
+  else
+  export is_gov=0;
+fi
+
+if [ $is_gov == 1 ]
+  then
+  az cloud set -n AzureUSGovernment;
+  export AZURE_CLOUD_ENVIRONMENT="AzureUSGovernment";
+fi
 
 which az
 az login \
@@ -106,5 +120,7 @@ az login \
 -u "$AZURE_CLIENT_ID" \
 -p "$AZURE_SECRET" \
 --tenant "$AZURE_TENANT"
+
+az account set -s $AZURE_SUBSCRIPTION_ID
 """
 print TEMPLATE %(output)

@@ -7,6 +7,15 @@ from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.resource.resources.models import DeploymentMode
 
 from msrestazure.azure_cloud import AZURE_US_GOV_CLOUD
+from msrestazure.azure_cloud import AZURE_PUBLIC_CLOUD
+
+import os
+
+if os.environ.get("is_gov") == "1":
+    mycloud = AZURE_US_GOV_CLOUD
+else:
+    mycloud = AZURE_PUBLIC_CLOUD
+
 from optparse import OptionParser
 
 parser = OptionParser()
@@ -74,17 +83,17 @@ credentials = ServicePrincipalCredentials(
     client_id=os.environ['AZURE_CLIENT_ID'],
     secret=os.environ['AZURE_SECRET'],
     tenant=os.environ['AZURE_TENANT'],
-    cloud_environment=AZURE_US_GOV_CLOUD
+    cloud_environment=mycloud
 )
 resource_group = os.environ['AZURE_RESOURCE_GROUP']
 f5_ext_resource_group = "%s_F5_External" %(resource_group)
 f5_int_resource_group = "%s_F5_Internal" %(resource_group)
-resource_client = ResourceManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
-compute_client = ComputeManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
-network_client = NetworkManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
+resource_client = ResourceManagementClient(credentials, subscription_id, base_url=mycloud.endpoints.resource_manager)
+compute_client = ComputeManagementClient(credentials, subscription_id, base_url=mycloud.endpoints.resource_manager)
+network_client = NetworkManagementClient(credentials, subscription_id, base_url=mycloud.endpoints.resource_manager)
 
 if USE_OMS:
-    loganalytics_client = LogAnalyticsManagementClient(credentials, subscription_id, base_url=AZURE_US_GOV_CLOUD.endpoints.resource_manager)
+    loganalytics_client = LogAnalyticsManagementClient(credentials, subscription_id, base_url=mycloud.endpoints.resource_manager)
 
 parameters = None
 
@@ -100,7 +109,7 @@ f5_license_key_4 = os.environ['f5_license_key_4']
 client_id=os.environ['AZURE_CLIENT_ID']
 client_secret=os.environ['AZURE_SECRET']
 tenant_id=os.environ['AZURE_TENANT']
-cloud_environment=AZURE_US_GOV_CLOUD
+cloud_environment=mycloud
 
 for deployment in resource_client.deployments.list_by_resource_group(resource_group):
 #    if deployment.name != 'Microsoft.Template':
@@ -134,7 +143,7 @@ if options.action == "external":
       "dnsLabel": f5_unique_short_name,
       "instanceName": f5_unique_short_name,
       "imageName":"Best",
-      "bigIpVersion":"13.0.0300",
+      "bigIpVersion":"13.1.0200",
       "licenseKey1": f5_license_key_1,
       "licenseKey2": f5_license_key_2,
       "numberOfExternalIps": 0,
@@ -170,7 +179,7 @@ if options.action == "internal":
       "dnsLabel": f5_unique_short_name2,
       "instanceName": f5_unique_short_name2,
       "imageName":"Best",
-      "bigIpVersion":"13.0.0300",
+      "bigIpVersion":"13.1.0200",
       "licenseKey1": f5_license_key_3,
       "licenseKey2": f5_license_key_4,
       "numberOfExternalIps": 0,
