@@ -2,6 +2,68 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "VDSSJumpBoxAdminUserName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "VDSSJumpBoxAdminPassword": {
+      "type": "securestring"
+    },
+
+    "tenantId": {
+      "metadata": {
+        "description": "Your Azure service principal application tenant ID."
+      },
+      "type": "string"
+    },
+    "clientId": {
+      "metadata": {
+        "description": "Your Azure service principal application client ID."
+      },
+      "type": "string"
+    },
+    "servicePrincipalSecret": {
+      "metadata": {
+        "description": "Your Azure service principal application secret."
+      },
+      "type": "securestring"
+    },
+    "licenseKey1": {
+      "defaultValue": "",
+      "minLength": 1,
+      "metadata": {
+        "description": "The license token for the F5 BIG-IP VE (BYOL)."
+      },
+      "type": "string"
+    },
+    "licenseKey2": {
+      "defaultValue": "",
+      "minLength": 1,
+      "metadata": {
+        "description": "The license token for the F5 BIG-IP VE (BYOL). This field is required when deploying two or more devices."
+      },
+      "type": "string"
+    },
+    "licenseKey3": {
+      "defaultValue": "",
+      "minLength": 1,
+      "metadata": {
+        "description": "The license token for the F5 BIG-IP VE (BYOL)."
+      },
+      "type": "string"
+    },
+    "licenseKey4": {
+      "defaultValue": "",
+      "minLength": 1,
+      "metadata": {
+        "description": "The license token for the F5 BIG-IP VE (BYOL). This field is required when deploying two or more devices."
+      },
+      "type": "string"
+    },
+    "VDSSJumpBoxLinuxFileUris": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/savevars.sh"
+    },
     "vnetName": {
       "type": "string",
       "defaultValue": "VDSS_VNet",
@@ -280,13 +342,7 @@
         "description": "IP address for VDSSJumpBox."
       }
     },
-    "VDSSJumpBoxAdminUserName": {
-      "type": "string",
-      "minLength": 1
-    },
-    "VDSSJumpBoxAdminPassword": {
-      "type": "securestring"
-    },
+
     "VDSSJumpBoxWindowsOSVersion": {
       "type": "string",
       "defaultValue": "2016-Datacenter",
@@ -303,60 +359,7 @@
       "defaultValue": "VDSSJumpBoxLinux",
       "minLength": 1
     },
-    "VDSSJumpBoxLinuxFileUris": {
-      "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/savevars.sh"
-    },
-    "tenantId": {
-      "metadata": {
-        "description": "Your Azure service principal application tenant ID."
-      },
-      "type": "string"
-    },
-    "clientId": {
-      "metadata": {
-        "description": "Your Azure service principal application client ID."
-      },
-      "type": "string"
-    },
-    "servicePrincipalSecret": {
-      "metadata": {
-        "description": "Your Azure service principal application secret."
-      },
-      "type": "securestring"
-    },
-    "licenseKey1": {
-      "defaultValue": "",
-      "minLength": 1,
-      "metadata": {
-        "description": "The license token for the F5 BIG-IP VE (BYOL)."
-      },
-      "type": "string"
-    },
-    "licenseKey2": {
-      "defaultValue": "",
-      "minLength": 1,
-      "metadata": {
-        "description": "The license token for the F5 BIG-IP VE (BYOL). This field is required when deploying two or more devices."
-      },
-      "type": "string"
-    },
-    "licenseKey3": {
-      "defaultValue": "",
-      "minLength": 1,
-      "metadata": {
-        "description": "The license token for the F5 BIG-IP VE (BYOL)."
-      },
-      "type": "string"
-    },
-    "licenseKey4": {
-      "defaultValue": "",
-      "minLength": 1,
-      "metadata": {
-        "description": "The license token for the F5 BIG-IP VE (BYOL). This field is required when deploying two or more devices."
-      },
-      "type": "string"
-    },
+
     "VDSSJumpBoxLinuxIp": {
       "type": "string",
       "defaultValue": "172.16.0.5",
@@ -397,67 +400,6 @@
         "16.04-LTS"
       ]
     },
-    "MOJumpBox_Availability_SetName": {
-      "type": "string",
-      "defaultValue": "MOJumpBox_AS",
-      "minLength": 1
-    },
-    "MOJumpBoxName": {
-      "type": "string",
-      "defaultValue": "MOJumpBox",
-      "minLength": 1
-    },
-    "MOJumpBoxIp": {
-      "type": "string",
-      "defaultValue": "172.16.0.6",
-      "metadata": {
-        "description": "IP address for MOJumpBox."
-      }
-    },
-    "MOJumpBoxAdminUserName": {
-      "type": "string",
-      "minLength": 1
-    },
-    "MOJumpBoxAdminPassword": {
-      "type": "securestring"
-    },
-    "MOJumpBoxWindowsOSVersion": {
-      "type": "string",
-      "defaultValue": "2016-Datacenter",
-      "allowedValues": [
-        "2008-R2-SP1",
-        "2012-Datacenter",
-        "2012-R2-Datacenter",
-        "2016-Datacenter",
-        "Windows-Server-Technical-Preview"
-      ]
-    },
-    "MOJumpBoxLinuxName": {
-      "type": "string",
-      "defaultValue": "MOJumpBoxLinux",
-      "minLength": 1
-    },
-    "MOJumpBoxLinuxIp": {
-      "type": "string",
-      "defaultValue": "172.16.0.7",
-      "metadata": {
-        "description": "IP address for Linux MOJumpBox."
-      }
-    },
-    "MOJumpBoxLinuxUbuntuOSVersion": {
-      "type": "string",
-      "defaultValue": "16.04-LTS",
-      "allowedValues": [
-        "12.04.5-LTS",
-        "14.04.2-LTS",
-        "16.04-LTS"
-      ]
-    },
-    "MOJumpBoxLinux_Availability_SetName": {
-      "type": "string",
-      "defaultValue": "MOJumpBoxLinux_AS",
-      "minLength": 1
-    },
     "VDSSJumpBoxLinux_Availability_SetName": {
       "type": "string",
       "defaultValue": "VDSSJumpBoxLinux_AS",
@@ -465,23 +407,6 @@
     }
   },
   "variables": {
-    "MOJumpBoxImagePublisher": "MicrosoftWindowsServer",
-    "MOJumpBoxImageOffer": "WindowsServer",
-    "MOJumpBoxOSDiskName": "MOJumpBoxOSDisk",
-    "MOJumpBoxVmSize": "Standard_DS2_v2",
-    "MOJumpBoxVnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
-    "MOJumpBoxSubnetRef": "[concat(variables('MOJumpBoxVnetID'), '/subnets/', parameters('Management_SubnetName'))]",
-    "MOJumpBoxStorageAccountContainerName": "vhds",
-    "MOJumpBoxNicName": "[concat(parameters('MOJumpBoxName'), 'NetworkInterface')]",
-    "MOJumpBoxLinuxImagePublisher": "Canonical",
-    "MOJumpBoxLinuxImageOffer": "UbuntuServer",
-    "MOJumpBoxLinuxOSDiskName": "MOJumpBoxLinuxOSDisk",
-    "MOJumpBoxLinuxVmSize": "Standard_DS2_v2",
-    "MOJumpBoxLinuxVnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
-    "MOJumpBoxLinuxSubnetRef": "[concat(variables('MOJumpBoxLinuxVnetID'), '/subnets/', parameters('Management_SubnetName'))]",
-    "MOJumpBoxLinuxStorageAccountContainerName": "vhds",
-    "MOJumpBoxLinuxNicName": "[concat(parameters('MOJumpBoxLinuxName'), 'NetworkInterface')]",
-    "linux-MOJumpBox-ipName": "linux-MOJumpBox-ip",
     "vdssstorageName": "[concat('vdssstorage', uniqueString(resourceGroup().id))]",
     "VDSSJumpBoxImagePublisher": "MicrosoftWindowsServer",
     "VDSSJumpBoxImageOffer": "WindowsServer",
@@ -499,7 +424,7 @@
     "VDSSJumpBoxLinuxSubnetRef": "[concat(variables('VDSSJumpBoxLinuxVnetID'), '/subnets/', parameters('Management_SubnetName'))]",
     "VDSSJumpBoxLinuxStorageAccountContainerName": "vhds",
     "VDSSJumpBoxLinuxNicName": "[concat(parameters('VDSSJumpBoxLinuxName'), 'NetworkInterface')]",
-    "VDSSJumpBoxLinuxCustomData": "#cloud-config\nwrite_files:\n\n - path: /etc/apt/sources.list.d/azure-cli.list\n   permissions: '0644'\n   owner: root:root\n   content: |\n      deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ wheezy main\nruncmd:\n  - sudo apt-key adv --keyserver packages.microsoft.com --recv-keys 52E16F86FEE04B979B07E28DB02C46DF417A0893\n  - sudo apt-get install software-properties-common\n  - sudo apt-add-repository -y ppa:ansible/ansible\n  - sudo apt-get update -y\n  - sudo apt-get install -y ansible\n  - sudo apt-get install -y apt-transport-https\n  - sudo apt-get update && sudo apt-get install -y azure-cli\n  - sudo apt-get install -y python-pip\n  - sudo apt-get install -y jq\n  - sudo pip install f5-sdk bigsuds netaddr deepdiff\n  - sudo pip install ansible[azure]\n  - sudo apt-get install -y docker.io\n  - docker run -d -p 80:80 --net=host --restart unless-stopped -e F5DEMO_APP=website -e F5DEMO_NODENAME='F5 Azure SACA' -e F5DEMO_COLOR=ffd734 -e F5DEMO_NODENAME_SSL='F5 Azure SACA (SSL)' -e F5DEMO_COLOR_SSL=a0bf37 chen23/f5-demo-app:ssl\n  - sudo -u AZURE_USER HOME=/home/AZURE_USER bash /home/AZURE_USER/f5-azure-saca/doall.sh &> /home/AZURE_USER/output.log",
+    "VDSSJumpBoxLinuxCustomData": "#cloud-config\nwrite_files:\n\n - path: /etc/apt/sources.list.d/azure-cli.list\n   permissions: '0644'\n   owner: root:root\n   content: |\n      deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ wheezy main\nruncmd:\n  - sudo apt-key adv --keyserver packages.microsoft.com --recv-keys 52E16F86FEE04B979B07E28DB02C46DF417A0893\n  - sudo apt-get install software-properties-common\n  - sudo apt-add-repository -y ppa:ansible/ansible\n  - sudo apt-get update -y\n  - sudo apt-get install -y ansible=2.4.*\n  - sudo apt-get install -y apt-transport-https\n  - sudo apt-get update && sudo apt-get install -y azure-cli\n  - sudo apt-get install -y python-pip\n  - sudo apt-get install -y jq\n  - sudo pip install f5-sdk bigsuds netaddr deepdiff\n  - sudo pip install ansible[azure]\n  - sudo apt-get install -y docker.io\n  - docker run -d -p 80:80 --net=host --restart unless-stopped -e F5DEMO_APP=website -e F5DEMO_NODENAME='F5 Azure SACA' -e F5DEMO_COLOR=ffd734 -e F5DEMO_NODENAME_SSL='F5 Azure SACA (SSL)' -e F5DEMO_COLOR_SSL=a0bf37 chen23/f5-demo-app:ssl\n  - sudo -u AZURE_USER HOME=/home/AZURE_USER bash /home/AZURE_USER/f5-azure-saca/doall.sh &> /home/AZURE_USER/output.log",
     "VDSSJumpBoxExtensionName": "SetupAutomationScript",
     "linux-VDSSJumpBox-ipName": "linux-VDSSJumpBox-ip",
     "IPSvmImagePublisher": "Canonical",
@@ -512,28 +437,10 @@
     "IPSvmStorageAccountContainerName": "vhds",
     "IPSvmUntrustedNicName": "[concat(parameters('IPS_Untrusted_NIC_Name'), 'NetworkInterface')]",
     "IPSvmTrustedNicName": "[concat(parameters('IPS_Trusted_NIC_Name'), 'NetworkInterface')]",
-    "IPSvmpipName": "IPSpip",
     "IPSCustomData": "#cloud-config\nwrite_files:\n\n\n##################################################\n#\n# Set static routes\n#\n##################################################\n - path: /etc/network/interfaces\n   permissions: '0644'\n   owner: root:root\n   content: |\n      auto lo\n      iface lo inet loopback\n\n      auto eth0\n      iface eth0 inet dhcp\n\n      auto eth1\n      iface eth1 inet dhcp\n\n      up route add -net 172.16.0.0/12 gw GATEWAY_IP\n      up route add -net 10.0.0.0/8 gw GATEWAY_IP\n      up route add -net 192.168.4.0/23 gw GATEWAY_IP\n - path: /etc/sysctl.conf\n   permissions: '0644'\n   owner: root:root\n   content: |\n      net.ipv4.ip_forward=1\n\nruncmd:\n  - service networking restart\n  - sysctl --system\n"
 
   },
   "resources": [
-    {
-      "name": "[parameters('MOJumpBoxLinux_Availability_SetName')]",
-      "type": "Microsoft.Compute/availabilitySets",
-      "sku": {
-        "name": "Aligned"
-      },
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2016-04-30-preview",
-      "dependsOn": [],
-      "tags": {
-        "displayName": "MOJumpBoxLinux_Availability_Set"
-      },
-      "properties": {
-        "platformUpdateDomainCount": 5,
-        "platformFaultDomainCount": 2
-      }
-    },
     {
       "name": "[parameters('VDSSJumpBoxLinux_Availability_SetName')]",
       "type": "Microsoft.Compute/availabilitySets",
@@ -549,191 +456,6 @@
       "properties": {
         "platformUpdateDomainCount": 5,
         "platformFaultDomainCount": 2
-      }
-    },
-    {
-      "name": "[parameters('MOJumpBox_Availability_SetName')]",
-      "type": "Microsoft.Compute/availabilitySets",
-      "sku": {
-        "name": "Aligned"
-      },
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2016-04-30-preview",
-      "dependsOn": [],
-      "tags": {
-        "displayName": "MOJumpBox_Availability_Set"
-      },
-      "properties": {
-        "platformUpdateDomainCount": 5,
-        "platformFaultDomainCount": 2
-      }
-    },
-    {
-      "name": "[variables('MOJumpBoxNicName')]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2016-03-30",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
-      ],
-      "tags": {
-        "displayName": "MOJumpBoxNic"
-      },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAddress": "[parameters('MOJumpBoxIp')]",
-              "privateIPAllocationMethod": "Static",
-              "subnet": {
-                "id": "[variables('MOJumpBoxSubnetRef')]"
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "[parameters('MOJumpBoxName')]",
-      "type": "Microsoft.Compute/virtualMachines",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2016-04-30-preview",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('vdssstorageName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces', variables('MOJumpBoxNicName'))]",
-        "[concat('Microsoft.Compute/availabilitySets/', parameters('MOJumpBox_Availability_SetName'))]"
-      ],
-      "tags": {
-        "displayName": "MOJumpBox"
-      },
-      "properties": {
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('MOJumpBox_Availability_SetName'))]"
-        },
-        "hardwareProfile": {
-          "vmSize": "[variables('MOJumpBoxVmSize')]"
-        },
-        "osProfile": {
-          "computerName": "[parameters('MOJumpBoxName')]",
-          "adminUsername": "[parameters('MOJumpBoxAdminUsername')]",
-          "adminPassword": "[parameters('MOJumpBoxAdminPassword')]"
-        },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "[variables('MOJumpBoxImagePublisher')]",
-            "offer": "[variables('MOJumpBoxImageOffer')]",
-            "sku": "[parameters('MOJumpBoxWindowsOSVersion')]",
-            "version": "latest"
-          },
-          "osDisk": {
-            "createOption": "fromImage",
-            "managedDisk": {
-              "storageAccountType": "Premium_LRS"
-            }
-          },
-          "dataDisks": []
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('MOJumpBoxNicName'))]"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "[variables('MOJumpBoxLinuxNicName')]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2016-03-30",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
-        "[resourceId('Microsoft.Network/publicIPAddresses', variables('linux-MOJumpBox-ipName'))]"
-      ],
-      "tags": {
-        "displayName": "MOJumpBoxLinuxNic"
-      },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAddress": "[parameters('MOJumpBoxLinuxIp')]",
-              "privateIPAllocationMethod": "Static",
-              "subnet": {
-                "id": "[variables('MOJumpBoxLinuxSubnetRef')]"
-              },
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('linux-MOJumpBox-ipName'))]"
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "[parameters('MOJumpBoxLinuxName')]",
-      "type": "Microsoft.Compute/virtualMachines",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2016-04-30-preview",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('vdssstorageName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces', variables('MOJumpBoxLinuxNicName'))]",
-        "[concat('Microsoft.Compute/availabilitySets/', parameters('MOJumpBoxLinux_Availability_SetName'))]"
-      ],
-      "tags": {
-        "displayName": "MOJumpBoxLinux"
-      },
-      "properties": {
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('MOJumpBoxLinux_Availability_SetName'))]"
-        },
-        "hardwareProfile": {
-          "vmSize": "[variables('MOJumpBoxLinuxVmSize')]"
-        },
-        "osProfile": {
-          "computerName": "[parameters('MOJumpBoxLinuxName')]",
-          "adminUsername": "[parameters('MOJumpBoxAdminUsername')]",
-          "adminPassword": "[parameters('MOJumpBoxAdminPassword')]"
-
-        },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "[variables('MOJumpBoxLinuxImagePublisher')]",
-            "offer": "[variables('MOJumpBoxLinuxImageOffer')]",
-            "sku": "[parameters('MOJumpBoxLinuxUbuntuOSVersion')]",
-            "version": "latest"
-          },
-          "osDisk": {
-            "createOption": "fromImage",
-            "managedDisk": {
-              "storageAccountType": "Premium_LRS"
-            }
-          },
-          "dataDisks": []
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('MOJumpBoxLinuxNicName'))]"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "[variables('linux-MOJumpBox-ipName')]",
-      "type": "Microsoft.Network/publicIPAddresses",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2016-03-30",
-      "dependsOn": [],
-      "tags": {
-        "displayName": "linux-MOJumpBox-ip"
-      },
-      "properties": {
-        "publicIPAllocationMethod": "Dynamic"
       }
     },
     {
@@ -1277,9 +999,6 @@
               "privateIPAllocationMethod": "Static",
               "subnet": {
                 "id": "[variables('IPSUntrustedSubnetref')]"
-              },
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('IPSvmpipName'))]"
               }
             }
           }
@@ -1369,19 +1088,6 @@
             }
           ]
         }
-      }
-    },
-    {
-      "name": "[variables('IPSvmpipName')]",
-      "type": "Microsoft.Network/publicIPAddresses",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2016-03-30",
-      "dependsOn": [],
-      "tags": {
-        "displayName": "IPSvmpip"
-      },
-      "properties": {
-        "publicIPAllocationMethod": "Dynamic"
       }
     }
   ]
