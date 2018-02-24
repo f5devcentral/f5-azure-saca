@@ -318,8 +318,8 @@ if not bigip_int2_pip:
 #bigip_int1 = IPAddress(parameters['management_SubnetPrefix'].first+12)
 #bigip_int2 = IPAddress(parameters['management_SubnetPrefix'].first+13)
 
-external_pip = get_pip(resource_group+"_F5_External", "f5-alb-ext-pip0")
-external_pip2 = get_pip(resource_group+"_F5_External", "f5-alb-ext-pip1")
+external_pip = get_pip(resource_group, "f5-ext-pip0")
+external_pip2 = get_pip(resource_group, "f5-ext-pip1")
 #print external_pip
 
 # add 2 for now, needs to be fixed
@@ -807,83 +807,20 @@ if options.action == "internal_setup":
     output['commands'] = commands
 
     localcommands = []
-    try:
-        network_client.load_balancers.get('%s_F5_External' %(resource_group),'f5-ext-alb')
-    except:
-        localcommands.append({'check':'az network lb show -g %s_F5_External --name f5-ext-alb' %(resource_group),
-                     'command':"az network lb create --resource-group %s_F5_External --public-ip-address f5-alb-ext-pip0 --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-ext-alb" %(resource_group)
-                     })
-        pass
+    
     localcommands.append({'check':None,
-                          'command': "az network lb frontend-ip create --name loadBalancerFrontEnd1 --lb-name f5-ext-alb -g %s_F5_External  --public-ip-address f5-alb-ext-pip1" %(resource_group)})
+                          'command': "az network nic ip-config address-pool add --address-pool /subscriptions/%(subscription_id)s/resourceGroups/%(resource_group)s/providers/Microsoft.Network/loadBalancers/f5-ext-alb/backendAddressPools/loadBalancerBackEnd --ids /subscriptions/%(subscription_id)s/resourceGroups/%(resource_group)s_F5_External/providers/Microsoft.Network/networkInterfaces/%(dnsLabel)s-ext0/ipConfigurations/%(dnsLabel)s-self-ipconfig" %({'subscription_id':subscription_id, 'resource_group':resource_group, 'dnsLabel':f5_ext['dnsLabel']})
+    })
     localcommands.append({'check':None,
-                          'command':"az network lb probe create  --lb-name f5-ext-alb  -g %s_F5_External  --name is_alive --port 80 --protocol Http --path /" %(resource_group)})
+                          'command': "az network nic ip-config address-pool add --address-pool /subscriptions/%(subscription_id)s/resourceGroups/%(resource_group)s/providers/Microsoft.Network/loadBalancers/f5-ext-alb/backendAddressPools/loadBalancerBackEnd --ids /subscriptions/%(subscription_id)s/resourceGroups/%(resource_group)s_F5_External/providers/Microsoft.Network/networkInterfaces/%(dnsLabel)s-ext1/ipConfigurations/%(dnsLabel)s-self-ipconfig" %({'subscription_id':subscription_id, 'resource_group':resource_group, 'dnsLabel':f5_ext['dnsLabel']})
+    })
 
     localcommands.append({'check':None,
-                          'command':"az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext0 --lb-name f5-ext-alb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])})
+                          'command': "az network nic ip-config address-pool add --address-pool /subscriptions/%(subscription_id)s/resourceGroups/%(resource_group)s/providers/Microsoft.Network/loadBalancers/f5-int-ilb/backendAddressPools/loadBalancerBackEnd --ids /subscriptions/%(subscription_id)s/resourceGroups/%(resource_group)s_F5_Internal/providers/Microsoft.Network/networkInterfaces/%(dnsLabel)s-ext0/ipConfigurations/%(dnsLabel)s-self-ipconfig" %({'subscription_id':subscription_id, 'resource_group':resource_group, 'dnsLabel':f5_int['dnsLabel']})
+    })
     localcommands.append({'check':None,
-                          'command':"az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext1 --lb-name f5-ext-alb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])})
-    localcommands.append({'check':None,
-                          'command':"az network lb rule create --backend-port 22 --frontend-port 22  --lb-name f5-ext-alb  -g %s_F5_External  --name ssh_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
-    localcommands.append({'check':None,
-                          'command':"az network lb rule create --backend-port 443 --frontend-port 443  --lb-name f5-ext-alb  -g %s_F5_External  --name rdp_gw_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
-    localcommands.append({'check':None,
-                          'command':"az network lb rule create --backend-port 3389 --frontend-port 3389  --lb-name f5-ext-alb  -g %s_F5_External  --name rdp_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
-
-    localcommands.append({'check':None,
-                          'command':"az network lb rule create --backend-port 80 --frontend-port 80  --lb-name f5-ext-alb  -g %s_F5_External  --name http_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd1 --probe-name is_alive" %(resource_group)})
-
-    localcommands.append({'check':None,
-                          'command':"az network lb rule create --backend-port 443 --frontend-port 443  --lb-name f5-ext-alb  -g %s_F5_External  --name ssl_visible_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd1 --probe-name is_alive" %(resource_group)})
-
-    localcommands.append({'check':None,
-                          'command':"az network lb rule create --backend-port 8443 --frontend-port 8443  --lb-name f5-ext-alb  -g %s_F5_External  --name ssl_not_visible_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd1 --probe-name is_alive" %(resource_group)})
-
-
-
-    try:
-        network_client.load_balancers.get('%s_F5_External' %(resource_group),'f5-ext-ilb')
-    except:
-        localcommands.append({'check':None,
-                              'command':"az network lb create --resource-group %s_F5_External --private-ip-address %s --subnet %s --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-ext-ilb" %(resource_group, 
-                                                                                                                                                                                                                                        str(parameters['f5_Ext_Untrusted_IP']),subnet.id)})
-        pass
-
-    try:
-        network_client.load_balancers.get('%s_F5_Internal' %(resource_group),'f5-int-ilb')
-    except:
-        localcommands.append({'check':None,
-                              'command':"az network lb create --resource-group %s_F5_Internal --private-ip-address %s --subnet %s --frontend-ip-name loadBalancerFrontEnd0 --backend-pool-name LoadBalancerBackEnd --name f5-int-ilb" %(resource_group, 
-                                                                                                                                                                                                                                        str(parameters['f5_Int_Untrusted_IP']),internalsubnet.id)})
-        pass
-
-
-    localcommands.append({'check':None,
-                          'command':"az network lb probe create  --lb-name f5-ext-ilb  -g %s_F5_External  --name is_alive --port 80 --protocol Http --path /" %(resource_group)})
-
-    localcommands.append({'check':None,
-                          'command':"az network lb probe create  --lb-name f5-int-ilb  -g %s_F5_Internal  --name is_alive --port 80 --protocol Http --path /" %(resource_group)})
-
-    localcommands.append({'check':None,
-                          'command':"az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext0 --lb-name f5-ext-ilb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])})
-    localcommands.append({'check':None,
-                          'command':"az network nic ip-config address-pool add --resource-group %s_F5_External --nic-name %s-ext1 --lb-name f5-ext-ilb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_ext['dnsLabel'],f5_ext['dnsLabel'])})
-
-    localcommands.append({'check':None,
-                          'command':"az network nic ip-config address-pool add --resource-group %s_F5_Internal --nic-name %s-ext0 --lb-name f5-int-ilb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_int['dnsLabel'],f5_int['dnsLabel'])})
-    localcommands.append({'check':None,
-                          'command':"az network nic ip-config address-pool add --resource-group %s_F5_Internal --nic-name %s-ext1 --lb-name f5-int-ilb --address-pool LoadBalancerBackEnd --ip-config-name %s-self-ipconfig" %(resource_group, f5_int['dnsLabel'],f5_int['dnsLabel'])})
-
-    localcommands.append({'check':None,
-                          'command':"az network lb rule create --backend-port 22 --frontend-port 22  --lb-name f5-ext-ilb  -g %s_F5_External  --name ssh_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
-    localcommands.append({'check':None,
-                          'command':"az network lb rule create --backend-port 80 --frontend-port 80  --lb-name f5-int-ilb  -g %s_F5_Internal  --name http_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
-    localcommands.append({'check':None,
-                          'command':"az network lb rule create --backend-port 443 --frontend-port 443  --lb-name f5-ext-ilb  -g %s_F5_External  --name rdp_gw_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
-    localcommands.append({'check':None,
-                          'command':"az network lb rule create --backend-port 3389 --frontend-port 3389  --lb-name f5-ext-ilb  -g %s_F5_External  --name rdp_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
-    localcommands.append({'check':None,
-                          'command':"az network lb rule create --backend-port 8443 --frontend-port 8443  --lb-name f5-ext-ilb  -g %s_F5_External  --name https_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd0 --probe-name is_alive" %(resource_group)})
+                          'command': "az network nic ip-config address-pool add --address-pool /subscriptions/%(subscription_id)s/resourceGroups/%(resource_group)s/providers/Microsoft.Network/loadBalancers/f5-int-ilb/backendAddressPools/loadBalancerBackEnd --ids /subscriptions/%(subscription_id)s/resourceGroups/%(resource_group)s_F5_Internal/providers/Microsoft.Network/networkInterfaces/%(dnsLabel)s-ext1/ipConfigurations/%(dnsLabel)s-self-ipconfig" %({'subscription_id':subscription_id, 'resource_group':resource_group, 'dnsLabel':f5_int['dnsLabel']})
+    })
 
     output['localcommands'] = localcommands
 
