@@ -19,6 +19,12 @@
 #    - debug: msg="{{failover.stdout}}"
 #      when:
 #       - '"active" in failover.stdout|first'
+    - name: Save the running configuration of the BIG-IP
+      bigip_config:
+         save: yes
+         server: "{{ ansible_host }}"
+         user: "{{ f5_username }}"
+         password: "{{ f5_password }}"
 
     - name: trigger failover
       bigip_command:

@@ -17,7 +17,42 @@
       JumpBoxAdminPassword:
         value: "{{jump_password}}"
   when: not output.ansible_facts.azure_resourcegroups
+- name: Get vars
+  command: az  group deployment show -g chenqa -n Microsoft.Template 
+  register: deployment
 
+- name: Check if ALB exists
+  azure_rm_publicipaddress_facts:
+    resource_group: "{{resource_group}}"
+    name: f5-ext-pip0
+  register: pip
+
+- name: Deploy ALB
+  azure_rm_deployment:
+    state: present
+    location: "{{ location }}"
+    resource_group_name: "{{resource_group}}"
+    template: "{{ lookup('file','alb.json') }}"
+
+    parameters:
+      dnsLabel:
+        value: "f5"
+      externalSubnetName:
+        value: "{{ params.properties.parameters.f5_Ext_Untrusted_SubnetName.value }}"
+      internalSubnetName:
+        value: "{{ params.properties.parameters.f5_Int_Untrusted_SubnetName.value }}"
+      vnetResourceGroupName:
+        value: "{{resource_group}}"
+      vnetName:
+        value: "{{ params.properties.parameters.vnetName.value }}" 
+      internalIpAddressRangeStart:
+        value: "{{ params.properties.parameters.f5_Int_Untrusted_IP.value }}"
+
+  vars:
+     params:
+       "{{deployment.stdout|from_json}}"	
+  when: not pip.ansible_facts.azure_publicipaddresses
+  
 - name: Deploy OMS Environnment
   azure_rm_deployment:
     state: present
