@@ -18,7 +18,7 @@
         value: "{{jump_password}}"
   when: not output.ansible_facts.azure_resourcegroups
 - name: Get vars
-  command: az  group deployment show -g chenqa -n Microsoft.Template 
+  command: "az group deployment show -g {{ resource_group }} -n Microsoft.Template"
   register: deployment
 
 - name: Check if ALB exists
