@@ -46,6 +46,9 @@ Verify that you see the expected resource groups (should appear within ~10 minut
 .. image:: /_static/expected-resource-groups.png
   :scale: 30%
 
+Resources
+~~~~~~~~~
+
 Clicking on the [original resource group] name you should see a set of resources including.
 
 * Virtual Network
@@ -67,6 +70,31 @@ Record the Public IP Addresses for "f5-ext-pip0" and "f5-ext-pip1".  Click on th
   :scale: 30%
 
 .. note:: Your IP Address will differ than the example screenshot.
+
+Troubleshooting the Deployment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you do not see the "_F5_"  resource groups you can log onto the linux jumpbox to check on the status of the deployment or look for errors.  SSH to the "linux-VDSSJumpBox-ip" host.
+
+.. code-block:: none
+
+  % tail -f /var/log/cloud-init-output.log
+  PLAY [localhost] ********************************************************************************************
+  ******************************************************************************************************
+
+  TASK [Gathering Facts] **************************************************************************************
+  ******************************************************************************************************
+  ok: [localhost]
+
+  TASK [f5-azure-scca : Check if resource group exists] *******************************************************
+  ******************************************************************************************************
+  ok: [localhost]
+
+  TASK [f5-azure-scca : Deploy SCCA Environnment] *************************************************************
+  ******************************************************************************************************
+  skipping: [localhost]
+  ...
+
 
 Demo Sites
 ~~~~~~~~~~
@@ -181,7 +209,7 @@ Find the Active device of the External F5 Devices.  It will be either:
 * https://172.16.0.11
 * https://172.16.0.12
 
-From the menu on the left of the screen access "Event Logs -> Network -> Firewall"
+From the menu on the left of the screen access "Security -> Event Logs -> Network -> Firewall"
 
 .. image:: /_static/bigip-logs-firewall-menu.png
   :scale: 75%
@@ -234,3 +262,46 @@ Note that "Floating IP (direct server return)" is set to "Enabled"
 
 .. image:: /_static/azure-alb-rule-detail.png
   :scale: 50%
+
+WAF logs
+~~~~~~~~
+
+In addition to providing network firewall capabilities, F5 BIG-IP ASM module provides a web application firewall that can deter L7 attacks.  Unlike a traditional firewall; a WAF is capable of providing a mixture of positive/negative security policies as well as intercept and modify response data as needed (DLP / BOT mitigation).
+
+
+Find the Active device of the Internal F5 Devices.  It will be either:
+
+* https://172.16.0.13
+* https://172.16.0.14
+
+From the menu on the left of the screen access "Security -> Event Logs -> Application -> Requests"
+
+.. image:: /_static/bigip-asm-logs-menu.png
+  :scale: 50%
+
+Initially you will see no data.  Click on the "X" next to Illegal Requests to show all results.
+
+.. image:: /_static/bigip-asm-logs-no-requests.png
+  :scale: 50%
+
+You can browse through the requests to see more data.
+
+.. image:: /_static/bigip-asm-logs-details.png
+  :scale: 50%
+
+Simulated L7 Attack (optional)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following will simulate an attack that will trigger a WAF policy.
+
+First make a request to https\://[f5-ext-pip1]/txt.
+
+.. image:: /_static/asm-simulated-attack-postman.png
+  :scale: 50%
+
+Change the method to "propfind" and submit.
+
+.. image:: /_static/asm-simulated-attack.png
+  :scale: 50%
+
+This will trigger a block for an illegal method.  This type of attack can be used when an attacker is trying to find insecure webdav file shares.
