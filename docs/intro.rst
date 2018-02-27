@@ -10,9 +10,9 @@ used for Management access and F5 devices that will be used to secure ingress an
 Connect to Azure Portal
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-First login to the Azure Government Portal at: https://portal.azure.us 
+First login to the Azure Portal at: https://portal.azure.us (US Government) OR https://portal.azure.com (Commercial)
 
-.. note:: This requires a Azure Government Subscription (".us" vs. ".com")
+.. note:: This requires a Azure Government Subscription OR Azure Subscription
 
 Enable Programmatic Access to F5 Resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,11 +35,17 @@ In the Market place search enter “f5 byol best” and hit the “enter” key.
  .. image:: /_static/marketplace-f5-byol.png
   :scale: 50%
  
-Click on “F5 BIG-IP ADC+SEC BEST – BYOL”
+Click on "F5 BIG-IP ADC BEST - BYOL"
+
+.. warning:: DO NOT SELECT “F5 BIG-IP ADC+SEC BEST – BYOL”
+
+Verify that you have the correct version by looking at the description and you should see "..version: **13.1**..".  
+
 At the very bottom of the page click on “Want to deploy programmatically?”
  
  .. figure:: /_static/marketplace-want-to-deploy.png
    :scale: 50%
+  
   
 Enable Programmatic Deployment
 ******************************
@@ -87,6 +93,8 @@ Enter a name (i.e. "bigipsp") and a Sign-on URL (i.e. "http://bigipsp").
 
  .. figure:: /_static/app-registrations-create.png
   :scale: 50%
+
+.. note:: If you are using a shared subscription; please use a unique identifier i.e. "student01-bigipsp"
 
 Retrieve App ID
 ****************
@@ -156,7 +164,13 @@ Custom Deployment
 
 Click on the following link:
 
+**Azure Government**
+
 * https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2Froles%2Ff5-azure-scca%2Ffiles%2Fazuredeploy.json
+
+**Azure Cloud**
+
+* https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2Froles%2Ff5-azure-scca%2Ffiles%2Fazuredeploy.json
 
 You should see.
 
@@ -166,14 +180,11 @@ You should see.
 Username and Password
 *********************
  
-Fill in the required username/password for the VDSS and Mission Owner Jump Boxes.
+Fill in the required username/password for the VDSS Jump Boxes.  These devices will be used for administrative access to the environment.
 
 .. figure:: /_static/custom-deployment-user-pass-1.png
   :scale: 50%
   
-.. figure:: /_static/custom-deployment-user-pass-2.png
-  :scale: 50%
-
 F5 Information
 **************  
 Next fill in the three pieces of information that was previously collected for the Service Principal and F5 license keys.
