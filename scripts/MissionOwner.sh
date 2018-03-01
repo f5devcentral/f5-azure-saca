@@ -83,12 +83,12 @@ case $1 in
 	       --next-hop-ip-address $F5IntTrustedIP \
 	       --resource-group $SCCAinfrastructureRGname \
 	       --route-table-name $Internal_Subnets_RouteTableName
-	    az network public-ip create  -g ${SCCAinfrastructureRGname}_F5_External -n f5-alb-ext-pip2 --allocation-method static
-	    az network lb frontend-ip create --name loadBalancerFrontEnd2 --lb-name f5-ext-alb -g ${SCCAinfrastructureRGname}_F5_External  --public-ip-address f5-alb-ext-pip2
+	    az network public-ip create  -g ${SCCAinfrastructureRGname} -n f5-ext-pip2 --allocation-method static
+	    az network lb frontend-ip create --name loadBalancerFrontEnd2 --lb-name f5-ext-alb -g ${SCCAinfrastructureRGname}  --public-ip-address f5-alb-ext-pip2
 
-	    az network lb rule create --backend-port 80 --frontend-port 80  --lb-name f5-ext-alb  -g ${SCCAinfrastructureRGname}_F5_External  --name mo_http_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd2 --probe-name is_alive
+	    az network lb rule create --backend-port 80 --frontend-port 80  --lb-name f5-ext-alb  -g ${SCCAinfrastructureRGname}  --name mo_http_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd3 -probe-name is_alive
 
-            az network lb rule create --backend-port 443 --frontend-port 443  --lb-name f5-ext-alb  -g ${SCCAinfrastructureRGname}_F5_External  --name mo_https_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd2 --probe-name is_alive
+            az network lb rule create --backend-port 443 --frontend-port 443  --lb-name f5-ext-alb  -g ${SCCAinfrastructureRGname}  --name mo_https_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd3 --probe-name is_alive
 
 
     ;;
@@ -119,13 +119,13 @@ case $1 in
 	       --vnet-name $SCCAinfrastructureVNetName
 
 	    echo "delete rules"
-	    az network lb rule delete --lb-name f5-ext-alb  -g ${SCCAinfrastructureRGname}_F5_External  --name mo_http_vs
-	    az network lb rule delete --lb-name f5-ext-alb  -g ${SCCAinfrastructureRGname}_F5_External  --name mo_https_vs
+	    az network lb rule delete --lb-name f5-ext-alb  -g ${SCCAinfrastructureRGname}  --name mo_http_vs
+	    az network lb rule delete --lb-name f5-ext-alb  -g ${SCCAinfrastructureRGname}  --name mo_https_vs
 	    echo "delete frontend"	    
-	    az network lb frontend-ip delete --name loadBalancerFrontEnd2 --lb-name f5-ext-alb -g ${SCCAinfrastructureRGname}_F5_External
+	    az network lb frontend-ip delete --name loadBalancerFrontEnd3 --lb-name f5-ext-alb -g ${SCCAinfrastructureRGname}
 	    # Delete pip
 	    echo "delete pip"
-	    az network public-ip delete  -g ${SCCAinfrastructureRGname}_F5_External -n f5-alb-ext-pip2	    
+	    az network public-ip delete  -g ${SCCAinfrastructureRGname} -n f5-ext-pip2	    
 	    # Delete Resource Group
 	    echo "delete group"
 	    az group delete --y --name $IL5MissionOwnerRGName --no-wait
