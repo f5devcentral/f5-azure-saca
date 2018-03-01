@@ -84,7 +84,7 @@ case $1 in
 	       --resource-group $SCCAinfrastructureRGname \
 	       --route-table-name $Internal_Subnets_RouteTableName
 	    az network public-ip create  -g ${SCCAinfrastructureRGname} -n f5-ext-pip2 --allocation-method static
-	    az network lb frontend-ip create --name loadBalancerFrontEnd3 --lb-name f5-ext-alb -g ${SCCAinfrastructureRGname}  --public-ip-address f5-alb-ext-pip2
+	    az network lb frontend-ip create --name loadBalancerFrontEnd3 --lb-name f5-ext-alb -g ${SCCAinfrastructureRGname}  --public-ip-address f5-ext-pip2
 
 	    az network lb rule create --backend-port 80 --frontend-port 80  --lb-name f5-ext-alb  -g ${SCCAinfrastructureRGname}  --name mo_http_vs --protocol Tcp --backend-pool-name LoadBalancerBackEnd --floating-ip true --frontend-ip-name loadBalancerFrontEnd3 -probe-name is_alive
 
