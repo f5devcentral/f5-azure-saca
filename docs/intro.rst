@@ -17,7 +17,7 @@ First login to the Azure Portal at: https://portal.azure.us (US Government) OR h
 Enable Programmatic Access to F5 Resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Before you launch the template; you will need to enable programmatic deployment for your F5 devices.  
+Before you launch the template; you will need to enable programmatic deployment for your F5 devices.
 
 Go to Marketplace
 *****************
@@ -34,32 +34,32 @@ In the Market place search enter “f5 byol best” and hit the “enter” key.
 
  .. image:: /_static/marketplace-f5-byol.png
   :scale: 50%
- 
+
 Click on "F5 BIG-IP ADC BEST - BYOL"
 
 .. warning:: DO NOT SELECT “F5 BIG-IP ADC+SEC BEST – BYOL”
 
-Verify that you have the correct version by looking at the description and you should see "..version: **13.1**..".  
+Verify that you have the correct version by looking at the description and you should see "..version: **13.1**..".
 
 At the very bottom of the page click on “Want to deploy programmatically?”
- 
+
  .. figure:: /_static/marketplace-want-to-deploy.png
    :scale: 50%
-  
-  
+
+
 Enable Programmatic Deployment
 ******************************
 Click on “Enable” next to the Subscription
- 
+
  .. figure:: /_static/enable-programattic.png
   :scale: 50%
 
-Create Service Principal
-~~~~~~~~~~~~~~~~~~~~~~~~
+Create a Service Principal
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A Service Principal will be used to deploy F5 BIG-IP devices and be used by the BIG-IP's to dynamically update Azure User Defined Routes (UDR).  
+A Service Principal will be used to deploy F5 BIG-IP devices and be used by the BIG-IP's to dynamically update Azure User Defined Routes (UDR).
 
-The following steps are how to create a Service Principal via the Azure Portal.  
+The following steps are how to create a Service Principal via the Azure Portal.
 
 You will need to retrieve the following three pieces of information that will be used later.
 
@@ -67,7 +67,74 @@ You will need to retrieve the following three pieces of information that will be
 #. Application Key (a.k.a. Client Secret)
 #. Tenant ID
 
-The following will guide you on how to retrieve this information.
+It is recommended to create a text file (i.e. using Notepad) that contains:
+
+.. code-block:: none
+
+  tenant id: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+  client id: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+     secret: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+The following will guide you on how to retrieve this information via the Azure Portal OR Azure CLI (choose one method)
+
+Create Service Principal via Azure CLI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use this method if you prefer using a command line interface or have access to Cloud Shell (available in Azure Cloud, not available in Microsoft Azure Government).
+
+To access Azure Cloud Shell see: https://docs.microsoft.com/en-us/azure/cloud-shell/overview
+
+First verify the subscription.
+
+.. code-block:: shell
+
+  student01@Azure:~$ az account show
+  {
+    "environmentName": "AzureCloud",
+    "id": "XXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXXXX",
+    "isDefault": true,
+    "name": "my_subscription",
+    "state": "Enabled",
+    "tenantId": "YYYYY-YYYY-YYYY-YYYY-YYYYYYYYYY",
+    "user": {    "name": "studnt01@example.com",
+      "type": "user"
+    }}
+
+If you do not see the correct subscription run to view subscriptions
+
+.. code-block:: shell
+
+  student01@Azure:~$ az account list
+
+Then set the default to the correct subscription.
+
+.. code-block:: shell
+
+  student01@Azure:~$ az account set -s XXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXXXX
+
+To create your service principal run (replace "student01" with a unique value or "bigip")
+
+.. code-block:: shell
+
+    student01@Azure:~$ az ad sp create-for-rbac -n "student01-sp"
+    Retrying role assignment creation: 1/36
+    {
+      "appId": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+      "displayName": "student01-sp",
+      "name": "http://student01-sp",
+      "password": "SSSSSSSS-SSSS-SSSS-SSSS-SSSSSSSSSSSS",
+      "tenant": "TTTTTTTT-TTTT-TTTT-TTTT-TTTTTTTTTTTT"
+    }
+
+.. tip:: When using Azure Cloud Shell you will need to highlight the text in your browser and "right-click" and select "copy" to copy and paste the text from the browser.
+
+Save the values of "tenant", "password", and "appId" to your text file that you created earlier.
+
+Create Service Principal via Azure Portal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you used the Azure CLI to create your Service Principal you can skip the following.
 
 .. note:: The following is adapted from: https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application
 
@@ -78,7 +145,7 @@ In the menu on the left click on "Azure Active Directory".
 
  .. figure:: /_static/azure-active-directory.png
   :scale: 50%
-  
+
 Create App Registration
 ************************
 
@@ -86,7 +153,7 @@ Next click on "App Registrations"
 
  .. figure:: /_static/app-registrations.png
   :scale: 50%
-  
+
 And click on "New application registration".
 
 Enter a name (i.e. "bigipsp") and a Sign-on URL (i.e. "http://bigipsp").
@@ -144,17 +211,15 @@ Under "Select" type the name of the principal that you previously created (i.e. 
 
 .. figure:: /_static/iam-add-permissions.png
   :scale: 50%
-  
-Get Tenant ID
-**************
+
+Get Directory ID
+****************
 
 The third piece of information that you will need is the "Tenant ID".
 
 Under Azure Active Directory retrieve the "Directory ID".
 
 .. note:: Please see: https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-tenant-id
-
-
 
 Launch Deployment
 ~~~~~~~~~~~~~~~~~
@@ -176,17 +241,17 @@ You should see.
 
 .. figure:: /_static/custom-deployment.png
   :scale: 30%
- 
+
 Username and Password
 *********************
- 
+
 Fill in the required username/password for the VDSS Jump Boxes.  These devices will be used for administrative access to the environment.
 
 .. figure:: /_static/custom-deployment-user-pass-1.png
   :scale: 50%
-  
+
 F5 Information
-**************  
+**************
 Next fill in the three pieces of information that was previously collected for the Service Principal and F5 license keys.
 
 .. figure:: /_static/custom-deployment-f5-info.png
@@ -199,11 +264,11 @@ Accept the Terms and Conditions and click Purchase.
 
 .. figure:: /_static/custom-deployment-tandc.png
   :scale: 50%
-  
+
 Verify Template Complete
 ************************
 
-It will take ~40 - ~60 minutes for the template to complete.  
+It will take ~40 - ~60 minutes for the template to complete.
 
 Under Resource Groups find the "Deployments" item and verify that you see "Succeeded".
 
