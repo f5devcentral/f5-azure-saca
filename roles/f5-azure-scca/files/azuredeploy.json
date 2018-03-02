@@ -10,23 +10,24 @@
       "type": "securestring"
     },
 
-    "tenantId": {
+
+    "appId": {
       "metadata": {
-        "description": "Your Azure service principal application tenant ID."
+        "description": "Azure Service Principal Application ID (appId)."
       },
       "type": "string"
     },
-    "clientId": {
+    "appPassword": {
       "metadata": {
-        "description": "Your Azure service principal application client ID."
-      },
-      "type": "string"
-    },
-    "servicePrincipalSecret": {
-      "metadata": {
-        "description": "Your Azure service principal application secret."
+        "description": "Service Principal Application secret/key (password)."
       },
       "type": "securestring"
+    },
+    "appTenantId": {
+      "metadata": {
+        "description": "Active Directory ID (tenant)."
+      },
+      "type": "string"
     },
     "licenseKey1": {
       "defaultValue": "",
@@ -961,7 +962,7 @@
           "fileUris": "[split(parameters('VDSSJumpBoxLinuxFileUris'), ' ')]"
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('bash savevars.sh ',parameters('VDSSJumpBoxAdminUserName'),' ', base64(parameters('VDSSJumpBoxAdminPassword')),' ',parameters('clientId'),' ',parameters('servicePrincipalSecret'),' ',parameters('tenantId'),' ', parameters('licensekey1'),' ', parameters('licensekey2'),' ', parameters('licensekey3'),' ', parameters('licensekey4'))]"
+          "commandToExecute": "[concat('bash savevars.sh ',parameters('VDSSJumpBoxAdminUserName'),' ', base64(parameters('VDSSJumpBoxAdminPassword')),' ',parameters('appId'),' ',parameters('appPassword'),' ',parameters('appTenantId'),' ', parameters('licensekey1'),' ', parameters('licensekey2'),' ', parameters('licensekey3'),' ', parameters('licensekey4'))]"
         }
       }
     },
