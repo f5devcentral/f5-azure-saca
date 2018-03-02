@@ -10,23 +10,24 @@
       "type": "securestring"
     },
 
-    "tenantId": {
-      "metadata": {
-        "description": "Your Azure service principal application tenant ID."
-      },
-      "type": "string"
-    },
+
     "clientId": {
       "metadata": {
-        "description": "Your Azure service principal application client ID."
+        "description": "Azure Service Principal Application ID (appId)."
       },
       "type": "string"
     },
     "servicePrincipalSecret": {
       "metadata": {
-        "description": "Your Azure service principal application secret."
+        "description": "Service Principal Application secret/key (password)."
       },
       "type": "securestring"
+    },
+    "tenantId": {
+      "metadata": {
+        "description": "Active Directory ID (tenant)."
+      },
+      "type": "string"
     },
     "licenseKey1": {
       "defaultValue": "",
