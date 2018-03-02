@@ -71,7 +71,7 @@ output['use_oms'] = 'False'
 
 if os.path.exists('.use_oms'):
     output['use_oms'] = 'True'
-    
+
 if os.path.exists('.password.txt'):
     output['f5_password'] = "`base64 --decode .password.txt`"
 TEMPLATE="""export AZURE_SUBSCRIPTION_ID="%(subscription_id)s"
@@ -99,7 +99,7 @@ export F5_VALIDATE_CERTS=no
 
 loc=$(curl -H metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" --stderr /dev/null |jq .compute.location)
 
-echo $loc | grep -E "(gov|dod)" > /dev/null;
+echo $loc | grep -i -E "(gov|dod)" > /dev/null;
 #echo $?
 if [ $? == 0 ]
   then
