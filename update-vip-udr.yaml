@@ -7,6 +7,7 @@
   connection: local
   gather_facts: yes
   tasks:
+#    - debug: msg="{{ansible_host}}"
     - name: check failover status
       bigip_command:
        server: "{{ ansible_host }}"
@@ -15,7 +16,7 @@
        commands:
         - show /sys failover
       register: failover
-
+      delegate_to: localhost
 #    - debug: msg="{{failover.stdout}}"
 #      when:
 #       - '"active" in failover.stdout|first'
@@ -25,7 +26,7 @@
          server: "{{ ansible_host }}"
          user: "{{ f5_username }}"
          password: "{{ f5_password }}"
-
+      delegate_to: localhost
     - name: trigger failover
       bigip_command:
        server: "{{ ansible_host }}"
@@ -35,6 +36,6 @@
         - run /sys failover standby traffic-group traffic-group-1
       when:
        - '"active" in failover.stdout|first'
-
+      delegate_to: localhost
 #    - debug: msg="{{ inventory_hostname }} has powerstate {{ powerstate }}"
 #    - shell: "f5-rest-node /config/cloud/azure/node_modules/f5-cloud-libs/node_modules/f5-cloud-libs-azure/scripts/failoverProvider.js"

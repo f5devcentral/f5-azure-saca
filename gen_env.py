@@ -108,6 +108,8 @@ if [ $? == 0 ]
   export is_gov=0;
 fi
 
+source venv/bin/activate
+
 if [ $is_gov == 1 ]
   then
   az cloud set -n AzureUSGovernment;

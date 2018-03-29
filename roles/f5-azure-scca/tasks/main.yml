@@ -50,7 +50,7 @@
 
   vars:
      params:
-       "{{deployment.stdout|from_json}}"	
+       "{{deployment.stdout|from_json}}"
   when: not pip.ansible_facts.azure_publicipaddresses
   
 - name: Deploy OMS Environnment

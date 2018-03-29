@@ -1,7 +1,13 @@
 #!/bin/bash
 cd $HOME/f5-azure-saca
+virtualenv venv
+source venv/bin/activate
+pip install ansible==2.4.3
+pip install f5-sdk bigsuds netaddr deepdiff
+pip install ansible[azure]
 ./gen_env.py > env.sh
 source env.sh
+
 #env
 ansible-playbook deploy.yaml
 ansible-playbook setup.yaml
