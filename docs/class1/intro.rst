@@ -30,14 +30,12 @@ From the top search field in the Azure Portal search for “marketplace”
 Find F5 BIG-IP
 **************
 
-In the Market place search enter “f5 byol best” and hit the “enter” key.
+In the Market place search enter “f5 byol all” and hit the “enter” key.
 
  .. image:: /_static/marketplace-f5-byol.png
   :scale: 50%
 
-Click on "F5 BIG-IP ADC BEST - BYOL"
-
-.. warning:: DO NOT SELECT “F5 BIG-IP ADC+SEC BEST – BYOL”
+Click on "F5 BIG-IP VE – ALL (BYOL, 2 Boot Locations)"
 
 Verify that you have the correct version by looking at the description and you should see "..version: **13.1**..".
 
