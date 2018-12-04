@@ -96,12 +96,12 @@
         },
         "bigIpVersion": {
             "allowedValues": [
-                "13.1.0200",
+                "13.1.007001",
                 "13.0.0300",
                 "12.1.2200",
                 "latest"
             ],
-            "defaultValue": "13.1.0200",
+            "defaultValue": "13.1.007001",
             "metadata": {
                 "description": "F5 BIG-IP version you want to use."
             },
@@ -311,7 +311,7 @@
             "13.0.0300": {
                 "Port": 8443
             },
-            "13.1.0200": {
+            "13.1.007001": {
                 "Port": 8443
             },
             "443": {
@@ -337,8 +337,8 @@
         "installCloudLibs": "[concat(variables('singleQuote'), '#!/bin/bash\necho about to execute\nchecks=0\nwhile [ $checks -lt 120 ]; do echo checking mcpd\n/usr/bin/tmsh -a show sys mcp-state field-fmt | grep -q running\nif [ $? == 0 ]; then\necho mcpd ready\nbreak\nfi\necho mcpd not ready yet\nlet checks=checks+1\nsleep 1\ndone\necho loading verifyHash script\n/usr/bin/tmsh load sys config merge file /config/verifyHash\nif [ $? != 0 ]; then\necho cannot validate signature of /config/verifyHash\nexit 1\nfi\necho loaded verifyHash\n\nconfig_loc=\"/config/cloud/\"\nhashed_file_list=\"${config_loc}f5-cloud-libs.tar.gz f5.service_discovery.tmpl ${config_loc}f5-cloud-libs-azure.tar.gz\"\nfor file in $hashed_file_list; do\necho \"verifying $file\"\n/usr/bin/tmsh run cli script verifyHash $file\nif [ $? != 0 ]; then\necho \"$file is not valid\"\nexit 1\nfi\necho \"verified $file\"\ndone\necho \"expanding $hashed_file_list\"\ntar xfz /config/cloud/f5-cloud-libs.tar.gz -C /config/cloud/azure/node_modules\ntar xfz /config/cloud/f5-cloud-libs-azure.tar.gz -C /config/cloud/azure/node_modules/f5-cloud-libs/node_modules\ntouch /config/cloud/cloudLibsReady', variables('singleQuote'))]",
         "dnsLabel": "[toLower(parameters('dnsLabel'))]",
         "imageNameToLower": "[toLower(parameters('imageName'))]",
-        "skuToUse": "[concat('f5-bigip-virtual-edition-', variables('imageNameToLower'),'-byol')]",
-        "offerToUse": "[if(or(equals(parameters('bigIpVersion'), '12.1.2200'), equals(parameters('bigIpVersion'), '13.0.0300')), 'f5-big-ip', concat('f5-big-ip-', variables('imageNameToLower')))]",
+        "skuToUse": "f5-big-all-2slot-byol",
+        "offerToUse": "f5-big-ip-byol",
         "bigIpNicPortValue": "[variables('bigIpNicPortMap')['3'].Port]",
         "bigIpMgmtPort": "[variables('bigIpVersionPortMap')[variables('bigIpNicPortValue')].Port]",
         "instanceName": "[toLower(parameters('instanceName'))]",
@@ -394,13 +394,13 @@
         "routeCmdArray": {
             "12.1.2200": "[concat('tmsh create sys management-route waagent_route network 168.63.129.16/32 gateway ', variables('mgmtRouteGw'), '; tmsh save sys config')]",
             "13.0.0300": "route",
-            "13.1.0200": "route",
+            "13.1.007001": "route",
             "latest": "route"
         },
         "failoverCmdArray": {
             "12.1.2200": "echo \"Failover db variable not required.\"",
             "13.0.0300": "echo \"Failover db variable not required.\"",
-            "13.1.0200": "tmsh modify sys db failover.selinuxallowscripts value enable",
+            "13.1.007001": "tmsh modify sys db failover.selinuxallowscripts value enable",
             "latest": "tmsh modify sys db failover.selinuxallowscripts value enable"
         },
         "instanceTypeMap": {
