@@ -15,7 +15,11 @@ This is `F5 Contributed Software <https://support.f5.com/csp/article/K80012344>`
 
 .. toctree::
    :maxdepth: 2
+   :numbered:
    :caption: Contents:
    :glob:
 
-   class*/class*
+   overview*
+   intro*
+   architecture*
+   details*
