@@ -5,6 +5,8 @@ source venv/bin/activate
 pip install ansible==2.4.3
 pip install f5-sdk bigsuds netaddr deepdiff
 pip install ansible[azure]
+pip install azure-mgmt-resource
+pip install msrestazure --upgrade --force
 ./gen_env.py > env.sh
 source env.sh
 
