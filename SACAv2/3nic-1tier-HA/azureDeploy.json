@@ -33,7 +33,7 @@
             }
         },
         "declarationUrl": {
-            "defaultValue": "https://raw.githubusercontent.com/Mikej81/f5-saca-future/master/AS3/sccaBaseline.json",
+            "defaultValue": "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/AS3/sccaBaseline.json",
             "metadata": {
                 "description": "URL for the AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration."
             },
