@@ -461,7 +461,10 @@
             "name": "[concat(variables('extPublicIPAddressNamePrefix'), copyIndex())]",
             "properties": {
                 "idleTimeoutInMinutes": 30,
-                "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
+                "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
+                "dnsSettings": {
+                    "domainNameLabel": "[concat(variables('dnsLabelPrefix'), '-0')]"
+                }
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/publicIPAddresses"
@@ -1303,5 +1306,15 @@
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Compute/virtualMachines/extensions"
         }
-    ]
+    ],
+"outputs": {
+        "RDP-URL": {
+            "type": "String",
+            "value": "[concat('rdp://',reference(concat(variables('extPublicIPAddressIdPrefix'), '0')).dnsSettings.fqdn, ':',3389)]"
+        },
+        "SSH-URL": {
+            "type": "String",
+            "value": "[concat('ssh://',reference(concat(variables('extPublicIPAddressIdPrefix'), '0')).dnsSettings.fqdn,' ',22)]"
+        }
+    }
 }
