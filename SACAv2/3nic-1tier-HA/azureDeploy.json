@@ -1310,11 +1310,11 @@
 "outputs": {
         "RDP-URL": {
             "type": "String",
-            "value": "[concat('rdp://',reference(concat(variables('extPublicIPAddressIdPrefix'), '0')).dnsSettings.fqdn, ':',3389)]"
+            "value": "[concat('rdp://',reference(concat(variables('extPublicIPAddressIdPrefix'), '0')).dnsSettings.fqdn)]"
         },
         "SSH-URL": {
             "type": "String",
-            "value": "[concat('ssh://',reference(concat(variables('extPublicIPAddressIdPrefix'), '0')).dnsSettings.fqdn,' ',22)]"
+            "value": "[concat('ssh://', variables('adminUsername'), '@', reference(concat(variables('extPublicIPAddressIdPrefix'), '0')).dnsSettings.fqdn)]"
         }
     }
 }
