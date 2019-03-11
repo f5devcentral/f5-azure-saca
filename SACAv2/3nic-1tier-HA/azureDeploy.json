@@ -33,7 +33,7 @@
             }
         },
         "declarationUrl": {
-            "defaultValue": "https://raw.githubusercontent.com/Mikej81/f5-saca-future/master/AS3/sccaBaseline.json",
+            "defaultValue": "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/AS3/sccaBaseline.json",
             "metadata": {
                 "description": "URL for the AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration."
             },
@@ -461,7 +461,10 @@
             "name": "[concat(variables('extPublicIPAddressNamePrefix'), copyIndex())]",
             "properties": {
                 "idleTimeoutInMinutes": 30,
-                "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
+                "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
+                "dnsSettings": {
+                    "domainNameLabel": "[concat(variables('dnsLabelPrefix'), '-0')]"
+                }
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/publicIPAddresses"
@@ -1303,5 +1306,15 @@
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Compute/virtualMachines/extensions"
         }
-    ]
+    ],
+"outputs": {
+        "RDP-URL": {
+            "type": "String",
+            "value": "[concat('rdp://',reference(concat(variables('extPublicIPAddressIdPrefix'), '0')).dnsSettings.fqdn)]"
+        },
+        "SSH-URL": {
+            "type": "String",
+            "value": "[concat('ssh://', variables('adminUsername'), '@', reference(concat(variables('extPublicIPAddressIdPrefix'), '0')).dnsSettings.fqdn)]"
+        }
+    }
 }

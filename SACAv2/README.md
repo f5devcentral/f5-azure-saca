@@ -99,14 +99,14 @@ You have three options for deploying this solution:
 
 - Using the Azure deploy buttons
 
-### Azure Government deploy buttons
+### SACAv2 Azure Government deploy buttons
 
 Use the appropriate button below to deploy:
 
 - **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
-- **1 Tier** This deploys the 3-NIC 1 Tier use-case.
+- **1 Tier** This deploys the 3-NIC 1 Tier use-case:  Collapsed Firewall, WAF, and IPS.
 
-  [![Deploy to Azure Gov](http://azuredeploy.net/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMikej81%2Ff5-saca-future%2Fmaster%2F3nic-1tier-HA%2FazureDeploy.json)
+  [![Deploy to Azure Gov](http://azuredeploy.net/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMikej81%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3nic-1tier-HA%2FazureDeploy.json)
 
 
 ### Template parameters
@@ -152,7 +152,7 @@ As an alternative to deploying through the Azure Portal (GUI) each solution prov
 
 The following is an example configuration diagram for this solution deployment. In this scenario, all access to the BIG-IP VE cluster (Active/Active) is through an ALB. For diagrams of alternate deployment topologies, see [alternate topologies](../../alternate-deployment-topologies.md).
 
-![Configuration Example](./images/azure-example-diagram.png)
+![Configuration Example](./SACAv2/images/azure-example-diagram.png)
 
 ## Post-Deployment Configuration
 
