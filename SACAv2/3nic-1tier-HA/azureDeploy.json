@@ -396,7 +396,7 @@
         "networkApiVersion": "2017-11-01",
         "newCustomImageName": "[concat(variables('dnsLabelPrefix'), 'image')]",
         "newDataStorageAccountName": "[concat(uniqueString(variables('dnsLabelPrefix'), resourceGroup().id, deployment().name), 'data000')]",
-        "numberOfExternalIps": "1",
+        "numberOfExternalIps": 1,
         "offerToUse": "[concat('f5-big-ip-', variables('imageNameArray').offerPostfix[variables('imageNameSub')])]",
         "osProfiles": {
             "password": {
