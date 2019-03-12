@@ -116,39 +116,10 @@
             },
             "type": "string"
         },
-        "ntpServer": {
-            "defaultValue": "0.pool.ntp.org",
-            "metadata": {
-                "description": "Leave the default NTP server the BIG-IP uses, or replace the default NTP server with the one you want to use."
-            },
-            "type": "string"
-        },
-        "numberOfExternalIps": {
-            "allowedValues": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5
-            ],
-            "defaultValue": 1,
-            "metadata": {
-                "description": "The number of public/private IP addresses you want to deploy for the application traffic (external) NIC on the BIG-IP VE to be used for virtual servers."
-            },
-            "type": "int"
-        },
         "restrictedSrcAddress": {
             "defaultValue": "*",
             "metadata": {
                 "description": "This field restricts management access to a specific network or address. Enter an IP address or address range in CIDR notation, or asterisk for all sources"
-            },
-            "type": "string"
-        },
-        "timeZone": {
-            "defaultValue": "UTC",
-            "metadata": {
-                "description": "If you would like to change the time zone the BIG-IP uses, enter the time zone you want to use. This is based on the tz database found in /usr/share/zoneinfo (see the full list [here](https://github.com/F5Networks/f5-azure-arm-templates/blob/master/azure-timezone-list.md)). Example values: UTC, US/Pacific, US/Eastern, Europe/London or Asia/Singapore."
             },
             "type": "string"
         },
@@ -180,24 +151,24 @@
             },
             "type": "string"
         },
-        "ManagementAddressSubnet": {
-            "defaultValue": "192.168.1.0/24",
-            "metadata": {
-                "description": "The CIDR block the BIG-IP VEs use when creating the Management Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
-            },
-            "type": "string"
-        },
-        "ManagementAddressStartIP": {
-            "defaultValue": "192.168.1.4",
-            "metadata": {
-                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
-            },
-            "type": "string"
-        },
         "VDMSAddressSubnet": {
             "defaultValue": "192.168.4.0/24",
             "metadata": {
                 "description": "The CIDR block the BIG-IP VEs use when creating the VDSS Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
+            },
+            "type": "string"
+        },
+        "ntpServer": {
+            "defaultValue": "0.pool.ntp.org",
+            "metadata": {
+                "description": "Leave the default NTP server the BIG-IP uses, or replace the default NTP server with the one you want to use."
+            },
+            "type": "string"
+        },
+        "timeZone": {
+            "defaultValue": "UTC",
+            "metadata": {
+                "description": "If you would like to change the time zone the BIG-IP uses, enter the time zone you want to use. This is based on the tz database found in /usr/share/zoneinfo (see the full list [here](https://github.com/F5Networks/f5-azure-arm-templates/blob/master/azure-timezone-list.md)). Example values: UTC, US/Pacific, US/Eastern, Europe/London or Asia/Singapore."
             },
             "type": "string"
         }
@@ -372,11 +343,13 @@
         "mgmtPublicIPAddressId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('mgmtPublicIPAddressName'))]",
         "mgmtPublicIPAddressName": "[concat(variables('dnsLabelPrefix'), '-mgmt-pip')]",
         "mgmtSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('mgmtSubnetName'))]",
-        "mgmtSubnetName": "mgmt",
-        "mgmtSubnetPrefix": "[parameters('ManagementAddressSubnet')]",
-        "mgmtSubnetPrivateAddress": "[parameters('ManagementAddressStartIP')]",
-        "mgmtSubnetPrivateAddressPrefix": "[substring(parameters('ManagementAddressStartIP'), 0, lastindexOf(parameters('ManagementAddressStartIP'), '.'))]",
-        "mgmtSubnetStartDirty": "[substring(parameters('ManagementAddressStartIP'), lastIndexOf(parameters('ManagementAddressStartIP'), '.'), sub(length(parameters('ManagementAddressStartIP')), lastIndexOf(parameters('ManagementAddressStartIP'), '.') ))]",
+        "mgmtSubnetName": "management",
+        "ManagementAddressSubnet": "192.168.1.0/24",
+        "ManagementAddressStartIP": "192.168.1.4",
+        "mgmtSubnetPrefix": "[variables('ManagementAddressSubnet')]",
+        "mgmtSubnetPrivateAddress": "[variables('ManagementAddressStartIP')]",
+        "mgmtSubnetPrivateAddressPrefix": "[substring(variables('ManagementAddressStartIP'), 0, lastindexOf(variables('ManagementAddressStartIP'), '.'))]",
+        "mgmtSubnetStartDirty": "[substring(variables('ManagementAddressStartIP'), lastIndexOf(variables('ManagementAddressStartIP'), '.'), sub(length(variables('ManagementAddressStartIP')), lastIndexOf(variables('ManagementAddressStartIP'), '.') ))]",
         "mgmtSubnetStartInt":"[replace(variables('mgmtSubnetStartDirty'), '.','')]",
         "mgmtSubnetPrivateAddress1": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 5))]",
         "mgmtSubnetPrivateAddress2": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 50))]",
@@ -423,7 +396,7 @@
         "networkApiVersion": "2017-11-01",
         "newCustomImageName": "[concat(variables('dnsLabelPrefix'), 'image')]",
         "newDataStorageAccountName": "[concat(uniqueString(variables('dnsLabelPrefix'), resourceGroup().id, deployment().name), 'data000')]",
-        "numberOfExternalIps": "[parameters('numberOfExternalIps')]",
+        "numberOfExternalIps": "1",
         "offerToUse": "[concat('f5-big-ip-', variables('imageNameArray').offerPostfix[variables('imageNameSub')])]",
         "osProfiles": {
             "password": {
@@ -526,7 +499,7 @@
                     "addressPrefixes": [
                         "[parameters('NorthUntrustedAddressSubnet')]",
                         "[parameters('NorthTrustedAddressSubnet')]",
-                        "[parameters('ManagementAddressSubnet')]",
+                        "[variables('ManagementAddressSubnet')]",
                         "[parameters('VDMSAddressSubnet')]"
                     ]
                 },
@@ -534,7 +507,7 @@
                     {
                         "name": "[variables('mgmtSubnetName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('ManagementAddressSubnet')]"
+                            "addressPrefix": "[variables('ManagementAddressSubnet')]"
                         }
                     },
                     {
