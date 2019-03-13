@@ -1,0 +1,1 @@
+noninteractive="y"; webssh2vip="{{PRIVATE_IP}}"; radiusvip="{{PRIVATE_IP}}"; ldapvip="{{PRIVATE_IP}}"; ldapsvip="{{PRIVATE_IP}}"; webtopvip="{{PUBLIC_IP}}"; radiusconfig="y"; sampleca="y"; disabletest="y"
