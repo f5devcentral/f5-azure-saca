@@ -317,7 +317,6 @@
         "extSubnetStartInt":"[replace(variables('extSubnetStartDirty'), '.','')]",
         "extSubnetPrivateAddress": "[parameters('NorthUntrustedAddressStartIP')]",
         "extSubnetPrivateAddress1": "[concat(variables('extSubnetPrivateAddressPrefix'), '.',add(int(variables('extSubnetStartInt')), 1))]",
-        "extSubnetPrivateAddress2": "[concat(variables('extSubnetPrivateAddressPrefix'), '.',add(int(variables('extSubnetStartInt')), 99))]",
         "externalLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-ext-alb')]",
         "extpublicIPAddressNamePrefix": "[concat(variables('dnsLabelPrefix'), '-ext-pip')]",
 
@@ -355,8 +354,8 @@
 
         "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip && openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer && tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer",
 
-        "puaConfig": "[concat('echo \"noninteractive=\"y\"\n webssh2vip=\"', variables('intSubnetPrivateAddress4'), '\"\n radiusvip=\"', variables('intSubnetPrivateAddress4'), '\"\n ldapvip=\"', variables('intSubnetPrivateAddress4'), '\"\n ldapsvip=\"', variables('intSubnetPrivateAddress4'), '\"\n webtopvip=\"0.0.0.0/0\"\n radiusconfig=\"y\"\n sampleca=\"y\"\n disabletest=\"y\"\" > pua_config.sh')]",
-        "cmdInstallPua": "unzip build_pua.zip && bash ./build_pua.sh",
+        "puaConfig": "[concat('echo \"noninteractive=\"y\"\nwebssh2vip=\"', variables('intSubnetPrivateAddress4'), '\"\nradiusvip=\"', variables('intSubnetPrivateAddress4'), '\"\nldapvip=\"', variables('intSubnetPrivateAddress4'), '\"\nldapsvip=\"', variables('intSubnetPrivateAddress4'), '\"\nwebtopvip=\"0.0.0.0\"\nradiusconfig=\"y\"\nstatus=\"Active\"\nsampleca=\"y\"\ndisabletest=\"y\"\" > pua_config.sh')]",
+        "cmdInstallPua": "sleep 30s && unzip build_pua.zip && bash ./build_pua.sh",
 
         "vdmsSubnetName": "VDMS",
         "windowsOSVersion": "2016-Datacenter",
@@ -1292,7 +1291,7 @@
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "http://iasecontent.disa.mil/pki-pke/Certificates_PKCS7_v5.5_DoD.zip",
-                        "https://github.com/billchurch/f5-pua/releases/download/1.0.24/build_pua.zip"
+                        "https://github.com/billchurch/f5-pua/raw/master/build_pua.zip"
                     ]
                 },
                 "type": "CustomScript",
