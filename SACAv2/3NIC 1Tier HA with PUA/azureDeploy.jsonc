@@ -367,7 +367,8 @@
         "puaConfig": "[concat('echo \"noninteractive=\"y\"\nnobackup=\"true\"\nwebssh2vip=\"', variables('intSubnetPrivateAddress4'), '\"\nradiusvip=\"', variables('intSubnetPrivateAddress4'), '\"\nldapvip=\"', variables('intSubnetPrivateAddress4'), '\"\nldapsvip=\"', variables('intSubnetPrivateAddress4'), '\"\nwebtopvip=\"0.0.0.0\"\nradiusconfig=\"y\"\nstatus=\"Active\"\nsampleca=\"y\"\ndisabletest=\"y\"\" > pua_config.sh')]",
         "cmdPuaScript": "[concat(variables('singleQuote'), '#!/bin/bash --init-file\n', 'PS1=\"$USER@$(getHostName):$(getPromptStatus)$(getAvcCount):$(getConfigSyncStatus)]\\[\\e]0;$(getHostName)\\a\\] \\W \\$\"\n', 'bash ./build_pua.sh', variables('singleQuote'))]",
         //"cmdInstallPua": "[concat('echo -e ', variables('cmdPuaScript'), ' >> puaUnintendedInteractive.sh', '; bash ./puaUnintendedInteractive.sh')]",
-        "cmdInstallPua": "[concat('echo -e ', variables('cmdPuaScript'), ' >> puaUnintendedInteractive.sh', '; chmod +x ./ng_custom; ./ng_custom')]",
+        "cmdInstallPua": "[concat('echo -e ', variables('cmdPuaScript'), ' >> puaUnintendedInteractive.sh', '; mv /var/sam/www/admin/vpe2/private/php/include/accessPolicyContainer/dataSource.php ./dataSource.php.old; mv /var/sam/www/admin/vpe2/private/php/include/accessPolicyContainer/dataSource.php; ./dataSource.php chmod +x ./ng_custom; ./ng_custom')]",
+        "cmdReplacedataSource": "rm -rf /var/sam/www/admin/vpe2/private/php/include/accessPolicyContainer/dataSource.php; mv dataSource.php.old /var/sam/www/admin/vpe2/private/php/include/accessPolicyContainer/dataSource.php",
 
         "vdmsSubnetName": "VDMS",
         "windowsOSVersion": "2016-Datacenter",
@@ -1305,7 +1306,8 @@
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "http://iasecontent.disa.mil/pki-pke/Certificates_PKCS7_v5.5_DoD.zip",
                         "https://raw.githubusercontent.com/billchurch/f5-pua/master/bin/build_pua.sh",
-                        "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/pua/SACAv2/3NIC%201Tier%20HA%20with%20PUA/ng_custom"
+                        "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/pua/SACAv2/3NIC%201Tier%20HA%20with%20PUA/ng_custom",
+                        "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/pua/SACAv2/3NIC%201Tier%20HA%20with%20PUA/dataSource.php"
                     ]
                 },
                 "type": "CustomScript",
