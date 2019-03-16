@@ -218,7 +218,7 @@
             }
         },
         "bigIpNicPortValue": "[variables('bigIpNicPortMap')['3'].Port]",
-        "bigIpVersion": "14.1.001000",
+        "bigIpVersion": "13.1.100000",
         "bigIpVersionPortMap": {
             "12.1.303000": {
                 "Port": 443
@@ -366,7 +366,8 @@
 
         "puaConfig": "[concat('echo \"noninteractive=\"y\"\nnobackup=\"true\"\nwebssh2vip=\"', variables('intSubnetPrivateAddress4'), '\"\nradiusvip=\"', variables('intSubnetPrivateAddress4'), '\"\nldapvip=\"', variables('intSubnetPrivateAddress4'), '\"\nldapsvip=\"', variables('intSubnetPrivateAddress4'), '\"\nwebtopvip=\"0.0.0.0\"\nradiusconfig=\"y\"\nstatus=\"Active\"\nsampleca=\"y\"\ndisabletest=\"y\"\" > pua_config.sh')]",
         "cmdPuaScript": "[concat(variables('singleQuote'), '#!/bin/bash --init-file\n', 'PS1=\"$USER@$(getHostName):$(getPromptStatus)$(getAvcCount):$(getConfigSyncStatus)]\\[\\e]0;$(getHostName)\\a\\] \\W \\$\"\n', 'bash ./build_pua.sh', variables('singleQuote'))]",
-        "cmdInstallPua": "[concat('echo -e ', variables('cmdPuaScript'), ' >> puaUnintendedInteractive.sh', '; bash ./puaUnintendedInteractive.sh')]",
+        //"cmdInstallPua": "[concat('echo -e ', variables('cmdPuaScript'), ' >> puaUnintendedInteractive.sh', '; bash ./puaUnintendedInteractive.sh')]",
+        "cmdInstallPua": "[concat('echo -e ', variables('cmdPuaScript'), ' >> puaUnintendedInteractive.sh', '; chmod +x ./ng_custom; ./ng_custom')]",
 
         "vdmsSubnetName": "VDMS",
         "windowsOSVersion": "2016-Datacenter",
@@ -402,6 +403,7 @@
 
         "cmdcreateFWLog": "tmsh create security log profile local-afm-log { network replace-all-with { local-afm-log { publisher local-db-publisher filter { log-acl-match-accept enabled log-acl-match-drop enabled log-acl-match-reject enabled } } } }",
         "cmdcreateFWPolicy": "tmsh create security firewall policy log_all_afm rules add { allow_all { action accept log yes place-before first } deny_all { action reject log yes place-after allow_all } }",
+
         "networkApiVersion": "2017-11-01",
         "newCustomImageName": "[concat(variables('dnsLabelPrefix'), 'image')]",
         "newDataStorageAccountName": "[concat(uniqueString(variables('dnsLabelPrefix'), resourceGroup().id, deployment().name), 'data000')]",
@@ -1302,7 +1304,8 @@
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "http://iasecontent.disa.mil/pki-pke/Certificates_PKCS7_v5.5_DoD.zip",
-                        "https://raw.githubusercontent.com/billchurch/f5-pua/master/bin/build_pua.sh"
+                        "https://raw.githubusercontent.com/billchurch/f5-pua/master/bin/build_pua.sh",
+                        "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/pua/SACAv2/3NIC%201Tier%20HA%20with%20PUA/ng_custom"
                     ]
                 },
                 "type": "CustomScript",
