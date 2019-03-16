@@ -907,21 +907,10 @@
             }
           },
           {
-            "name": "http_alive",
-            "properties": {
-              "protocol": "Http",
-              "port": 80,
-              "requestPath": "/",
-              "intervalInSeconds": 15,
-              "numberOfProbes": 2
-            }
-          },
-          {
             "name": "https_alive",
             "properties": {
-              "protocol": "Https",
+              "protocol": "Tcp",
               "port": 443,
-              "requestPath": "/",
               "intervalInSeconds": 15,
               "numberOfProbes": 2
             }
