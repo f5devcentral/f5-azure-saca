@@ -218,13 +218,16 @@
             }
         },
         "bigIpNicPortValue": "[variables('bigIpNicPortMap')['3'].Port]",
-        "bigIpVersion": "13.1.100000",
+        "bigIpVersion": "14.1.001000",
         "bigIpVersionPortMap": {
             "12.1.303000": {
                 "Port": 443
             },
             "13.1.100000": {
                 "Port": 8443
+            },
+            "14.1.001000": {
+                "Port": 443
             },
             "443": {
                 "Port": 443
@@ -273,6 +276,12 @@
                 "AllTwoBootLocations": "big-all-2slot",
                 "LTMOneBootLocation": "big-ltm-1slot",
                 "LTMTwoBootLocations": "big-ltm-2slot"
+            },
+            "14.1.001000": {
+                "AllOneBootLocation": "big-all-1slot",
+                "AllTwoBootLocations": "big-all-2slot",
+                "LTMOneBootLocation": "big-ltm-1slot",
+                "LTMTwoBootLocations": "big-ltm-2slot"                
             },
             "latest": {
                 "AllOneBootLocation": "big-all-2slot",
@@ -442,6 +451,7 @@
         "routeCmdArray": {
             "12.1.303000": "[concat('tmsh create sys management-route waagent_route network 168.63.129.16/32 gateway ', variables('mgmtRouteGw'), '; tmsh save sys config')]",
             "13.1.100000": "route",
+            "14.1.001000": "route",
             "latest": "route"
         },
         "skuToUse": "[concat('f5-', variables('imageNameSub'),'-byol')]",

@@ -1,0 +1,1342 @@
+#!/usr/bin/php
+<?php
+
+//-----------------------------------------------------------------------------------------------------------------
+// code starts here
+//-----------------------------------------------------------------------------------------------------------------
+
+require_once("/var/sam/www/admin/vpe2/private/php/include/common.php");
+modules::load("validate");
+modules::load("dataSource");
+modules::load("accessPolicyItem");
+
+function displayPromptExit( $errorText ){
+    if( !empty($errorText) ){ echo("\n{$errorText}\n\n"); }
+    echo("MC Access Profile/Policy Access Import utility v{$GLOBALS["VERSION"]}\n");
+    echo("Usage: ng_custom [-s] <templatefile.conf.tar[.gz]> <new_name> [-p|-partition <partition>]\n\n");
+    echo("FindMode: ".SourceMCPD::findMode()."\n\n");
+    echo("Mode: ".SourceMCPD::MODE_SYSCALLD."\n\n");
+    exit(1);
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+// setup
+//-----------------------------------------------------------------------------------------------------------------
+
+$BOTYPES = ["profile_access", "access_policy"]; //const
+$GLOBALS["baseClass"] = $BOTYPES[0];
+
+$GLOBALS["VERSION"] = versionInfo::getIMEXV();
+$GLOBALS["IGNOREVC"] = FALSE;
+
+$GLOBALS["EXIT1ERRORPREFIX"] = "Import error: ";
+$GLOBALS["ONEXIT-EXEC"] = [];
+$GLOBALS["ONEXIT"] = function(){ clean(); };
+
+$GLOBALS["CREATEDFOLDERS"] = [];
+$GLOBALS["EXISTINGFOLDERS"] = [];
+
+$GLOBALS["LOGFILE"] = FALSE;
+
+$argPtr = 1;
+$confTarGzName = "";
+$baseFoldername = "";
+$share = FALSE;
+
+while( $argPtr < $argc ){
+    switch( $argv[$argPtr] ){
+        case "-partition":
+        case "-p":
+            if( empty( $argv[++$argPtr] ) || $argv[$argPtr]{1} == "-" ){ displayPromptExit("Incorrect arguments: <partition> is not specified"); }
+            $argPartition = $argv[$argPtr++];
+        break;
+        case "--logfile":
+            $GLOBALS["LOGFILE"] = TRUE;
+            $argPtr++;
+        break;
+        case "--ignorevc":
+            $GLOBALS["IGNOREVC"] = TRUE;
+            $argPtr++;
+        break;
+        case "-s":
+            $share = TRUE;
+            $argPtr++;
+        break;
+        case "-t":
+            if(empty($argv[++$argPtr]) || $argv[$argPtr]{1} == "-" ||
+                !in_array(($GLOBALS["baseClass"] = $argv[$argPtr++]), $BOTYPES)){
+                displayPromptExit("Incorrect arguments: <type> is not specified correctly");
+            }
+        break;
+        default:
+            if(!empty($confTarGzName) || !empty($baseFoldername)){
+                displayPromptExit("Incorrect arguments: <templatefile.conf.tar.gz> or <new_name> are specified more than once");
+            }
+            $confTarGzName = $argv[$argPtr++];
+            $baseFoldername = $argv[$argPtr++];
+        break;
+    }
+}
+
+// general
+if( empty($confTarGzName) || empty($baseFoldername) ){ displayPromptExit("Incorrect arguments: <templatefile.conf.tar.gz> or <new_name> is not specified"); }
+
+//check filename
+if( !file_exists( $confTarGzName ) ){ displayPromptExit("Incorrect arguments: {$confTarGzName} doesn't exist"); }
+
+//name
+$baseFoldername = validate::crop($baseFoldername, validate::MCPFOLDERNAME);
+if(empty($baseFoldername)){
+    displayPromptExit("Incorrect arguments: The import name {$baseFoldername} is not valid. The import name should begin with a letter and can contain only letters, numbers, underscores and dashes.\n");
+}
+
+if(substr($baseFoldername, 0, 1) == "/"){
+    list($basePartition, $baseName) = cmiName::split($baseFoldername);
+}else{
+    $baseName = $baseFoldername;
+}
+
+// partition
+$commonPartition = "Common";
+if(empty($argPartition)){
+    $argPartition = (!empty( $basePartition ) ? $basePartition : $commonPartition);
+}
+if(empty($basePartition)){
+    $basePartition = $argPartition;
+    $baseFoldername = cmiName::join($basePartition, $baseName);
+}
+$_ENV["MANUAL_COOKIE_PARTITION"] = $basePartition;
+sourceMCPD::reloadDll();
+
+// logger
+if(!isset($GLOBALS["logger"]) && $GLOBALS["LOGFILE"]){
+    $GLOBALS["logger"] = new vpelog("ng-import", $GLOBALS["LOGFILE"]);
+}
+//
+$GLOBALS["STARTTIME"] = microtime(TRUE);
+if($GLOBALS["LOGFILE"]){
+    $GLOBALS["logger"]->outln("\n\n----------------------------------------\n\m");
+    $GLOBALS["logger"]->outln("Version: {$GLOBALS["VERSION"]}\n");
+    $GLOBALS["logger"]->outln("Importing file '$confTarGzName' to '$baseFoldername'");
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+// obj - main object class
+//-----------------------------------------------------------------------------------------------------------------
+
+class parsed_entry
+{
+    public static $filesTypesStettings = array( );
+
+    public static $profileBelongingCustomizationGroupTypes = array(  "logon", "logout", "decision", "errormap", "message", "eps", "framework", "general", "retry" );
+    public static $shareableBelongingCustomizationGroupTypes = array(  "webtop", "secure_access_client", "resource_app_tunnel", "resource_network_access", "resource_remote_desktop", "resource_portal_access", "resource_portal_access", "resource_webtop_link" );
+
+    public static $root;
+
+    public static $originalObjectPartition;
+
+    public $f5titula;
+    public $f5titulaEx;
+    public $f5partition;
+    public $isFile;
+    public $body;
+
+    public $class = "";
+    public $type; // do we need it?
+
+    public $foldername;
+    public $partition;
+    public $name;
+
+
+    public $mcpHash;
+    public $indexby;
+    public $xmlObject = NULL;
+
+    public $groupName;
+    public $fileName;
+    public $groupType;
+    public $fileObjectLink = null;
+    public $fileObjectEmbeddedLinks = array();
+
+    public $installOrder="";
+    public $runScript;
+
+    public $mark;
+
+    public $originalName;
+    public $originalPartition;
+    public $originalFoldername;
+
+    public $newName;
+    public $newPartition;
+    public $newFoldername;
+
+    public $isSaving;
+
+    public static function F5PrefixedExtract($title)
+    {
+        preg_match('/#F5\[([^]]*)\]/i', $title, $matches);
+        return $matches[1];
+    }
+
+    public static function findEntryByKTypeNewName(&$entries, $stopK, $type, $param1, $by1, $param2 = "", $by2 = ""){
+        if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("findEntryByKTypeNewName (".count($entries).", $stopK, $type, $param1, $by1, $param2, $by2)"); }
+
+        foreach( $entries as $k=>&$entry ){
+            //
+            if($GLOBALS["LOGFILE"]){
+                $GLOBALS["logger"]->out("k=$k stopK=$stopK {$entry->type}==$type {$entry->$by1}==$param1");
+                $GLOBALS["logger"]->out(($param2!="" && $by2 != "" ? "{$entry->$by2}=={$param2}" : "")."\n", FALSE);
+            }
+            if( $k !=="" && $k === $stopK ){
+                return NULL;
+            }
+            if($by1 == "foldername"){ $by1 = "foldernameNoConfusion"; }
+            if($entry->type == $type && $entry->$by1 == $param1 && ($by2 == "" || $entry->$by2 == $param2)){
+                return $entry;
+            }
+        }
+        if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("findEntryByKTypeNewName returned NULL"); }
+        return NULL;
+    }
+
+    // this function is just blindly parsing no replacement
+    public static function create( $f5a, $body ){
+        $line = 0;
+        //
+        $p = new parsed_entry();
+        $p->f5titula = parsed_entry::F5PrefixedExtract( $f5a[$line++] );
+        if( strpos( $f5a[$line], "#F5[Original Name:" ) === 0 ){
+            $i = preg_match( '/Original Name:([^,]*), Type:([a-z]{1})/i', parsed_entry::F5PrefixedExtract( $f5a[$line++] ), $matches );
+            list( , $p->originalFoldername, $p->mark ) = $matches;
+            list( $p->originalPartition, $p->originalName ) = cmiName::split($p->originalFoldername);
+        }
+        //
+        if( strpos( $f5a[$line], "#F5[$target_partition$]" ) === 0 ){
+            $p->f5partition = parsed_entry::F5PrefixedExtract( $f5a[$line++] );
+        }
+        //
+        $p->body = $body;
+        $p->isSaving = true;
+        //
+        $p->f5titulaEx = explode(' / ', $p->f5titula );
+        foreach( $p->f5titulaEx as &$str ){
+            $str = trim($str);
+        }
+
+        if($GLOBALS["LOGFILE"]){
+            $GLOBALS["logger"]->outln("--------------------------");
+            $GLOBALS["logger"]->outln(var_export($p->f5titulaEx,true));
+        }
+
+        if( !( $p->isFile = ( $p->f5titulaEx[0] == "Local Traffic" && $p->f5titulaEx[1] == "APM" && in_array( $p->f5titulaEx[2], array( "File", "File Object", "File Object Embedded", "Tmsh Install" ) ) ) ) ){
+
+            list( $firstline ) = explode( "\n", $p->body );
+            preg_match('/^([^@]+) ([^ {]+) *{/',$firstline,$matches);
+
+            // file
+            $p->tmshCmd = $matches[1];
+
+            // try to find this or superclass
+            if(($p->xmlObject = EDOM::findNodeWithAttribute(parsed_entry::$root, "class", "tmshCmd", $p->tmshCmd)) === NULL){
+                $cmd = substr($p->tmshCmd, 0, strrpos($p->tmshCmd, " "));
+                if(($p->xmlObject = EDOM::findNodeWithAttribute(parsed_entry::$root, "class", "tmshCmd", $cmd)) === NULL){
+                    exit1("Unable to xml object for tmshCmd='$p->tmshCmd'", 1, $GLOBALS["ONEXIT"]);
+                }
+            }
+
+            $p->class = $p->xmlObject->getAttribute("id");
+            $p->type = str_replace("_", " ", $p->class);
+
+            if($p->xmlObject->hasAttribute("hasFiles")){
+                $p->installOrder = $p->xmlObject->getAttribute("hasFiles");
+                $p->tmshInstallType = EDOM::getAttribute($p->xmlObject, "tmshInstallType", "");
+            }
+
+            $p->foldername = $matches[2];
+            list( $p->partition, $p->name ) = cmiName::split($p->foldername);
+            //
+            if($GLOBALS["LOGFILE"]){
+                $GLOBALS["logger"]->outln("{$p->type} {$p->foldername} (search: {$p->tmshSector};{$p->tmshPlace})");
+            }
+
+            // hardcode customization group support
+            if( $p->type == "customization group" ){
+                $p->groupType = ( preg_match( '|\n    type ([^\n]+)\n|', $p->body, $regs ) ? str_replace( "-", "_",  trim( $regs[1] ) ) : "logon" );
+            }
+
+        }else{
+
+             $lines = explode("\n",$p->body);
+             $p->body = "";
+             $p->runScript = "";
+
+             // obligatory?
+             preg_match( "|Saved as: (.*)|", $lines[0], $m );
+             $p->tarfilename = $m[1];
+
+             // replace
+             if( isset($lines[1]) && preg_match( "|Post: Replace In Contents / ([^/]*) / (.*)|", $lines[1], $m ) ){
+                 replaceInFile( $m[1], $m[2], $p->tarfilename );
+             }
+
+             switch( $p->f5titulaEx[2] ){
+                //
+                case "File Object Embedded":
+                    list( , $p->class, $p->embedToSection, $p->embedToName ) = explode( ",", $p->f5titulaEx[3] );
+                    $p->type = str_replace( "_", " ", $p->class );
+                    $p->installOrder = "fileObjectEmbedded";
+                    list( $p->foldername ) = split( ":", $p->f5titulaEx[4] );
+                    list( $p->partition, $p->name ) = cmiName::split($p->foldername);
+                break;
+
+                case "Tmsh Install":
+                    $p->class = $p->f5titulaEx[3];
+                    $p->type = str_replace( "_", " ", $p->class);
+                    $p->installOrder = "tmshInstall";
+                    $p->foldername = $p->f5titulaEx[4];
+                    list( $p->partition, $p->name ) = cmiName::split($p->foldername);
+                    $p->preserve = false;
+                break;
+
+                case "File Object":
+                default: //File Object
+                    $p->class = $p->f5titulaEx[3];
+                    $p->type = str_replace( "_", " ", $p->class);
+                    $p->installOrder = "fileObject";
+                    $p->foldername = $p->f5titulaEx[4];
+                    list( $p->partition, $p->name ) = cmiName::split($p->foldername);
+                    $p->preserve = false;
+                break;
+             }
+
+            if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("{$p->type} {$p->foldername} {$p->installOrder})"); }
+        }
+
+        //foldername no confusion
+        $p->foldernameNoConfusion = ($start = strpos($p->foldername, ":::::")) > 0 ? substr($p->foldername, 0, $start) : $p->foldername;
+        //if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->out( print_r($p, true ) ); }
+
+        return $p;
+    }
+
+    // MIXED
+    public function isSaving(){
+        return $this->isSaving;
+    }
+
+    public function isFile(){
+        return $this->isFile;
+    }
+
+    public function setNewFoldername($foldername){
+        if(($x = strpos($foldername, "::::::")) !== FALSE){
+            $foldername = substr($foldername, 0, $x);
+        }
+        $this->newFoldername = $foldername;
+        if($GLOBALS["LOGFILE"]){
+            $GLOBALS["logger"]->outln("{$this->type} foldername={$this->foldername} rename to newFoldername={{$this->newFoldername})");
+        }
+        list($this->newPartition, $this->newName) = cmiName::split($this->newFoldername);
+        createFolders($foldername);
+    }
+
+    public function getBody(){
+        return $this->body;
+    }
+
+    // FILE ONLY
+    public function getFileName(){
+        return $this->fileName;
+    }
+
+    public function getRunScript(){
+        return $this->runScript;
+    }
+
+    public function getInstallOrder(){
+        return $this->installOrder;
+    }
+
+    public function isPreserve(){
+        return $this->preserve;
+    }
+
+    // CONFIG ENTRY
+    public function isShareable(){
+        return ( $this->type != "customization group" ? ( $this->mark == "s" ) : in_array( $this->groupType, parsed_entry::$shareableBelongingCustomizationGroupTypes ) );
+    }
+
+    function getMCPHash($name, $fetch = NULL){
+        $fetch = !is_array($fetch) ? NULL : array_unique(array_merge($fetch, ['object_id', 'partition_id']));
+        $hash = sourceMCPD::getHashC(
+            $this->class,
+            ["name" => $name],
+            $fetch
+        ); // ELEVATED
+        return $hash;
+    }
+
+    static $fileObjectCropFields = array( "cache-path", "updated-by", "checksum", "created-by", "create-time", "last-update-time", "size", "mode", "revision" );
+    static $fileObjectCropFieldsAll = array( "local-path", "cache-path", "updated-by", "checksum", "created-by", "create-time", "last-update-time", "size", "mode", "revision" );
+
+    public function getRenamedBody( $share, $baseName, $basePartition, $commonPartition, $fromNames, $toNames, $types ){
+        $body = $this->body;
+        if( $this->isShareable() || strpos( $this->type, "agent" ) !== FALSE || strpos( $this->type, "profile access" ) !== FALSE || strpos( $this->type, "customization group" ) !== FALSE ){
+            $body = str_replace( $fromNames, $toNames, $body );
+        }
+
+        if( $this->type == "pool" ){
+            $bodyLines = explode("\n", $body );
+            $count = count($bodyLines);
+            for( $i=$count-1; $i>=0; $i--){
+                if( strpos( $bodyLines[$i], "            state" ) === 0 && strpos( $bodyLines[$i], "user-down" ) === FALSE ){
+                    unset( $bodyLines[$i] );
+                }
+            }
+            $body = implode("\n", $bodyLines );
+        }
+
+        if( $this->installOrder == "fileObject" || $this->installOrder == "tmshInstall"){
+            $this->fileObjectLink->newName = $this->newName;
+
+            // remove some fields form file object
+            foreach( parsed_entry::$fileObjectCropFieldsAll as $f ){
+                $body = preg_replace("/\n\s+{$f} [^\n]+/","", $body);
+            }
+
+            // insert cache-path
+            $separated = preg_split("|{|", $body, 2 );
+
+            if( $this->fileObjectLink->type == "customization group" || $this->fileObjectLink->type == "windows group policy file" || $this->fileObjectLink->type == "customization image file" || $this->fileObjectLink->type == "kerberos keytab file" ){
+                $body = $separated[0]."{\n    local-path ".$GLOBALS["SAVE_PREFIX"]."/".$this->fileObjectLink->tarfilename.( strpos($separated[1],"\n") === NULL? "\n": "" ).$separated[1];
+            }else{
+                $body = $separated[0]."{\n    cache-path ".$GLOBALS["SAVE_PREFIX"]."/".$this->fileObjectLink->tarfilename.( strpos($separated[1],"\n") === NULL ? "\n": "" ).$separated[1];
+           }
+        }
+
+        if( !empty( $this->fileObjectEmbeddedLinks ) ){
+            foreach( $this->fileObjectEmbeddedLinks as &$fileObjectEmbedded ){
+                $fileObjectEmbedded->newName = $this->newName;
+                $bodyLines = explode("\n", str_replace("\r\n", "\n", $body ) );
+                $count = count($bodyLines);
+                $i = array_search("    {$fileObjectEmbedded->embedToSection} {", $bodyLines );
+                // securId hack, cut all sdstatus.12 section
+                if($this->type == "aaa securid server" && $fileObjectEmbedded->embedToName == "sdstatus.12"){
+                    if(($i = array_search("        {$fileObjectEmbedded->embedToName} {", $bodyLines)) === NULL){
+                        break;
+                    }
+                    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("aaa securid server and sdstatus.12 exclusion"); }
+                    for( $i=$i; $i<$count; $i++){
+                        if(  strpos( $bodyLines[$i], "        }" ) === 0 ){
+                            unset( $bodyLines[$i] );
+                            break;
+                        }
+                        unset( $bodyLines[$i] );
+                    }
+                    $body = implode("\n", $bodyLines);
+                    // continue main loop
+                    continue;
+                }
+                // no hack embedding
+                for( $i=(int)$i; $i<$count; $i++){
+                    if( $bodyLines[$i] == "    }" ){
+                        break;
+                    }
+                    //
+                    if( strpos( $bodyLines[$i], "        {$fileObjectEmbedded->embedToName} {" ) === 0 ){
+
+                        //replace path to be a local-path instead of cache-path
+                        //in the attribute contents of embedded file object like
+                        //sandbox "files", securid, customization template file
+                        //as cache-path is read-only field
+
+                        $bodyLines[$i] .= "\n            local-path ".$GLOBALS["SAVE_PREFIX"]."/".$fileObjectEmbedded->tarfilename;
+                        continue;
+                    }
+                    //
+                    foreach( parsed_entry::$fileObjectCropFields as $fileObjectCropField ){
+                        if( strpos( $bodyLines[$i], "            {$fileObjectCropField} " ) === 0 ){
+                            unset($bodyLines[$i]);
+                            continue;
+                        }
+                    }
+                }
+                $body = implode("\n", $bodyLines );
+            }
+        }
+
+        $body = str_replace( array( "@name", "@partition", "@commonpartition" ), array( $baseName, $basePartition, $commonPartition ), $body );
+
+        return $body;
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+// functions
+//-----------------------------------------------------------------------------------------------------------------
+
+
+function createFolders($foldername){
+    //
+    list($partition, $folders) = cmiName::split($foldername, cmiName::PartitionFolderName);
+    if(!empty($folders) && !in_array("/{$partition}/{$folders}", $GLOBALS["EXISTINGFOLDERS"])){
+        $foldersSplit = split("/", $folders);
+        $currentFolder = "/{$partition}";
+        foreach($foldersSplit as $folderSplit){
+            $currentFolder .= "/{$folderSplit}";
+            if(in_array($currentFolder, $GLOBALS["EXISTINGFOLDERS"])){
+                continue;
+            }else if(sourceMCPD::getAllHashes("folder", ["name" => $currentFolder], ['name', 'partition_id', 'object_id']) !== NULL){
+                $GLOBALS["EXISTINGFOLDERS"][] = $currentFolder;
+            }else{
+                $folder = sourceMCPD::create("folder", ["name" => $currentFolder]);
+                if(($res = sourceMCPD::saveAllHashes([$folder])) === FALSE){
+                    exit1(sourceMCPD::error(), 1, $GLOBALS["ONEXIT"]);
+                }
+                if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("folder created: $folder"); }
+                $GLOBALS["CREATEDFOLDERS"][] = $folder;
+            }
+        }
+    }
+}
+
+// this function is doing main splitting and returns entries and files
+function separateSections( $baseName, $basePartition, $commonPartition, $contents ){
+    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("*** separtateSections"); }
+
+    $out = preg_split( "/(\\r?\\n#F5[^\\n]+)/", $contents, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+    foreach($out as &$outstr){
+        $outstr = trim($outstr);
+    }
+
+    //0:@replace @partition
+    //@replace @commonpartition
+    //@replace @name
+    $line = 0;
+    $replaceCheckArray = ["partition", "commonpartition", "name"];
+    foreach($replaceCheckArray as $rcs){
+        if(strpos($out[$line], "@replace @{$rcs}") === FALSE){
+            exit1("line {$line} of template must begin with @replace @{$rcs} not ".substr($out[$line], 0, 64));
+        }
+    }
+    $line++;
+
+    //1:#F5[Version:1.2]
+    //2:#F5[Build:1.2.3.4.5.6.7]
+    if(!$GLOBALS["IGNOREVC"] && (!preg_match('|^#F5\[Version:(\d+.\d+)\]$|', $out[$line], $matches)
+        || $matches[1] != $GLOBALS["VERSION"])){
+        exit1("config version {$matches[1]} is not compatible with BIGIP version {$GLOBALS["VERSION"]}");
+    }
+    $line+=2;
+
+    //3:#F5[Origin Partition:PartitionName]
+    if( !preg_match('|^#F5\[Origin Partition:(.*)\]$|', $out[$line], $matches) ){
+        exit1("line $line of config must contain partition information not ".substr($out[$line], 0, 64));
+    }else{
+        parsed_entry::$originalObjectPartition = $matches[1];
+    }
+    $line++;
+
+    //4:#F5[Base Class:Class]
+    //5:#F5[Base Name:/PartitionName/ObjectName]
+    if(preg_match('|^#F5\[Base Class:(.*)\]$|', $out[$line], $matches)){
+        if(!empty($GLOBALS["baseClass"]) && $matches[1] != $GLOBALS["baseClass"]){
+            exit1("this conf.tar.gz file contains object of type {$GLOBALS["baseClass"]} not {$matches[1]}");
+        }
+        $line+=2;
+    }
+    $line++;
+
+    if($GLOBALS["LOGFILE"]){
+        $GLOBALS["logger"]->outln("Config: version=$matches[1], origin=parsed_entry::$originalObjectPartition");
+    }
+
+    //Real config starts here
+    if(strpos(trim($out[$line]) , "#F5") !== 0){
+        exit1("line #".($line)." should begin with #F5 not ".substr($out[$line], 0, 64));
+    }
+
+    $filePreEntries = [];
+    $filePostEntries = [];
+    $fileObjects = [];
+    $bodyEntries = [];
+    for( $i=$line; $i<count($out); $i++ ){
+        $f5a = array();
+        for( $j=0; $j<4; $j++ ){
+            if( strpos ( $out[$i+$j], "#F5" ) !== 0 ){
+                $i += $j;
+                break;
+            }
+            $f5a[$j] = $out[$i+$j];
+        }
+
+        $p = parsed_entry::create( $f5a, $out[$i] );
+        if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("parsed_entry::create: {$p->foldername} {$p->type}"); }
+        if( $p->isFile() ) {
+            if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("is file: {$p->foldername} {$p->getInstallOrder()}"); }
+            switch( $p->getInstallOrder() ){
+                case "tmshInstall":
+                case "fileObjectEmbedded":
+                case "fileObject":
+                    $fileObjects[] = $p;
+                break;
+            }
+        }else{
+            $bodyEntries[] = $p;
+        }
+    }
+
+    return array($out[0], $bodyEntries, $fileObjects, $filePreEntries, $filePostEntries);
+}
+
+// this function is doinng renaming and sorting out
+// order is improtant
+function preporcessBodyEntries( $bodyEntries, $fileObjects, $filePreEntries, $filePostEntries, $baseName, $basePartition, $commonPartition, $share )
+{
+    $shareableEntries = array();
+    $profileEntries = array();
+    $cifEntries = array();
+
+    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("loop bodyEntries"); }
+    foreach( $bodyEntries as /** @var parsed_entry */ &$bodyEntry ){
+        //
+        if( $bodyEntry->getInstallOrder() == "fileObject" || $bodyEntry->getInstallOrder() == "tmshInstall" ){
+            $fileObject = parsed_entry::findEntryByKTypeNewName( $fileObjects, "", $bodyEntry->type, $bodyEntry->foldername, "foldername", $bodyEntry->getInstallOrder(), "installOrder" );
+            if( $fileObject === NULL ){
+                exit1("unable to find fileObjectData for $bodyEntry->type $bodyEntry->foldername", 1, $GLOBALS["ONEXIT"] );
+            }
+            $bodyEntry->fileObjectLink = $fileObject;
+            $fileObject->bodyEntryLink = $bodyEntry;
+            if( $bodyEntry->getInstallOrder() == "tmshInstall" ){ // no save in .conf for certs, keys etc
+                $fileObject->isSaving = false;
+                $bodyEntry->isSaving = 0; // note it's going to be false if reused
+            }
+            if( $bodyEntry->type == "customization image file" ){
+                $cifEntries[] = $bodyEntry;
+                continue; //not now
+            }
+        }
+
+        if( $bodyEntry->isShareable() ){
+            $shareableEntries[] = $bodyEntry;
+        }else{
+            $profileEntries[] = $bodyEntry;
+        }
+    }
+
+    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("loop fileObjects"); }
+    foreach( $fileObjects as &$fileObject ){
+        //
+        if( $fileObject->getInstallOrder() == "fileObjectEmbedded" ){
+            if(($bodyObject = parsed_entry::findEntryByKTypeNewName($bodyEntries, "", $fileObject->type, $fileObject->foldername, "foldername")) === NULL){
+                exit1("unable to find bodyObject for embedded join $fileObject->type $fileObject->foldername", 1, $GLOBALS["ONEXIT"] );
+            }else{
+                $bodyObject->fileObjectEmbeddedLinks[] = $fileObject;
+            }
+        }
+    }
+
+    // find all
+    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("loop cifEntries"); }
+    foreach( $cifEntries as /** @var parsed_entry */ &$cifEntry ){
+        if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("cifEntry: {$cifEntries->type} {$cifEntries->foldername}"); }
+        foreach( $bodyEntries as /** @var parsed_entry */ &$bodyEntry ){
+            if( $bodyEntry->type == "customization group"
+                && ($begin = strpos( $bodyEntry->body, "    images {"  )) !== FALSE
+                && ($end = strpos( $bodyEntry->body, "\n    }", $begin )) !== FALSE){
+                //
+                $substr = substr( $bodyEntry->body, $begin,  $end - $begin );
+                if($GLOBALS["LOGFILE"]){
+                    $GLOBALS["logger"]->outln("images { in {$bodyEntry->type} {$bodyEntry->foldername} --- {$substr}");
+                }
+                if( strpos( $substr, $cifEntry->name ) !== FALSE ){
+                    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("found!"); }
+                    $bodyEntry->imageCustGroups[] =  $cifEntry;
+                    $cifEntry->imageCustGroups[] = $bodyEntry;
+                    $shareableEntries[] = $cifEntry;
+                }
+            }
+        }
+    }
+
+    // finding new name for profile objects
+    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("finding new name for profile objects"); }
+    preg_match( '/^(.+?)([_-]*)(\d*)$/', $baseName, $m);
+    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->out( "regexp m=".print_r($m, true)); }
+    $m = [1=>$m[1], (!empty($m[2]) ? $m[2] : "_"), (int)$m[3]];
+    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->out( "m final=".print_r($m, true)); }
+    //
+    for( $i=0; $i<10000; $i++ ){
+        $oldName = $baseName;
+        foreach( $profileEntries as /** @var parsed_entry */ &$profileEntry ){
+            $name = cmiName::join($basePartition, str_replace("@name", $baseName, $profileEntry->name));
+            if($profileEntry->getMCPHash($name, ["name"]) !== NULL){
+                $baseName = $m[1].$m[2].++$m[3];
+                break;
+            }
+        }
+        if( $oldName == $baseName ){
+            // here we go
+            foreach( $profileEntries as &$profileEntry ){
+                $profileEntry->setNewFoldername( str_replace( array("@partition", "@name"), array( $basePartition, $baseName ), $profileEntry->foldername  ) );
+            }
+            break;
+        }
+    }
+
+    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("loop shareableEntries"); }
+    // finding new name for shareable objects
+    $customizationFix = [];
+    $tempFoldernameCache = [];
+    foreach( $shareableEntries as  $k=> /** @var parsed_entry */ &$shareableEntry ){
+        if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("Object {$shareableEntry->type} {$shareableEntry->originalFoldername} share=$share, base=$basePartition\n"); }
+        // check is there object with original name
+        if(($mcpEntry = $shareableEntry->getMCPHash($shareableEntry->originalFoldername, ["name"])) !== NULL){
+            if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("mcp entry: ".print_r($mcpEntry, true)); }
+        }else{
+            if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("not found in mcpd"); }
+        }
+        // case 1
+        // this require custom comparator
+        if($shareableEntry->xmlObject && EDOM::getAttribute($shareableEntry->xmlObject, "cmp", "", FALSE) != ""){
+            if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("case 1 - special comparator\n"); }
+            $continueFlag = FALSE;
+            switch($shareableEntry->class){
+                case "swg_url_category":
+                    $category = "";
+                    $urlcount = 0;
+                    if(($pos = strpos($shareableEntry->body, "    urls {")) !== FALSE){
+                        // try to find the same category
+                        $lines = substr($shareableEntry->body, $pos, strpos($shareableEntry->body, "\n    }", $pos) - $pos);
+                        $lines = explode("\n", $lines);
+                        for($i = 0, $quote = -1; $i<count($lines); $i++, $quote = -1){
+                            $line = $lines[$i];
+                            if(strpos($line, "        http") === 0 || ($quote = strpos($line, "        \"http")) === 0){
+                                $pos = strrpos($line, ($quote === 0 ? "\" {": " {")) - (9 + $quote);
+                                $url = stripslashes(substr($line, 9 + $quote, $pos));
+                                $objs = sourceMCPD::getAllHashes("custom_category_url", ["url" => $url], ["category"], false); // ELEVATED
+                                if($objs === NULL ^ !empty($category) && ($objs === NULL || $category != $objs[0]["category"])){
+                                    $category = FALSE;
+                                    break; //  for($i = 0, $quote = -1 // no category found
+                                }
+                                $urlcount++;
+                                $category = ($objs === NULL ? NULL : $objs[0]["category"]);
+                            }
+                        }
+                    }
+                    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("cmp - category is ".serialize($category)); }
+                    if(!empty($category)){ // category found, try find original
+                        $objs = sourceMCPD::getAllHashes("custom_category_url", ["category" => $category], ["url"], false); // ELEVATED
+                        if($urlcount != count($objs)){
+                            if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("cmp - category {$category} has different number of urls"); }
+                            $category = FALSE; // doesn't work, url # is different
+                        }else{
+                            if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln( "cmp - found object with compatible settings {$category}" ); }
+                            // set other object name, disable saving
+                            $shareableEntry->setNewFoldername($category);
+                            $shareableEntry->isSaving = false;
+                            $continueFlag = TRUE;
+                            break; // case "swg_url_category"
+                        }
+                    }
+                    if($category === FALSE){ // no category, try find original
+                        if(($obj = $shareableEntry->getMCPHash($shareableEntry->originalFoldername, ["name"])) === NULL){
+                            exit1("unable to import {$shareableEntry->type} {$shareableEntry->originalFoldername} - conflicting urls / object with original name doesn't exit", 1, $GLOBALS["ONEXIT"]);
+                        }
+                        if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("cmp - found object under original name"); }
+                        // set orignal name, disable saving stop here
+                        $shareableEntry->setNewFoldername($shareableEntry->originalFoldername);
+                        $shareableEntry->isSaving = false;
+                        $continueFlag = TRUE;
+                        break; // case "swg_url_category"
+                    }
+                break; // switch($shareableEntry->class
+                case "oauth_scope":
+                    $m = [];
+                    if(preg_match('|scope-name ("?)([^\s]+)\1|', $shareableEntry->body, $m)
+                        && ($obj = sourceMCPD::getHashC("oauth_scope", ["scope_name" => stripslashes($m[2])], ['name', 'partition_id', 'object_id'], false)) !== NULL){
+                        $shareableEntry->setNewFoldername($obj["name"]);
+                        $shareableEntry->isSaving = FALSE;
+                        $continueFlag = TRUE;
+                        // find customization group
+                        preg_match('|customization-group ("?)([^\s]+)\1|', $shareableEntry->body, $m);
+                        foreach($bodyEntries as $k=>&$entry){
+                            if($entry->foldername == $m[2] && strpos($entry->body, "    type oauth-authz-scope") !== FALSE){
+                                $entry->isSaving = FALSE;
+                                break; // foreach
+                            }
+                        }
+                    }
+                case "oauth_claim":
+                    $m = [];
+                    if(preg_match('|claim-name ("?)([^\s]+)\1|', $shareableEntry->body, $m)
+                        && ($obj = sourceMCPD::getHashC("oauth_claim", ["claim_name" => stripslashes($m[2])], ['name', 'partition_id', 'object_id'], false)) !== NULL){
+                        $shareableEntry->setNewFoldername($obj["name"]);
+                        $shareableEntry->isSaving = FALSE;
+                        $continueFlag = TRUE;
+                    }
+                break;
+                case "oauth_client_app":
+                    $m = [];
+                    if(preg_match('|client-id ("?)([^\s]+)\1|', $shareableEntry->body, $m)
+                        && ($obj = sourceMCPD::getHashC("oauth_client_app", ["client_id" => stripslashes($m[2])], ['name', 'partition_id', 'object_id'], false)) !== NULL){
+                        $shareableEntry->setNewFoldername($obj["name"]);
+                        $shareableEntry->isSaving = FALSE;
+                        $continueFlag = TRUE;
+                    }
+                break;
+                case "oauth_resource_server":
+                    $m = [];
+                    if(preg_match('|resource-server-id ("?)([^\s]+)\1|', $shareableEntry->body, $m)
+                        && ($obj = sourceMCPD::getHashC("oauth_resource_server", ["resource_server_id" => stripslashes($m[2])], ['name', 'partition_id', 'object_id'], false)) !== NULL){
+                        $shareableEntry->setNewFoldername($obj["name"]);
+                        $shareableEntry->isSaving = FALSE;
+                        $continueFlag = TRUE;
+                    }
+                break;
+                default:
+                    exit1("Special comparator for {$shareableEntry->class} is not found", 1, $GLOBALS["ONEXIT"]);
+            }
+            // doesn't allow to go further to case 2, false is default
+            if($continueFlag){ continue; }
+        }
+
+        // case 2
+        // reusing and no such object : create under original name
+        if( $share && $mcpEntry === NULL ){
+            if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("case 2 - reusing and no such object \n"); }
+            // set original name
+            $shareableEntry->setNewFoldername($shareableEntry->originalFoldername);
+        }
+        // case 3
+        // reusing and there's accessible object: reuse existing
+        if( $share && $mcpEntry !== NULL /* && ( $mcpEntry["partition_id"] == $basePartition || $mcpEntry["partition_id"] == $commonPartition ) */ ){
+            if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("case 3 - reusing and there's accessible object\n"); }
+            // set original name
+            $shareableEntry->setNewFoldername( $shareableEntry->originalFoldername );
+            // disable saving
+            $shareableEntry->isSaving = false;
+            // fix customization
+            if( in_array( $shareableEntry->type, parsed_entry::$shareableBelongingCustomizationGroupTypes ) ){
+                $shareableEntry->customizationGroupName = ( preg_match("|\n    customization-group ([^\n]+)\n|", $shareableEntry->body , $regs ) ? $regs[1] : exit1("unable figure out customization group name for $shareableEntry->type $shareableEntry->foldername ({$shareableEntry->foldername})", 1, $GLOBALS["ONEXIT"] ) );
+                $customizationFix[] = $shareableEntry;
+            }
+        }
+        // case 4
+        // no reuse or object exists in other, unaccessible partition : create new object with unique name
+        if( !$share
+            || ( $mcpEntry !== NULL && $mcpEntry["partition_id"] != $basePartition && $mcpEntry["partition_id"] != $commonPartition )
+            || ( $mcpEntry === NULL && $shareableEntry->name == "@name" )
+        ){
+            if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("case 4 - no reuse or object exists in other, unaccessible partition\n"); }
+            $newName = str_replace( "@name", $baseName, $shareableEntry->name );
+            $addName = "";
+            $extName = "";
+            if( substr( $newName, -4, 1 ) != "." ){
+                $extName = "";
+            }else{
+                $extName = substr( $newName, -4 );
+                $newName = substr( $newName, 0, -4 );
+            }
+            //
+            if(!is_array($tempFoldernameCache[$shareableEntry->type])){
+                $tempFoldernameCache[$shareableEntry->type] = [];
+            }
+            $fetch = ['name', 'partition_id', 'object_id'];
+            for( $i=1; $i<10000; $i++ ){
+                $tempName = $newName.$addName.$extName;
+                $tempFoldername = cmiName::join($basePartition, $tempName);
+                if(!isset($tempFoldernameCache[$shareableEntry->type][$tempFoldername])
+                    && $shareableEntry->getMCPHash($tempFoldername, $fetch) === NULL
+                    /* || $shareableEntry->type === "sandbox" */
+                ){
+                    $tempFoldernameCache[$shareableEntry->type][$tempFoldername] = TRUE; // &= $shareableEntry;
+                    $shareableEntry->setNewFoldername($tempFoldername);
+                    break;
+                }else{
+                    $addName = $m[2].$i;
+                }
+            }
+        }
+    }
+
+    // affiliated customization groups fix
+    foreach( $customizationFix as &$cfixEntry ){
+         //
+         if( ( $cEntry = parsed_entry::findEntryByKTypeNewName( $shareableEntries, "", "customization group", $cfixEntry->customizationGroupName, "foldername" ) ) === NULL ){
+            exit1( "unable to find or match customizaiton group $cfixEntry->customizationGroupName for $cfixEntry->type $cfixEntry->name\n", 1, $GLOBALS["ONEXIT"] );
+         }
+         $cEntry->isSaving = false;
+         if( !empty( $cEntry->imageCustGroups )){
+             //
+             foreach( $cEntry->imageCustGroups as $cGroup ){
+                 $cGroup->isSaving = false;
+             }
+         }
+    }
+
+    // rename all variables
+    $fromFoldernames = array();
+    $toFoldernames = array();
+    $types = array();
+
+    //
+    foreach( $bodyEntries as &$bodyEntry ){
+        if( $bodyEntry->isShareable() ){
+            $types[] = $bodyEntry->type;
+            $fromFoldernames[] = $bodyEntry->foldername;
+            $toFoldernames[] = $bodyEntry->newFoldername;
+        }
+    }
+
+    $contents = ( empty( $partition ) ? "" : "cli admin-partitions {\n    update-partition {$partition}\n}\n" );
+
+    // get config file
+    foreach( $bodyEntries as /** @var parsed_entry */ &$bodyEntry ){
+        if( $bodyEntry->isSaving() ){
+            $renamedBody = $bodyEntry->getRenamedBody($share, $baseName, $basePartition, $commonPartition, $fromFoldernames, $toFoldernames, $types);
+            $contents .= $renamedBody."\n\n";
+
+            if($GLOBALS["LOGFILE"]){
+                $GLOBALS["logger"]->outln($bodyEntry->body);
+                $GLOBALS["logger"]->outln($renamedBody);
+            }
+        }
+    }
+
+    // get fileobjects to file
+    foreach( $fileObjects as /** @var parsed_entry */ &$fileObject ){
+        if( $fileObject->isSaving() ){
+            // customizaiton group inner path fix
+            if( $fileObject->type == "customization group" ){
+                //
+                replaceInFile( $fileObject->bodyEntryLink->originalFoldername, $fileObject->bodyEntryLink->newFoldername, $GLOBALS["SAVE_PREFIX"]."/".$fileObject->tarfilename );
+            }
+        }
+    }
+
+    return $contents;
+}
+
+function runTmshCommand($tmshCommand)
+{
+    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln("runTMSHCommand()"); }
+
+    $tmshStdout = "";
+    $tmshError = "";
+    $tmshLogfile = $GLOBALS["SAVE_PREFIX"].'.log';
+
+    $handle = popen( "{$tmshCommand} 2> {$tmshLogfile}", 'r');
+    $tmshStdout = trim(fread($handle, 8192));
+    pclose($handle);
+
+    $tmshError = trim(file_get_contents( $tmshLogfile ));
+
+    if($GLOBALS["LOGFILE"]){
+        $GLOBALS["logger"]->outln("cmd:    $tmshCommand");
+        $GLOBALS["logger"]->outln("stdout: $tmshRet");
+        $GLOBALS["logger"]->outln("error:  $tmshError");
+    }
+
+    return [$tmshError, $tmshStdout];
+}
+
+function tmshInstall($bodyObjects, $fileObjects){
+    foreach($fileObjects as $k=>&$installObject){
+        // === 0 means not reused
+        if($installObject->getInstallOrder() == "tmshInstall" && $installObject->bodyEntryLink->isSaving() === 0){
+            $installObject->bodyEntryLink->isSaving = false;
+            $tmshCommand = "tmsh install {$installObject->bodyEntryLink->tmshInstallType} {$installObject->bodyEntryLink->newFoldername} from-local-file {$GLOBALS["SAVE_PREFIX"]}/{$installObject->tarfilename}";
+            list($tmshError, $tmshStdout) = runTmshCommand($tmshCommand);
+            if(trim($tmshError) != "" ){
+                return "Installing object {$installObject->bodyEntryLink->class} {$installObject->tarfilename} using with tmsh install {$installObject->bodyEntryLink->tmshInstallType} caused tmsh error:\n{$tmshError} {$tmshStdout}";
+            }
+            $GLOBALS["ONEXIT-EXEC"][] = "tmsh delete {$installObject->bodyEntryLink->tmshInstallType} {$installObject->bodyEntryLink->newFoldername}";
+        }
+    }
+    return "";
+}
+
+// this function installs content
+function installContents($contents)
+{
+    // replace
+    $contents = preg_replace( "/\r/", "", $contents );
+
+    // save contents to temp file
+    $filename = $GLOBALS["SAVE_PREFIX"].".conf";
+    if ( ( is_file($filename) || is_link($filename) ) && unlink( $filename ) === FALSE ){
+        return "Unable to delete {$filename}";
+    }
+
+    if ( ( $handle = fopen($filename, 'w') ) === FALSE ) {
+        return "Cannot open file {$filename} for write";
+    }
+
+    // Write $contents to our opened file.
+    if ( fwrite($handle, $contents) === FALSE) {
+       return "Cannot write to file {$filename}";
+    }
+
+    fclose($handle);
+
+    if($GLOBALS["LOGFILE"]){ $GLOBALS["logger"]->outln( "Loading from: {$filename}"); }
+
+    //------------------------- merge
+
+    $tmshCommand = "tmsh load sys config merge file {$filename}";
+    //0 => stdout, 1 => error
+    $pipesStdoutError = runTmshCommand($tmshCommand);
+
+    foreach($pipesStdoutError as &$pipeOut){
+        if(strpos($pipeOut, "Error") !== false
+            || strpos($pipeOut, "parsing error") !== false
+            || preg_match("|\d\d\d\d:\d:|", $pipeOut)){
+           return trim($pipeOut);
+        }
+    }
+
+    if($GLOBALS["LOGFILE"] !== true){
+        unlink($filename);
+        unlink($GLOBALS["SAVE_PREFIX"].".log");
+        $GLOBALS["ONEXIT-EXEC"] = [];
+        $GLOBALS["CREATEDFOLDERS"] = [];
+        clean();
+    }
+
+    return "";
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+
+function checkRouteDomainList( &$bodyEntries )
+{
+    foreach( $bodyEntries as $bodyIndex=>&$bodyEntry ){
+        if( $bodyEntry->f5titula == "Access Control / Route Domain" ){
+            preg_match( '|^net route-domain ([^{]+) {\s*|', $bodyEntry->body, $k );
+            $errText = "route domain ({$k[1]}) was available when the access policy was exported. This route domain must now be recreated, or must be available to the current user account or from the current partition (".sourceMCPD::$cookiePartition."). Please correct the issue and retry.";
+            if(NULL === ($domain = sourceMCPD::getHashC(
+                "route_domain",
+                ['name' => $k[1]],
+                ['partition_id', 'object_id']
+             ))){
+                 return $errText;
+             }
+             if($domain["partition_id"] != sourceMCPD::$cookiePartition && $domain["partition_id"] != "Common"){
+                 return $errText;
+             }
+             unset( $bodyEntries[$bodyIndex] );
+        }
+    }
+
+    return "";
+}
+
+function checkSnatpoolList( &$bodyEntries )
+{
+    foreach( $bodyEntries as $bodyIndex=>&$bodyEntry ){
+        if( $bodyEntry->f5titula == "Access Control / Snatpool" ){
+            preg_match( '|^ltm snatpool ([^{]+) {\s*|', $bodyEntry->body, $k );
+            $snatpool = sourceMCPD::getHashC("snatpool", ['name' => $bodyEntry->originalFoldername], ['name', 'partition_id', 'object_id']);
+            if($snatpool === NULL || ($snatpool["partition_id"] != sourceMCPD::$cookiePartition && $snatpool["partition_id"] != "Common")){
+                return "snatpool ({$bodyEntry->originalFoldername}) was available when the access policy was exported. This snatpool must now be recreated, or must be available to the current user account or from the current partition (".sourceMCPD::$cookiePartition."). Please correct the issue and retry.";
+            }
+            unset( $bodyEntries[$bodyIndex] );
+        }
+    }
+
+    return "";
+}
+
+function fixLtmPools( &$bodyEntries )
+{
+    foreach( $bodyEntries as $bodyIndex=>&$bodyEntry ){
+        if( $bodyEntry->f5titula == "Access Control / Pool" ){
+            $lines = explode( "\n", $bodyEntry->body );
+            $count = count($lines);
+            $begin = false;
+            for( $i=0; $i < $count; $i++ ){
+                //
+                if( $begin && strpos ( $lines[$i], "    }" ) === 0 ){
+                    $begin = false;
+                }
+                //
+                if( $begin ){
+                    if( preg_match( "|        ([A-Za-z0-9._-]*)\/(.*)|i", $lines[$i], $matches ) ){
+                        $lines[$i] = "        /{$bodyEntry->partition}/{$matches[2]}";
+                    }
+                }
+                //
+                if( strpos( $lines[$i], "    members {" ) === 0 ){
+                    $begin = true;
+                    continue;
+                }
+            }
+            $bodyEntry->body = implode("\n", $lines );
+        }
+    }
+    return "";
+}
+
+function fixOrderIntersect( &$bodyEntries )
+{
+    $tmshFieldToConfig = [
+        "acl-order" => [
+            "acl" => [ "acl" => "acl_order" ],
+            "connectivity resource web application" => [ "connectivity_resource_web_application" => "wa_order" ],
+            "connectivity resource remote desktop" => ["connectivity_resource_remote_desktop" => "rd_order"],
+            "connectivity resource app tunnel" => ["connectivity_resource_app_tunnel" => "at_order"]
+        ],
+        "display-order" => [
+            "webtop section" => [ "webtop_section" => "ws_order" ]
+        ]
+    ];
+
+    $tmshClassToField = []; // "connectivity resource web application" => "display-order"
+    $orders = array_map(function($a){ return []; }, $tmshFieldToConfig);
+    foreach($tmshFieldToConfig as $tmshField=>&$tmshConfig){
+        foreach($tmshConfig as $tmshClass=>&$mcpdConfig){
+            $tmshClassToField[$tmshClass] = $tmshField;
+            foreach($mcpdConfig as $mcpClass=>$mcpField){
+                $hashes = sourceMCPD::getAllHashes($mcpClass, [], [$mcpField, 'partition_id', 'object_id'], FALSE); //ELEVATED
+                if(is_array($hashes)){
+                    foreach($hashes as $hash){
+                        $order = (int)$hash[$mcpField];
+                        $orders[$tmshField][$order] = 1;
+                    }
+                }
+            }
+        }
+    }
+
+    //implying that config has no conflicting orders
+    //checking if there any order conflicts
+    $tmshFieldToOrder = array_map(function($a){ return []; }, $tmshFieldToConfig);
+    $tmshFieldToKeepOrder = array_map(function($a){ return TRUE; }, $tmshFieldToConfig);
+    foreach($bodyEntries as /** @var parsed_entry */ &$bodyEntry){
+        if($bodyEntry->isSaving() && array_key_exists($bodyEntry->type, $tmshClassToField)){
+            $tmshField = $tmshClassToField[$bodyEntry->type];
+            $bodyEntry->currentOrder = (preg_match( "|\n    {$tmshField} ([0-9]+)|", $bodyEntry->body, $regs)
+                ? (int)$regs[1] : 0);
+            $tmshFieldToOrder[$tmshField][$bodyEntry->currentOrder] = &$bodyEntry;
+            if(!empty($orders[$tmshField][$bodyEntry->currentOrder])){
+                $tmshFieldToKeepOrder[$tmshField] = FALSE;
+            }
+        }
+    }
+
+    //renumbering if needed
+    foreach($tmshFieldToOrder as $tmshField=>&$bodyEntriesPicked){
+        //
+        if($tmshFieldToKeepOrder[$tmshField]){
+            foreach($bodyEntriesPicked as &$bodyEntry){
+                $bodyEntry->newOrder = $bodyEntry->currentOrder;
+                $orders[$tmshField][$currentOrder] = 1;
+            }
+        }else{
+            //sort within
+            uasort(
+                $bodyEntriesPicked,
+                function($a, $b){
+                    return ($a->currentOrder == $b->currentOrder) ? 0 : ($a->currentOrder < $b->currentOrder) ? -1 : 1;
+                }
+            );
+
+            $newOrder = 0;
+            foreach($bodyEntriesPicked as &$bodyEntry){
+                // todo: move 65536 to const
+                for(; $newOrder <= 65536; $newOrder++){
+                    if(empty($orders[$tmshField][$newOrder])){
+                        break;
+                    }
+                }
+                // there are no available orders
+                if($newOrder >= 65536){
+                    return "Attempting to import {$bodyEntry->type} {$bodyEntry->name} specified in your config template with {$tmshField} value of {$bodyEntry->currentOrder} is conflicting with the resource that exists in the current configuration and couldn't be resolved automatically due lack of remaining order numbers.";
+                }
+                // save
+                $bodyEntry->newOrder = $newOrder;
+                $orders[$tmshField][$newOrder] = 1;
+                // for some reason, when the order is zero, there's no acl-order property
+                if(0 == $bodyEntry->currentOrder && FALSE === strpos($bodyEntry->body, "    {$tmshField}")){
+                     $bodyEntry->body = preg_replace("|    entries|", "    {$tmshField} 0\n    entries",
+                        $bodyEntry->body);
+                }
+                $bodyEntry->body = preg_replace("|\n    {$tmshField} ([0-9]+)|",
+                    "\n    {$tmshField} {$bodyEntry->newOrder}", $bodyEntry->body);
+            }
+        }
+    }
+
+    return "";
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+
+function replaceInFile( $from, $to, $filename ){
+//
+    $f = file_get_contents( $filename );
+    $f = str_replace( $from, $to, $f );
+    file_put_contents ( $filename, $f );
+}
+
+function prepare( $confTarGzName ){
+    // create temp
+    $GLOBALS["SAVE_PREFIX"] = commonTemp::createTempFolder($GLOBALS["TMP_APPNAME"], $GLOBALS["TMP_SUBNAME"]);
+    // untar
+    $tarPar = ( strrpos($confTarGzName, ".tar") == strlen($confTarGzName) - 4 ? "xvf" : "xvfz" );
+    $tarCmd = "/bin/tar {$tarPar} {$confTarGzName} -C {$GLOBALS["SAVE_PREFIX"]}/";
+    exec($tarCmd, $tarOut, $tarErr);
+    if( $tarErr ){
+        return "untar failed $tarCmd returned:".implode("\n",$tarOut);
+    }
+    //
+    if( fileperms( $confTarGz ) && unlink( $confTarGz ) === false ){
+        return "unable to delete {$confTarGz}";
+    }
+    return "";
+}
+
+function clean(){
+    // delte folder if it has been created
+    if(!empty($GLOBALS["CREATEDFOLDERS"])){
+        sourceMCPD::delete($GLOBALS["CREATEDFOLDERS"]);
+    }
+
+    // remove preinstalled
+    foreach($GLOBALS["ONEXIT-EXEC"] as $tmshCommand){
+        list($tmshError, $tmshStdout) = runTmshCommand($tmshCommand);
+        if($tmshError != "" || $tmshStdout != "" ){
+            echo("{$tmshCommand}\ncaused\n{$tmshError}{$tmshStdout}\n");
+        }
+    }
+    commonTemp::removeTempFolder($GLOBALS["TMP_APPNAME"], $GLOBALS["TMP_SUBNAME"]);
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+
+$GLOBALS["TMP_APPNAME"] = "import";
+$GLOBALS["TMP_SUBNAME"] = "p".commonTemp::datePostfix();
+
+// Load parsed.xml
+parsed_entry::$root = EDOM::load(serverPaths::xmlBase."imex/parsed.xml")->documentElement;
+
+// Elevate privileges
+sourceMCPD::elevateTrigger(TRUE);
+
+// Unpack conf.tar.gz
+$errorString = prepare($confTarGzName);
+if( $errorString !== "" ){
+    exit1($errorString, 1, $GLOBALS["ONEXIT"]);
+}
+
+//--------------------------------------------------------------------------------------------------------------
+
+// 1.6 style
+$fullConfName = $GLOBALS["SAVE_PREFIX"]."/ng-export.conf";
+if( !file_exists( $fullConfName ) ){
+    // pre 1.6 style
+    $fullConfName = $GLOBALS["SAVE_PREFIX"]."/access_profile.conf";
+    if( !file_exists( $fullConfName ) ){
+        exit1("main .conf file is not found", 1, $GLOBALS["ONEXIT"]);
+    }
+}
+
+$handle = fopen( $fullConfName, "r" );
+$contents = '';
+while (!feof($handle)){
+     $contents .= fread($handle, 8192);
+}
+fclose($handle);
+
+// dos format fix
+$contents = str_replace("\r\n", "\n", $contents );
+
+if( empty($contents) ){
+    exit1("file {$fullConfName} has no data.\n", 1, $GLOBALS["ONEXIT"]);
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+//
+
+list($replaceName, $bodyEntries, $fileObjects, $filePreEntries, $filePostEntries) = separateSections( $baseName, $basePartition, $commonPartition, $contents, $share );
+
+//-----------------------------------------------------------------------------------------------------------------
+// fix issues
+
+$errorString = checkRouteDomainList( $bodyEntries );
+if( $errorString !== "" ){
+    exit1($errorString, 1, $GLOBALS["ONEXIT"]);
+}
+
+$errorString = checkSnatpoolList( $bodyEntries );
+if( $errorString !== "" ){
+    exit1($errorString, 1, $GLOBALS["ONEXIT"]);
+}
+
+$errorString = fixOrderIntersect( $bodyEntries );
+if( $errorString !== "" ){
+    exit1($errorString, 1, $GLOBALS["ONEXIT"]);
+}
+
+$errorString = fixLtmPools( $bodyEntries );
+if( $errorString !== "" ){
+    exit1($errorString, 1, $GLOBALS["ONEXIT"]);
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+
+$contents = preporcessBodyEntries( $bodyEntries, $fileObjects, $filePreEntries, $filePostEntries,  $baseName, $basePartition, $commonPartition, $share );
+
+//-----------------------------------------------------------------------------------------------------------------
+// tmsh object installation
+
+$errorString = tmshInstall( $bodyEntries, $fileObjects );
+if( $errorString !== "" ){
+    exit1($errorString, 1, $GLOBALS["ONEXIT"]);
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+// contents installation
+
+tmshRead::set_p(TRUE, FALSE);
+$errorString = installContents( $contents );
+tmshRead::set_p(FALSE, FALSE);
+if($errorString !== ""){
+    exit1($errorString, 1, $GLOBALS["ONEXIT"]);
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+// last
+// save all partitions
+
+if( SourceMCPD::findMode() != SourceMCPD::MODE_SYSCALLD ){
+    $tmshRet = "";
+    $handle = popen("tmsh save sys config", 'r');
+    $tmshRet = fread($handle, 8192);
+    pclose($handle);
+}
+
+// commonTemp::removeTempFolder has already happened inside clean?
+
+if($GLOBALS["LOGFILE"]){
+    $GLOBALS["logger"]->outln("-----------------------------");
+    $GLOBALS["logger"]->outln("Execution Time (sec): ".(microtime(TRUE) - $GLOBALS["STARTTIME"])."\n");
+}
+?>
