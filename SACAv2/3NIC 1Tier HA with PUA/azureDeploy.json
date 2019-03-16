@@ -352,10 +352,12 @@
         "mgmtSubnetPrivateAddress3": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 51))]",
         "mgmtRouteGw": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.1')]",
 
+        "singleQuote": "'",
         "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip && openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer && tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer",
 
         "puaConfig": "[concat('echo \"noninteractive=\"y\"\nnobackup=\"true\"\nwebssh2vip=\"', variables('intSubnetPrivateAddress4'), '\"\nradiusvip=\"', variables('intSubnetPrivateAddress4'), '\"\nldapvip=\"', variables('intSubnetPrivateAddress4'), '\"\nldapsvip=\"', variables('intSubnetPrivateAddress4'), '\"\nwebtopvip=\"0.0.0.0\"\nradiusconfig=\"y\"\nstatus=\"Active\"\nsampleca=\"y\"\ndisabletest=\"y\"\" > pua_config.sh')]",
-        "cmdInstallPua": "sleep 5m && echo $PS1 > ps1.txt; bash ./build_pua.sh",
+        "cmdPuaScript": "[concat(variables('singleQuote'), '#!/bin/bash --init-file\"n', 'PS1=', variables('singleQuote'), '.\\$', variables('singleQuote'), '\nbash ./build_pua.sh', variables('singleQuote'))]",
+        "cmdInstallPua": "[concat('echo -e ', variables('cmdPuaScript'), ' >> puaUnintendedInteractive.sh', '; bash ./puaUnintendedInteractive.sh')]",
 
         "vdmsSubnetName": "VDMS",
         "windowsOSVersion": "2016-Datacenter",
@@ -442,7 +444,6 @@
             "13.1.100000": "route",
             "latest": "route"
         },
-        "singleQuote": "'",
         "skuToUse": "[concat('f5-', variables('imageNameSub'),'-byol')]",
         "storageApiVersion": "2017-10-01",
         "storageProfileArray": {
