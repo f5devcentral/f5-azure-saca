@@ -179,7 +179,7 @@ ob_end_clean();
         }
 
         //return sourceMCPD::MODE_UNKNOWN;
-        return sourceMCPD::MODE_SYSCALLD
+        return sourceMCPD::MODE_SYSCALLD;
     }
 
     public static function getRole()
