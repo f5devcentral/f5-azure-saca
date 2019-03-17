@@ -367,7 +367,7 @@
 
         "puaConfig0": "[concat('echo \"noninteractive=\"y\"\nnobackup=\"true\"\nwebssh2vip=\"', variables('intSubnetPrivateAddress4'), '\"\nradiusvip=\"', variables('intSubnetPrivateAddress4'), '\"\nldapvip=\"', variables('intSubnetPrivateAddress4'), '\"\nldapsvip=\"', variables('intSubnetPrivateAddress4'), '\"\nwebtopvip=\"')]",
         "puaConfig1": "[concat('\"\nradiusconfig=\"y\"\nstatus=\"Active\"\nsampleca=\"y\"\ndisabletest=\"y\"\" > pua_config.sh')]",
-        "cmdPuaScript": "[concat(variables('singleQuote'), '#!/bin/bash --init-file\n', 'PS1=\"$USER@$(getHostName):$(getPromptStatus)$(getAvcCount):$(getConfigSyncStatus)]\\[\\e]0;$(getHostName)\\a\\] \\W \\$\"\n', 'bash ./build_pua.sh', variables('singleQuote'))]",
+        "cmdPuaScript": "[concat(variables('singleQuote'), '#!/bin/bash --init-file\n', 'bash ./build_pua.sh', variables('singleQuote'))]",
         "cmdInstallPua": "[concat('echo -e ', variables('cmdPuaScript'), ' >> puaUnintendedInteractive.sh', '; mv /var/sam/www/admin/vpe2/private/php/include/accessPolicyContainer/dataSource.php ./dataSource.php.old; mv ./dataSource.php /var/sam/www/admin/vpe2/private/php/include/accessPolicyContainer/dataSource.php; bash ./puaUnintendedInteractive.sh')]",
         "cmdReplacedataSource": "rm -rf /var/sam/www/admin/vpe2/private/php/include/accessPolicyContainer/dataSource.php; mv dataSource.php.old /var/sam/www/admin/vpe2/private/php/include/accessPolicyContainer/dataSource.php",
 
@@ -949,7 +949,7 @@
               "enableFloatingIP": true,
               "idleTimeoutInMinutes": 4,
               "protocol": "Tcp",
-              "loadDistribution": "Default",
+              "loadDistribution": "SourceIP",
               "backendAddressPool": {
                 "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
               },
