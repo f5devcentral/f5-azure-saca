@@ -108,7 +108,7 @@ Use the appropriate button below to deploy:
 
 - **1 Tier with Priviledged User Access**  This deploys the 3-NIC 1 Tier with Priviledged User Access use-case.
 
-  [![Deploy to Azure Gov](http://azuredeploy.net/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fgithub.com%2Ff5devcentral%2Ff5-azure-saca%2Fblob%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA_with_PUA%2FazureDeploy.json)
+  [![Deploy to Azure Gov](http://azuredeploy.net/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA_with_PUA%2FazureDeploy.json)
 
 
 ### SACAv1 Azure Government deploy buttons
