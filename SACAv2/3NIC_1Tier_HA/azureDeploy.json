@@ -33,7 +33,7 @@
             }
         },
         "declarationUrl": {
-            "defaultValue": "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/AS3/sccaBaseline.json",
+            "defaultValue": "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/AS3/sccaBaseline.json",
             "metadata": {
                 "description": "URL for the AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration."
             },
@@ -436,7 +436,6 @@
         "resourceGroupName": "[resourceGroup().name]",
         "routeCmdArray": {
             "12.1.303000": "[concat('tmsh create sys management-route waagent_route network 168.63.129.16/32 gateway ', variables('mgmtRouteGw'), '; tmsh save sys config')]",
-            "13.1.100000": "route",
             "latest": "route"
         },
         "singleQuote": "'",
