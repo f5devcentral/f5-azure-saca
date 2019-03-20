@@ -8,6 +8,17 @@
         "id": "urn:uuid:b92236ad-a677-4574-8bce-7d1487aeb62f",
         "label": "Management",
         "remark": "Management VIPs",
+        "Common": {
+            "class": "Tenant",
+            "Shared": {
+                "class": "Application",
+                "template": "shared",
+                      "ip_reputation_drop": {
+                "class": "iRule",
+                "iRule": "when CLIENT_ACCEPTED {\nif {[llength [IP::reputation [IP::client_addr]]] != 0}{\nlog local0. \"IP Intelligence for IP address [IP::client_addr]:[IP::reputation [IP::client_addr]]\"\ndrop\n}\n}\n"
+              }
+            }
+        },
         "mgmt": {
             "class": "Tenant",
             "mgmt_rdp": {
@@ -15,6 +26,7 @@
                 "template": "generic",
                 "mgmt_rdp": {
                     "class": "Service_TCP",
+                    "iRules": ["/Common/Shared/ip_reputation_drop"],
                     "virtualAddresses": [
                         "0.0.0.0"
                     ],
@@ -49,6 +61,7 @@
                 "template": "generic",
                 "mgmt_ssh": {
                     "class": "Service_TCP",
+                    "iRules": ["/Common/Shared/ip_reputation_drop"],
                     "virtualAddresses": [
                         "0.0.0.0"
                     ],
