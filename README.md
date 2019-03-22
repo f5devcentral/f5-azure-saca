@@ -159,7 +159,7 @@ As an alternative to deploying through the Azure Portal (GUI) each solution prov
 
 ## Configuration Example
 
-The following is an example configuration diagram for this solution deployment. In this scenario, all access to the BIG-IP VE cluster (Active/Active) is through an ALB. For diagrams of alternate deployment topologies, see [alternate topologies](../../alternate-deployment-topologies.md).
+The following is an example configuration diagram for this solution deployment. In this scenario, all access to the BIG-IP VE cluster (Active/Active) is through an ALB.
 
 ![Configuration Example](./images/azure-example-diagram.png)
 
