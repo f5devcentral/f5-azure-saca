@@ -196,7 +196,6 @@
                 "id": "[concat(variables('intLbId'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
             }
         ],
-        "bigIpMgmtPort": "[variables('bigIpVersionPortMap')[variables('bigIpNicPortValue')].Port]",
         "bigIpNicPortMap": {
             "1": {
                 "Port": "[variables('bigIpVersion')]"
@@ -236,6 +235,7 @@
                 "Port": 8443
             }
         },
+        "bigIpMgmtPort": "[variables('bigIpVersionPortMap')[variables('bigIpNicPortValue')].Port]",
         "commandArgs": "[concat('-o ', parameters('declarationUrl'), ' -u svc_user')]",
         "computeApiVersion": "2017-12-01",
         "createNewCustomImage": "[contains(variables('customImage'), 'https://')]",
@@ -364,7 +364,8 @@
 
         "singleQuote": "'",
         "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip && openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer && tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer",
-
+        "cmdConfigStig": "bash ./bigipstig.sh",
+        
         "puaConfig0": "[concat('echo \"noninteractive=\"y\"\nnobackup=\"true\"\nwebssh2vip=\"', variables('intSubnetPrivateAddress4'), '\"\nradiusvip=\"', variables('intSubnetPrivateAddress4'), '\"\nldapvip=\"', variables('intSubnetPrivateAddress4'), '\"\nldapsvip=\"', variables('intSubnetPrivateAddress4'), '\"\nwebtopvip=\"')]",
         "puaConfig1": "[concat('\"\nradiusconfig=\"y\"\nstatus=\"Active\"\nsampleca=\"y\"\ndisabletest=\"y\"\" > pua_config.sh')]",
         "cmdPuaScript": "[concat(variables('singleQuote'), '#!/bin/bash --init-file\n', 'bash ./build_pua.sh', variables('singleQuote'))]",
