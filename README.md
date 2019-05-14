@@ -105,10 +105,15 @@ Use the appropriate button below to deploy:
 - **1 Tier** This deploys the 3-NIC 1 Tier use-case.
 
   [![Deploy to Azure Gov](http://azuredeploy.net/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2FazureDeploy.json)
+  
+### SACAv2 Azure Commercial deploy buttons
 
-- **1 Tier with Priviledged User Access**  This deploys the 3-NIC 1 Tier with Priviledged User Access use-case.
+Use the appropriate button below to deploy:
 
-  [![Deploy to Azure Gov](http://azuredeploy.net/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA_with_PUA%2FazureDeploy.json)
+- **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
+- **1 Tier** This deploys the 3-NIC 1 Tier use-case.
+
+  [![Deploy to Azure Gov](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2FazureDeploy.json)
 
 
 ### SACAv1 Azure Government deploy buttons
