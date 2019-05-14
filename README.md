@@ -104,8 +104,12 @@ Use the appropriate button below to deploy:
 - **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
 - **1 Tier** This deploys the 3-NIC 1 Tier use-case.
 
-  [![Deploy to Azure Gov](http://azuredeploy.net/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2FazureDeploy.json)
-  
+  [![Deploy to Azure Gov](http://portal.azure.us/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2FazureDeploy.json)
+
+- **3 Tier [ALPHA]** This deploys the standard F5 "Firewall Sandwich" use-case, with an IPS tier.
+
+  [![Deploy to Azure Gov](http://portal.azure.us/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMikej81%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2FazureDeploy.json)
+
 ### SACAv2 Azure Commercial deploy buttons
 
 Use the appropriate button below to deploy:
@@ -115,12 +119,15 @@ Use the appropriate button below to deploy:
 
   [![Deploy to Azure Gov](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2FazureDeploy.json)
 
+- **3 Tier [ALPHA]** This deploys the standard F5 "Firewall Sandwich" use-case, with an IPS tier.
+
+  [![Deploy to Azure Gov](http://azuredeploy.net/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMikej81%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2FazureDeploy.json)
 
 ### SACAv1 Azure Government deploy buttons
 
 - **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
 
-  [![Deploy to Azure Gov](http://azuredeploy.net/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv1%2Froles%2Ff5-azure-scca%2Ffiles%2Fazuredeploy.json)
+  [![Deploy to Azure Gov](http://portal.azure.us/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv1%2Froles%2Ff5-azure-scca%2Ffiles%2Fazuredeploy.json)
 
 
 ### Template parameters
