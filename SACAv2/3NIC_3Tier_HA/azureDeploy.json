@@ -1051,7 +1051,7 @@
                     {
                         "name": "[concat(variables('resourceGroupName'), '-ext-ipconfig2')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": "variables('SBBackEndAddressPool')",
+                            "loadBalancerBackendAddressPools": "[variables('SBBackEndAddressPool')]",
                             "primary": false,
                             "privateIPAddress": "[concat(variables('ext2SubnetPrivateAddressPrefix'), '.',10)]",
                             "privateIPAllocationMethod": "Static",
