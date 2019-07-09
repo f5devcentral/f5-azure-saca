@@ -1029,7 +1029,7 @@
             "location": "[variables('location')]",
             "name": "[variables('availabilitySetName')]",
             "properties": {
-                "PlatformFaultDomainCount": 3,
+                "PlatformFaultDomainCount": 2,
                 "PlatformUpdateDomainCount": 2
             },
             "sku": {
