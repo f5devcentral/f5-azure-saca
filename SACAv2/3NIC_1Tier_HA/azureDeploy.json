@@ -509,7 +509,7 @@
                     {
                         "name": "VDMSRouteToILB",
                         "properties": {
-                            "addressPrefix": "[parameters('VDMSAddressSubnet')]",
+                            "addressPrefix": "0.0.0.0/0",
                             "nextHopType": "VirtualAppliance",
                             "nextHopIpAddress": "[variables('internalLoadBalancerAddress')]"
                         }
