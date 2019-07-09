@@ -1026,7 +1026,7 @@
             "location": "[variables('location')]",
             "name": "[variables('availabilitySetName')]",
             "properties": {
-                "PlatformFaultDomainCount": 2,
+                "PlatformFaultDomainCount": 3,
                 "PlatformUpdateDomainCount": 2
             },
             "sku": {
@@ -1186,6 +1186,9 @@
         "[resourceId('Microsoft.Network/networkInterfaces/', concat(variables('mgmtNicName'), '2'))]"
       ],
       "properties": {
+        "availabilitySet": {
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+        },
         "hardwareProfile": {
           "vmSize": "[variables('jbvmSize')]"
         },
@@ -1238,6 +1241,9 @@
         "[resourceId('Microsoft.Network/networkInterfaces/', concat(variables('mgmtNicName'), '3'))]"
       ],
       "properties": {
+        "availabilitySet": {
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+        },
         "hardwareProfile": {
           "vmSize": "Standard_A2"
         },
