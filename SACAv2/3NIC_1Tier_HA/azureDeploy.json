@@ -348,6 +348,7 @@
         "internalLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-int-ilb')]",
         "internalLoadBalancerProbePort": "3456",
         "internalLoadBalancerType": "All",
+
         "tmmRouteGw": "[concat(variables('intSubnetPrivateAddressPrefix'), '.1')]",
 
         "mgmtNicName": "[concat(variables('dnsLabelPrefix'), '-mgmt')]",
@@ -362,6 +363,7 @@
         "mgmtSubnetPrivateAddress1": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 5))]",
         "mgmtSubnetPrivateAddress2": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 50))]",
         "mgmtSubnetPrivateAddress3": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 51))]",
+
         "mgmtRouteGw": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.1')]",
 
         "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip && openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer && tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer",
@@ -511,7 +513,7 @@
             "properties": {
                 "routes": [
                     {
-                        "name": "default",
+                        "name": "Default",
                         "properties": {
                             "addressPrefix": "0.0.0.0/0",
                             "nextHopType": "VirtualAppliance",
