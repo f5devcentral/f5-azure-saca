@@ -188,6 +188,8 @@
         },
         "appScript": "IyEvYmluL2Jhc2gKZnVuY3Rpb24gcGFzc3dkKCkgewogIGVjaG8gfCBmNS1yZXN0LW5vZGUgL2NvbmZpZy9jbG91ZC9henVyZS9ub2RlX21vZHVsZXMvQGY1ZGV2Y2VudHJhbC9mNS1jbG91ZC1saWJzL3NjcmlwdHMvZGVjcnlwdERhdGFGcm9tRmlsZS5qcyAtLWRhdGEtZmlsZSAvY29uZmlnL2Nsb3VkLy5wYXNzd2QgfCBhd2sgJ3twcmludCAkMX0nCn0KCndoaWxlIGdldG9wdHMgbzp1OiBvcHRpb24KZG8gY2FzZSAiJG9wdGlvbiIgIGluCiAgICAgICAgbykgZGVjbGFyYXRpb25Vcmw9JE9QVEFSRzs7CiAgICAgICAgdSkgdXNlcj0kT1BUQVJHOzsKICAgIGVzYWMKZG9uZQoKZGVwbG95ZWQ9Im5vIgpmaWxlX2xvYz0iL2NvbmZpZy9jbG91ZC9jdXN0b21fY29uZmlnIgpkZmxfbWdtdF9wb3J0PWB0bXNoIGxpc3Qgc3lzIGh0dHBkIHNzbC1wb3J0IHwgZ3JlcCBzc2wtcG9ydCB8IHNlZCAncy9zc2wtcG9ydCAvLztzLyAvL2cnYAp1cmxfcmVnZXg9IihodHRwOlwvXC98aHR0cHM6XC9cLyk/W2EtejAtOV0rKFtcLVwuXXsxfVthLXowLTldKykqXC5bYS16XXsyLDV9KDpbMC05XXsxLDV9KT8oXC8uKik/JCIKCmlmIFtbICRkZWNsYXJhdGlvblVybCA9fiAkdXJsX3JlZ2V4IF1dOyB0aGVuCiAgICByZXNwb25zZV9jb2RlPSQoL3Vzci9iaW4vY3VybCAtc2sgLXcgIiV7aHR0cF9jb2RlfSIgJGRlY2xhcmF0aW9uVXJsIC1vICRmaWxlX2xvYykKICAgIGlmIFtbICRyZXNwb25zZV9jb2RlID09IDIwMCBdXTsgdGhlbgogICAgICAgICBlY2hvICJDdXN0b20gY29uZmlnIGRvd25sb2FkIGNvbXBsZXRlOyBjaGVja2luZyBmb3IgdmFsaWQgSlNPTi4iCiAgICAgICAgIGNhdCAkZmlsZV9sb2MgfCBqcSAuY2xhc3MKICAgICAgICAgaWYgW1sgJD8gPT0gMCBdXTsgdGhlbgogICAgICAgICAgICAgcmVzcG9uc2VfY29kZT0kKC91c3IvYmluL2N1cmwgLXNrdnZ1ICR1c2VyOiQocGFzc3dkKSAtdyAiJXtodHRwX2NvZGV9IiAtWCBQT1NUIC1IICJDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24iIGh0dHBzOi8vbG9jYWxob3N0OiRkZmxfbWdtdF9wb3J0L21nbXQvc2hhcmVkL2FwcHN2Y3MvZGVjbGFyZSAtZCBAJGZpbGVfbG9jIC1vIC9kZXYvbnVsbCkKCiAgICAgICAgICAgICBpZiBbWyAkcmVzcG9uc2VfY29kZSA9PSAyMDAgfHwgJHJlc3BvbnNlX2NvZGUgPT0gNTAyIF1dOyB0aGVuCiAgICAgICAgICAgICAgICAgIGVjaG8gIkRlcGxveW1lbnQgb2YgYXBwbGljYXRpb24gc3VjY2VlZGVkLiIKICAgICAgICAgICAgICAgICAgZGVwbG95ZWQ9InllcyIKICAgICAgICAgICAgIGVsc2UKICAgICAgICAgICAgICAgICBlY2hvICJGYWlsZWQgdG8gZGVwbG95IGFwcGxpY2F0aW9uOyBjb250aW51aW5nIHdpdGggcmVzcG9uc2UgY29kZSAnIiRyZXNwb25zZV9jb2RlIiciCiAgICAgICAgICAgICBmaQogICAgICAgICBlbHNlCiAgICAgICAgICAgICBlY2hvICJDdXN0b20gY29uZmlnIHdhcyBub3QgdmFsaWQgSlNPTiwgY29udGludWluZyIKICAgICAgICAgZmkKICAgIGVsc2UKICAgICAgICBlY2hvICJGYWlsZWQgdG8gZG93bmxvYWQgY3VzdG9tIGNvbmZpZzsgY29udGludWluZyB3aXRoIHJlc3BvbnNlIGNvZGUgJyIkcmVzcG9uc2VfY29kZSInIgogICAgZmkKZWxzZQogICAgIGVjaG8gIkN1c3RvbSBjb25maWcgd2FzIG5vdCBhIFVSTCwgY29udGludWluZy4iCmZpCgppZiBbWyAkZGVwbG95ZWQgPT0gIm5vIiAmJiAkZGVjbGFyYXRpb25VcmwgPT0gIk5PVF9TUEVDSUZJRUQiIF1dOyB0aGVuCiAgICBlY2hvICJBcHBsaWNhdGlvbiBkZXBsb3ltZW50IGZhaWxlZCBvciBjdXN0b20gVVJMIHdhcyBub3Qgc3BlY2lmaWVkLiIKZmkKCmVjaG8gIkRlcGxveW1lbnQgY29tcGxldGUuIgpleGl0",
         "availabilitySetName": "[concat(variables('dnsLabelPrefix'), '-avset')]",
+        "availabilitySet2Name": "[concat(variables('dnsLabelPrefix'), '-avset2')]",
+        "availabilitySet3Name": "[concat(variables('dnsLabelPrefix'), '-avset3')]",
         "backEndAddressPoolArray": [
             {
                 "id": "[concat(variables('extLbId'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
@@ -250,9 +252,7 @@
         "f5AS3Tag": "v3.6.0",
         "f5CloudIappsLoggerTag": "v1.0.0",
         "f5CloudIappsSdTag": "v2.3.1",
-        "f5CloudLibsAzureTag": "v2.7.1",
         "f5CloudLibsTag": "v4.7.0",
-        "f5NetworksTag": "v6.0.2.0",
         "failoverCmdArray": {
             "No": {
                 "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.azure.com'), ' unicast-address none')]",
@@ -1072,6 +1072,34 @@
             "type": "Microsoft.Compute/availabilitySets"
         },
         {
+            "apiVersion": "[variables('computeApiVersion')]",
+            "location": "[variables('location')]",
+            "name": "[variables('availabilitySet2Name')]",
+            "properties": {
+                "PlatformFaultDomainCount": 2,
+                "PlatformUpdateDomainCount": 2
+            },
+            "sku": {
+                "name": "Aligned"
+            },
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
+            "type": "Microsoft.Compute/availabilitySets"
+        },
+        {
+            "apiVersion": "[variables('computeApiVersion')]",
+            "location": "[variables('location')]",
+            "name": "[variables('availabilitySet3Name')]",
+            "properties": {
+                "PlatformFaultDomainCount": 2,
+                "PlatformUpdateDomainCount": 2
+            },
+            "sku": {
+                "name": "Aligned"
+            },
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
+            "type": "Microsoft.Compute/availabilitySets"
+        },
+        {
             "apiVersion": "[variables('storageApiVersion')]",
             "kind": "Storage",
             "location": "[variables('location')]",
@@ -1223,7 +1251,7 @@
       ],
       "properties": {
         "availabilitySet": {
-            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet2Name'))]"
         },
         "hardwareProfile": {
           "vmSize": "[variables('jbvmSize')]"
@@ -1278,7 +1306,7 @@
       ],
       "properties": {
         "availabilitySet": {
-            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet3Name'))]"
         },
         "hardwareProfile": {
           "vmSize": "Standard_A2"
