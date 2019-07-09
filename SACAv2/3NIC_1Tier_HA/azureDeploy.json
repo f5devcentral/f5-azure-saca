@@ -862,7 +862,9 @@
             ],
             "location": "[variables('location')]",
             "name": "[variables('externalLoadBalancerName')]",
-            "sku": "[variables('loadbalancersku')]",
+            "sku": {
+                "name":"[variables('loadbalancersku')]"
+            },
             "properties": {
                 "backendAddressPools": [
                     {
@@ -968,7 +970,9 @@
             ],
             "location": "[variables('location')]",
             "name": "[variables('internalLoadBalancerName')]",
-            "sku": "[variables('loadbalancersku')]",
+            "sku": {
+                "name":"[variables('loadbalancersku')]"
+            },
             "properties": {
                 "backendAddressPools": [
                     {
