@@ -492,6 +492,9 @@
             },
             "location": "[variables('location')]",
             "name": "[concat(variables('extPublicIPAddressNamePrefix'), copyIndex())]",
+            "sku": {
+                "name": "[variables('publicipsku')]"
+            },
             "properties": {
                 "idleTimeoutInMinutes": 30,
                 "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
@@ -894,6 +897,9 @@
             ],
             "location": "[variables('location')]",
             "name": "[variables('externalLoadBalancerName')]",
+            "sku": {
+                "name":"[variables('loadbalancersku')]"
+            },
             "properties": {
                 "backendAddressPools": [
                     {
