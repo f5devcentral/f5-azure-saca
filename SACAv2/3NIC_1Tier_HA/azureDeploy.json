@@ -248,11 +248,15 @@
         "dnsLabelPrefix": "[toLower(parameters('dnsLabelPrefix'))]",
         "enableNetworkFailover": "Yes",
 
+
+        "f5CloudLibsTag": "v4.9.1",
+        "f5CloudLibsAzureTag": "v2.9.1",
+        "f5NetworksTag": "v7.0.0.1",
+        "f5CloudIappsLoggerTag": "v1.0.0",
+        "f5CloudIappsSdTag": "v2.3.2",
         "f5AS3Build": "f5-appsvcs-3.5.1-5.noarch.rpm",
         "f5AS3Tag": "v3.6.0",
-        "f5CloudIappsLoggerTag": "v1.0.0",
-        "f5CloudIappsSdTag": "v2.3.1",
-        "f5CloudLibsTag": "v4.7.0",
+
         "failoverCmdArray": {
             "No": {
                 "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.azure.com'), ' unicast-address none')]",
@@ -507,7 +511,7 @@
             "properties": {
                 "routes": [
                     {
-                        "name": "VDMSRouteToILB",
+                        "name": "default",
                         "properties": {
                             "addressPrefix": "0.0.0.0/0",
                             "nextHopType": "VirtualAppliance",
