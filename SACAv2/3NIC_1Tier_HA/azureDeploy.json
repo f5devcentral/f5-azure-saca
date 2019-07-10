@@ -578,6 +578,7 @@
             "apiVersion": "[variables('networkApiVersion')]",
             "dependsOn": [
                 "[variables('vnetId')]",
+                "[variables('mgmtNsgID')]",
                 "[concat('Microsoft.Network/loadBalancers/', variables('externalLoadBalancerName'))]"
             ],
             "location": "[variables('location')]",
@@ -611,6 +612,7 @@
             "apiVersion": "[variables('networkApiVersion')]",
             "dependsOn": [
                 "[variables('vnetId')]",
+                "[variables('mgmtNsgID')]",
                 "[concat('Microsoft.Network/loadBalancers/', variables('externalLoadBalancerName'))]"
             ],
             "location": "[variables('location')]",
@@ -643,7 +645,8 @@
         {
             "apiVersion": "[variables('networkApiVersion')]",
             "dependsOn": [
-                "[variables('vnetId')]"
+                "[variables('vnetId')]",
+                "[variables('mgmtNsgID')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('mgmtNicName'), '2')]",
@@ -670,7 +673,8 @@
                 {
             "apiVersion": "[variables('networkApiVersion')]",
             "dependsOn": [
-                "[variables('vnetId')]"
+                "[variables('vnetId')]",
+                "[variables('mgmtNsgID')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('mgmtNicName'), '3')]",
