@@ -352,6 +352,7 @@
         "tmmRouteGw": "[concat(variables('intSubnetPrivateAddressPrefix'), '.1')]",
 
         "mgmtNicName": "[concat(variables('dnsLabelPrefix'), '-mgmt')]",
+        "mgmtNsgID": "[resourceId('Microsoft.Network/networkSecurityGroups/',concat(variables('dnsLabelPrefix'),'-mgmt-nsg'))]",
         "mgmtSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('mgmtSubnetName'))]",
         "mgmtSubnetName": "management",
         "ManagementAddressSubnet": "192.168.1.0/24",
@@ -598,7 +599,10 @@
                             ]
                         }
                     }
-                ]
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('mgmtNsgID')]"
+                }
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -628,7 +632,10 @@
                             ]
                         }
                     }
-                ]
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('mgmtNsgID')]"
+                }
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -652,7 +659,10 @@
                             }
                         }
                     }
-                ]
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('mgmtNsgID')]"
+                }
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -676,7 +686,10 @@
                             }
                         }
                     }
-                ]
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('mgmtNsgID')]"
+                }
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -852,6 +865,59 @@
         {
             "apiVersion": "[variables('networkApiVersion')]",
             "location": "[variables('location')]",
+            "name": "[concat(variables('dnsLabelPrefix'), '-mgmt-nsg')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "mgmt_allow_https",
+                        "properties": {
+                            "access": "Allow",
+                            "description": "",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "[variables('bigIpMgmtPort')]",
+                            "direction": "Inbound",
+                            "priority": 101,
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "[parameters('restrictedSrcAddress')]",
+                            "sourcePortRange": "*"
+                        }
+                    },
+                    {
+                        "name": "ssh_allow_22",
+                        "properties": {
+                            "access": "Allow",
+                            "description": "",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "22",
+                            "direction": "Inbound",
+                            "priority": 102,
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "[parameters('restrictedSrcAddress')]",
+                            "sourcePortRange": "*"
+                        }
+                    },
+                    {
+                        "name": "rdp_allow_3389",
+                        "properties": {
+                            "access": "Allow",
+                            "description": "",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "3389",
+                            "direction": "Inbound",
+                            "priority": 103,
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "[parameters('restrictedSrcAddress')]",
+                            "sourcePortRange": "*"
+                        }
+                    }
+                ]
+            },
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
+            "type": "Microsoft.Network/networkSecurityGroups"
+        },
+        {
+            "apiVersion": "[variables('networkApiVersion')]",
+            "location": "[variables('location')]",
             "name": "[concat(variables('dnsLabelPrefix'), '-ext-nsg')]",
             "properties": {
                 "securityRules": [
@@ -937,15 +1003,6 @@
                     }
                 ],
         "probes": [
-            {
-                "name": "httpsProbe",
-                "properties": {
-                    "intervalInSeconds": 15,
-                    "numberOfProbes": 3,
-                    "port": 443,
-                    "protocol": "Tcp"
-                }
-            },
           {
             "name": "ssh_alive",
             "properties": {
@@ -976,24 +1033,6 @@
           }
         ],
         "loadBalancingRules": [
-          {
-            "Name": "external-access",
-            "properties": {
-                "backendAddressPool": {
-                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/backendAddressPools/loadBalancerMgmtBackEnd')]"
-                },
-                "backendPort": 443,
-                "frontendIPConfiguration": {
-                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
-                },
-                "frontendPort": 443,
-                "idleTimeoutInMinutes": 15,
-                "probe": {
-                    "id": "[concat(variables('extLbId'),'/probes/httpsProbe')]"
-                },
-                "protocol": "Tcp"
-            }
-        },
           {
             "name": "rdp_vs",
             "properties": {
