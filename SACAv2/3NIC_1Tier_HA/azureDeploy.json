@@ -248,7 +248,6 @@
         "dnsLabelPrefix": "[toLower(parameters('dnsLabelPrefix'))]",
         "enableNetworkFailover": "Yes",
 
-
         "f5CloudLibsTag": "v4.9.1",
         "f5CloudLibsAzureTag": "v2.9.1",
         "f5NetworksTag": "v7.0.0.1",
@@ -882,7 +881,7 @@
                             "direction": "Inbound",
                             "priority": 101,
                             "protocol": "Tcp",
-                            "sourceAddressPrefix": "VirtualNetwork",
+                            "sourceAddressPrefix": "*",
                             "sourcePortRange": "*"
                         }
                     },
@@ -896,7 +895,7 @@
                             "direction": "Inbound",
                             "priority": 102,
                             "protocol": "Tcp",
-                            "sourceAddressPrefix": "VirtualNetwork",
+                            "sourceAddressPrefix": "*",
                             "sourcePortRange": "*"
                         }
                     },
@@ -910,7 +909,7 @@
                             "direction": "Inbound",
                             "priority": 103,
                             "protocol": "Tcp",
-                            "sourceAddressPrefix": "VirtualNetwork",
+                            "sourceAddressPrefix": "*",
                             "sourcePortRange": "*"
                         }
                     }
