@@ -5,6 +5,8 @@
 ## Contents
 - [CHANGELOG](CHANGELOG.md)
 - [Introduction](#introduction)
+- [What is SCCA](#what-is-secure-cloud-computing-architecture)
+- [What is Included](#what-is-included-in-this-template)
 - [Prerequisites](#prerequisites)
 - [Important Configuration Notes](#important-configuration-notes)
 - [Security](#security)
@@ -15,32 +17,29 @@
 
 ## Introduction
 
-SCCA is an abrievation for Secure Cloud Computing Architecture which is outlined in the following document: [https://iasecontent.disa.mil/stigs/pdf/SCCA_FRD_v2-9.pdf](https://iasecontent.disa.mil/stigs/pdf/SCCA_FRD_v2-9.pdf)
+This README will provide a baseline introduction into the Secure Cloud Computing Architecture (SCCA), Infrastructure as Code (IaC), and summarize a portion of the guidance to comply with the guidance provided. Links will be provided for more in-depth explanations.
 
-This architecture provides guidance on requirements for securing Cloud Computing Environments.
+## What is Secure Cloud Computing Architecture (SCCA)?
 
-The SCCA Functional Requirements Document outlines recommended components including a Cloud Access Point (CAP), Virtual Datacenter Security Stack (VDSS), Virtual Datacenter Managed Service (VDMS), and Trusted Cloud Credential Manager (TCCM).
+Moving to the Cloud can be tough. The Department of Defense (DoD) still has requirements to protect the Defense Information System Networks (DISN) and DoD Information Networks (DoDIN), even when living in a Cloud Service Provider (CSP). Per the SCCA Functional Requirements Document, the purpose of SCCA is to provide a barrier of protection between the DISN and commercial cloud services used by the DoD. 
 
-This solution uses an ARM template to launch a three NIC deployment of a cloud-focused BIG-IP VE cluster (Active/Active) in Microsoft Azure Government.
+“It specifically addresses attacks originating from mission applications that reside within the Cloud Service Environment (CSE) upon both the DISN infrastructure and neighboring tenants in a multi-tenant environment. It provides a consistent CSP independent level of security that enables the use of commercially available Cloud Service Offerings (CSO) for hosting DoD mission applications operating at all DoD Information System Impact Levels (i.e. 2, 4, 5, & 6).” [https://iasecontent.disa.mil/stigs/pdf/SCCA_FRD_v2-9.pdf](https://iasecontent.disa.mil/stigs/pdf/SCCA_FRD_v2-9.pdf)
 
-The cluster is configured in a traditional *Active/Standby* mode. Alternately, you can configure multiple traffic groups in the traditional *Active/Active* mode to allow each device to process traffic for the traffic group to which it is associated. Azure load balancer probes determine which BIG-IP VE device will receive application traffic.
+## What is included in this template?
 
-This template also configures an internal Azure Load Balancer (ILB) for forwarding traffic to the internal interfaces of the BIG-IP VE devices. The ILB will be pre-configured with a per-protocol load balancing rule.
+The BIG-IP VE cluster is deployed with Local Traffic Manager (LTM), Application Security Manager (ASM), Advanced Firewall Manager (AFM), and IP Intelligence (IPI) features enabled by default. 
 
-* When using all-protocol load balancing, you can configure the next hop on Azure User Defined Routes (UDRs) to point to the private IP address of the ILB.  Deploy an IP forwarding virtual server on BIG-IP VE to accept this traffic and forward it to the destination. *
-
-When using per-protocol load balancing, deploy a network virtual server on BIG-IP VE with a destination address that matches the secondary private IP addresses of the ILB load balancing rule's backend pool members.  Note: The all-protocol ILB is currently only available in preview; you must sign up through Microsoft to enable this functionality before deploying the template.
+**Networking Stack Type:** This solution deploys into a new networking stack, which is created along with the solution. 
 
 The BIG-IP VEs have the [Local Traffic Manager (LTM)](https://f5.com/products/big-ip/local-traffic-manager-ltm) module enabled to provide advanced traffic management functionality. This means you can also configure the BIG-IP VE to enable F5's L4/L7 security features, access control, and intelligent traffic management.
 
 For information on getting started using F5's ARM templates on GitHub, see [Microsoft Azure: Solutions 101](http://clouddocs.f5.com/cloud/public/v1/azure/Azure_solutions101.html).
 
-**Networking Stack Type:** This solution deploys into a new networking stack, which is created along with the solution.
-
 ## Prerequisites
 
 - **Important**: When you configure the admin password for the BIG-IP VE in the template, you cannot use the character **#**.  Additionally, there are a number of other special characters that you should avoid using for F5 product user accounts.  See [K2873](https://support.f5.com/csp/article/K2873) for details.
 - Since you are deploying the BYOL template, you must have a valid BIG-IP license token.
+- **Licensing**:  Ensure that you have an **unused** VE Best with IPI and IPS addons.  The system will not provision with this template without the proper license.
 
 ## Important configuration notes **Read All**
 
@@ -104,7 +103,7 @@ Use the appropriate button below to deploy:
 - **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
 - **1 Tier** This deploys the 3-NIC 1 Tier use-case.
 
- [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2FazureDeploy.json)
+  [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2FazureDeploy.json)
 
 - **3 Tier [ALPHA]** This deploys the standard F5 "Firewall Sandwich" use-case, with an IPS tier.
 
