@@ -474,8 +474,7 @@
         "intSubnetPrivateAddress3": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 11))]",
         "internalLoadBalancerAddress": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 65))]",
         "NorthboundLoadBalancerNameb": "[concat(variables('dnsLabelPrefix'),'-nb-ilb')]",
-        "internalLoadBalancerProbePort": "3456",
-        "internalLoadBalancerType": "Per-protocol",
+
         "tmmRouteGw": "[concat(variables('intSubnetPrivateAddressPrefix'), '.1')]",
 
         "mgmtNsgID": "[resourceId('Microsoft.Network/networkSecurityGroups/',concat(variables('dnsLabelPrefix'),'-mgmt-nsg'))]",
@@ -815,7 +814,9 @@
         {
             "apiVersion": "[variables('networkApiVersion')]",
             "dependsOn": [
-                "[variables('vnetId')]"
+                "[variables('vnetId')]",
+                "[variables('mgmtNsgID')]",
+                "[concat('Microsoft.Network/loadBalancers/', variables('NorthboundLoadBalancerName'))]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('mgmtNicName'), '1')]",
@@ -847,7 +848,9 @@
         {
             "apiVersion": "[variables('networkApiVersion')]",
             "dependsOn": [
-                "[variables('vnetId')]"
+                "[variables('vnetId')]",
+                "[variables('mgmtNsgID')]",
+                "[concat('Microsoft.Network/loadBalancers/', variables('NorthboundLoadBalancerName'))]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('mgmtNicName'), '2')]",
@@ -879,7 +882,9 @@
         {
             "apiVersion": "[variables('networkApiVersion')]",
             "dependsOn": [
-                "[variables('vnetId')]"
+                "[variables('vnetId')]",
+                "[variables('mgmtNsgID')]",
+                "[concat('Microsoft.Network/loadBalancers/', variables('NorthboundLoadBalancerName'))]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('mgmtNicName'), '3')]",
@@ -911,7 +916,9 @@
         {
             "apiVersion": "[variables('networkApiVersion')]",
             "dependsOn": [
-                "[variables('vnetId')]"
+                "[variables('vnetId')]",
+                "[variables('mgmtNsgID')]",
+                "[concat('Microsoft.Network/loadBalancers/', variables('NorthboundLoadBalancerName'))]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('mgmtNicName'), '4')]",
@@ -943,7 +950,9 @@
                 {
             "apiVersion": "[variables('networkApiVersion')]",
             "dependsOn": [
-                "[variables('vnetId')]"
+                "[variables('vnetId')]",
+                "[variables('mgmtNsgID')]",
+                "[concat('Microsoft.Network/loadBalancers/', variables('NorthboundLoadBalancerName'))]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('mgmtNicName'), '5')]",
@@ -976,7 +985,9 @@
             "apiVersion": "[variables('networkApiVersion')]",
             "condition": "[equals(parameters('IPSTier'),'Yes')]",
             "dependsOn": [
-                "[variables('vnetId')]"
+                "[variables('vnetId')]",
+                "[variables('mgmtNsgID')]",
+                "[concat('Microsoft.Network/loadBalancers/', variables('NorthboundLoadBalancerName'))]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('mgmtNicName'), '6')]",
@@ -1009,7 +1020,9 @@
             "apiVersion": "[variables('networkApiVersion')]",
             "condition": "[equals(parameters('IPSTier'),'Yes')]",
             "dependsOn": [
-                "[variables('vnetId')]"
+                "[variables('vnetId')]",
+                "[variables('mgmtNsgID')]",
+                "[concat('Microsoft.Network/loadBalancers/', variables('NorthboundLoadBalancerName'))]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('mgmtNicName'), '7')]",
@@ -1150,7 +1163,11 @@
                     {
                         "name": "[concat(variables('resourceGroupName'), '-ext-ipconfig2')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": "[variables('SBBackEndAddressPool')]",
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                "id": "[concat(variables('sbILBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
+                                }
+                            ],
                             "primary": false,
                             "privateIPAddress": "[concat(variables('ext2SubnetPrivateAddressPrefix'), '.',10)]",
                             "privateIPAllocationMethod": "Static",
@@ -1188,7 +1205,11 @@
                     {
                         "name": "[concat(variables('resourceGroupName'), '-ext-ipconfig3')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": "[variables('SBBackEndAddressPool')]",
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[concat(variables('sbILBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
+                                }
+                            ],
                             "primary": false,
                             "privateIPAddress": "[concat(variables('ext2SubnetPrivateAddressPrefix'), '.',11)]",
                             "privateIPAllocationMethod": "Static",
@@ -1228,6 +1249,7 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig-secondary')]",
                         "properties": {
+                            "primary": false,
                             "privateIPAddress": "[variables('intSubnetPrivateAddress2')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1235,8 +1257,7 @@
                             }
                         }
                     }
-                ],
-                "primary": true
+                ]
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -1267,6 +1288,7 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig-secondary')]",
                         "properties": {
+                            "primary": false,
                             "privateIPAddress": "[variables('intSubnetPrivateAddress3')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1274,8 +1296,7 @@
                             }
                         }
                     }
-                ],
-                "primary": true
+                ]
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -1305,6 +1326,7 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig-secondary')]",
                         "properties": {
+                            "primary": false,
                             "privateIPAddress": "[variables('int2SubnetPrivateAddress2')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1312,8 +1334,7 @@
                             }
                         }
                     }
-                ],
-                "primary": true
+                ]
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -1343,6 +1364,7 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig-secondary')]",
                         "properties": {
+                            "primary": false,
                             "privateIPAddress": "[variables('int2SubnetPrivateAddress3')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1350,8 +1372,7 @@
                             }
                         }
                     }
-                ],
-                "primary": true
+                ]
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -1382,7 +1403,12 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig-secondary')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": "[variables('IPSBackEndAddressPool')]",
+                            "primary": false,
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[concat(variables('IPSILBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
+                                }
+                            ],
                             "privateIPAddress": "[variables('IPSExtSubnetPrivateAddress2')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1390,8 +1416,7 @@
                             }
                         }
                     }
-                ],
-                "primary": true
+                ]
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -1422,7 +1447,12 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig-secondary')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": "[variables('IPSBackEndAddressPool')]",
+                            "primary": false,
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[concat(variables('IPSILBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
+                                }
+                            ],
                             "privateIPAddress": "[variables('IPSExtSubnetPrivateAddress3')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1430,8 +1460,7 @@
                             }
                         }
                     }
-                ],
-                "primary": true
+                ]
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -1461,6 +1490,7 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig-secondary')]",
                         "properties": {
+                            "primary": false,
                             "privateIPAddress": "[variables('IPSIntSubnetPrivateAddress2')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1468,8 +1498,7 @@
                             }
                         }
                     }
-                ],
-                "primary": true
+                ]
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -1499,6 +1528,7 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig-secondary')]",
                         "properties": {
+                            "primary": false,
                             "privateIPAddress": "[variables('IPSIntSubnetPrivateAddress3')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1506,8 +1536,7 @@
                             }
                         }
                     }
-                ],
-                "primary": true
+                ]
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -1680,7 +1709,16 @@
               "intervalInSeconds": 15,
               "numberOfProbes": 2
             }
-          }
+          },
+          {
+            "name": "https_alive",
+            "properties": {
+                "intervalInSeconds": 15,
+                "numberOfProbes": 3,
+                "port": 443,
+                "protocol": "Tcp"
+            }
+        }
         ],
         "loadBalancingRules": [
           {
