@@ -12,152 +12,6 @@
         }
     },
     "parameters": {
-        "IPSTier": {
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "defaultValue": "Yes",
-            "metadata": {
-                "description": "Specify whether IPS Tier would deploy from this template. If 'Yes', then this is a 3-teirs architecture, otherwise it is 2-tiers architecture"
-            },
-            "type": "string"
-        },
-        "IPSTrustedAddressStartIP": {
-            "defaultValue": "192.168.6.4",
-            "metadata": {
-                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
-            },
-            "type": "string"
-        },
-        "IPSTrustedAddressSubnet": {
-            "defaultValue": "192.168.6.0/24",
-            "metadata": {
-                "description": "The CIDR block the IPS VEs use when creating the South Trusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
-            },
-            "type": "string"
-        },
-        "IPSUntrustedAddressStartIP": {
-            "defaultValue": "192.168.5.4",
-            "metadata": {
-                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
-            },
-            "type": "string"
-        },
-        "IPSUntrustedAddressSubnet": {
-            "defaultValue": "192.168.5.0/24",
-            "metadata": {
-                "description": "The CIDR block the IPS VEs use when creating the Untrusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
-            },
-            "type": "string"
-        },
-        "IPSUntrustedLBPrivateAddress": {
-            "defaultValue": "192.168.5.100",
-            "metadata": {
-                "description": "The static address of the IPS LB IP to be used for deployment. You MUST type the full IP Address '192.168.5.100'."
-            },
-            "type": "string"
-        },
-        "NorthTrustedAddressStartIP": {
-            "defaultValue": "192.168.3.4",
-            "metadata": {
-                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
-            },
-            "type": "string"
-        },
-        "NorthTrustedAddressSubnet": {
-            "defaultValue": "192.168.3.0/24",
-            "metadata": {
-                "description": "The CIDR block the BIG-IP VEs use when creating the North Trusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
-            },
-            "type": "string"
-        },
-        "NorthUntrustedAddressStartIP": {
-            "defaultValue": "192.168.2.4",
-            "metadata": {
-                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
-            },
-            "type": "string"
-        },
-        "NorthUntrustedAddressSubnet": {
-            "defaultValue": "192.168.2.0/24",
-            "metadata": {
-                "description": "The CIDR block the BIG-IP VEs use when creating the North Untrusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
-            },
-            "type": "string"
-        },
-        "NorthUntrustedLBPrivateAddress": {
-            "defaultValue": "192.168.2.100",
-            "metadata": {
-                "description": "The static address of the North Bound LB IP to be used for deployment. This is use ONLY IF the NorthboundLoadBalancerType is 'Private-ilb' type. You MUST type the full IP Address '192.168.2.100'."
-            },
-            "type": "string"
-        },
-        "NorthboundLoadBalancerType": {
-            "allowedValues": [
-                "Public-alb",
-                "Private-ilb"
-            ],
-            "defaultValue": "Public-alb",
-            "metadata": {
-                "description": "Specify a the type of Northbound Azure load balancer to deploy. Note: As of the initial release of this template,  it is default to Public-alb"
-            },
-            "type": "string"
-        },
-        "SouthTrustedAddressStartIP": {
-            "defaultValue": "192.168.8.4",
-            "metadata": {
-                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
-            },
-            "type": "string"
-        },
-        "SouthTrustedAddressSubnet": {
-            "defaultValue": "192.168.8.0/24",
-            "metadata": {
-                "description": "The CIDR block the BIG-IP VEs use when creating the South Trusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
-            },
-            "type": "string"
-        },
-        "SouthUntrustedAddressStartIP": {
-            "defaultValue": "192.168.7.4",
-            "metadata": {
-                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
-            },
-            "type": "string"
-        },
-        "SouthUntrustedAddressSubnet": {
-            "defaultValue": "192.168.7.0/24",
-            "metadata": {
-                "description": "The CIDR block the BIG-IP VEs use when creating the South Untrusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
-            },
-            "type": "string"
-        },
-        "SouthUntrustedLBPrivateAddress": {
-            "defaultValue": "192.168.7.100",
-            "metadata": {
-                "description": "The static address of the South Bound LB IP to be used for deployment. You MUST type the full IP Address '192.168.7.100'."
-            },
-            "type": "string"
-        },
-        "VDMSAddressSubnet": {
-            "defaultValue": "192.168.4.0/24",
-            "metadata": {
-                "description": "The CIDR block the BIG-IP VEs use when creating the VDSS Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
-            },
-            "type": "string"
-        },
-        "WindowsAdminPassword": {
-            "metadata": {
-                "description": "Password for the Windows Virtual Machine."
-            },
-            "type": "securestring"
-        },
-        "adminPasswordOrKey": {
-            "metadata": {
-                "description": "Password or SSH public key to login to the Virtual Machine. Note: There are a number of special characters that you should avoid using for F5 product user accounts.  See [K2873](https://support.f5.com/csp/article/K2873) for details. Note: If using key-based authentication, this should be the public key as a string, typically starting with **---- BEGIN SSH2 PUBLIC KEY ----** and ending with **---- END SSH2 PUBLIC KEY ----**."
-            },
-            "type": "securestring"
-        },
         "adminUsername": {
             "defaultValue": "xadmin",
             "metadata": {
@@ -175,6 +29,18 @@
                 "description": "Type of authentication to use on the Virtual Machine, password based authentication or key based authentication."
             },
             "type": "string"
+        },
+        "adminPasswordOrKey": {
+            "metadata": {
+                "description": "Password or SSH public key to login to the Virtual Machine. Note: There are a number of special characters that you should avoid using for F5 product user accounts.  See [K2873](https://support.f5.com/csp/article/K2873) for details. Note: If using key-based authentication, this should be the public key as a string, typically starting with **---- BEGIN SSH2 PUBLIC KEY ----** and ending with **---- END SSH2 PUBLIC KEY ----**."
+            },
+            "type": "securestring"
+        },
+        "WindowsAdminPassword": {
+            "metadata": {
+                "description": "Password for the Windows Virtual Machine."
+            },
+            "type": "securestring"
         },
         "declarationUrl": {
             "defaultValue": "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/AS3/sccaBaseline.json",
@@ -271,6 +137,140 @@
             "defaultValue": "",
             "metadata": {
                 "description": "The license token for the F5 BIG-IP VE (BYOL)."
+            },
+            "type": "string"
+        },
+        "NorthboundLoadBalancerType": {
+            "allowedValues": [
+                "Public-alb",
+                "Private-ilb"
+            ],
+            "defaultValue": "Public-alb",
+            "metadata": {
+                "description": "Specify a the type of Northbound Azure load balancer to deploy. Note: As of the initial release of this template,  it is default to Public-alb"
+            },
+            "type": "string"
+        },
+        "NorthTrustedAddressStartIP": {
+            "defaultValue": "192.168.3.4",
+            "metadata": {
+                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
+            },
+            "type": "string"
+        },
+        "NorthTrustedAddressSubnet": {
+            "defaultValue": "192.168.3.0/24",
+            "metadata": {
+                "description": "The CIDR block the BIG-IP VEs use when creating the North Trusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
+            },
+            "type": "string"
+        },
+        "NorthUntrustedAddressStartIP": {
+            "defaultValue": "192.168.2.4",
+            "metadata": {
+                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
+            },
+            "type": "string"
+        },
+        "NorthUntrustedAddressSubnet": {
+            "defaultValue": "192.168.2.0/24",
+            "metadata": {
+                "description": "The CIDR block the BIG-IP VEs use when creating the North Untrusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
+            },
+            "type": "string"
+        },
+        "NorthUntrustedLBPrivateAddress": {
+            "defaultValue": "192.168.2.100",
+            "metadata": {
+                "description": "The static address of the North Bound LB IP to be used for deployment. This is use ONLY IF the NorthboundLoadBalancerType is 'Private-ilb' type. You MUST type the full IP Address '192.168.2.100'."
+            },
+            "type": "string"
+        },
+        "IPSTier": {
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "Specify whether IPS Tier would deploy from this template. If 'Yes', then this is a 3-teirs architecture, otherwise it is 2-tiers architecture"
+            },
+            "type": "string"
+        },
+        "IPSTrustedAddressStartIP": {
+            "defaultValue": "192.168.6.4",
+            "metadata": {
+                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
+            },
+            "type": "string"
+        },
+        "IPSTrustedAddressSubnet": {
+            "defaultValue": "192.168.6.0/24",
+            "metadata": {
+                "description": "The CIDR block the IPS VEs use when creating the South Trusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
+            },
+            "type": "string"
+        },
+        "IPSUntrustedAddressStartIP": {
+            "defaultValue": "192.168.5.4",
+            "metadata": {
+                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
+            },
+            "type": "string"
+        },
+        "IPSUntrustedAddressSubnet": {
+            "defaultValue": "192.168.5.0/24",
+            "metadata": {
+                "description": "The CIDR block the IPS VEs use when creating the Untrusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
+            },
+            "type": "string"
+        },
+        "IPSUntrustedLBPrivateAddress": {
+            "defaultValue": "192.168.5.100",
+            "metadata": {
+                "description": "The static address of the IPS LB IP to be used for deployment. You MUST type the full IP Address '192.168.5.100'."
+            },
+            "type": "string"
+        },
+        "SouthTrustedAddressStartIP": {
+            "defaultValue": "192.168.8.4",
+            "metadata": {
+                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
+            },
+            "type": "string"
+        },
+        "SouthTrustedAddressSubnet": {
+            "defaultValue": "192.168.8.0/24",
+            "metadata": {
+                "description": "The CIDR block the BIG-IP VEs use when creating the South Trusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
+            },
+            "type": "string"
+        },
+        "SouthUntrustedAddressStartIP": {
+            "defaultValue": "192.168.7.4",
+            "metadata": {
+                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
+            },
+            "type": "string"
+        },
+        "SouthUntrustedAddressSubnet": {
+            "defaultValue": "192.168.7.0/24",
+            "metadata": {
+                "description": "The CIDR block the BIG-IP VEs use when creating the South Untrusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
+            },
+            "type": "string"
+        },
+        "SouthUntrustedLBPrivateAddress": {
+            "defaultValue": "192.168.7.100",
+            "metadata": {
+                "description": "The static address of the South Bound LB IP to be used for deployment. You MUST type the full IP Address '192.168.7.100'."
+            },
+            "type": "string"
+        },
+        "VDMSAddressSubnet": {
+            "defaultValue": "192.168.4.0/24",
+            "metadata": {
+                "description": "The CIDR block the BIG-IP VEs use when creating the VDSS Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
             },
             "type": "string"
         },

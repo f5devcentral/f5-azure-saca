@@ -19,6 +19,17 @@
             },
             "type": "string"
         },
+        "authenticationType": {
+            "allowedValues": [
+                "password",
+                "sshPublicKey"
+            ],
+            "defaultValue": "password",
+            "metadata": {
+                "description": "Type of authentication to use on the Virtual Machine, password based authentication or key based authentication."
+            },
+            "type": "string"
+        },
         "adminPasswordOrKey": {
             "metadata": {
                 "description": "Password or SSH public key to login to the Virtual Machine. Note: There are a number of special characters that you should avoid using for F5 product user accounts.  See [K2873](https://support.f5.com/csp/article/K2873) for details. Note: If using key-based authentication, this should be the public key as a string, typically starting with **---- BEGIN SSH2 PUBLIC KEY ----** and ending with **---- END SSH2 PUBLIC KEY ----**."
@@ -30,17 +41,6 @@
                 "description": "Password for the Windows Virtual Machine."
             },
             "type": "securestring"
-        },
-        "authenticationType": {
-            "allowedValues": [
-                "password",
-                "sshPublicKey"
-            ],
-            "defaultValue": "password",
-            "metadata": {
-                "description": "Type of authentication to use on the Virtual Machine, password based authentication or key based authentication."
-            },
-            "type": "string"
         },
         "declarationUrl": {
             "defaultValue": "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/AS3/sccaBaseline.json",
