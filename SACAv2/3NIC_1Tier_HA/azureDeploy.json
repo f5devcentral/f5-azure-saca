@@ -12,46 +12,12 @@
         }
     },
     "parameters": {
-        "NorthTrustedAddressStartIP": {
-            "defaultValue": "192.168.3.4",
+        "adminUsername": {
+            "defaultValue": "xadmin",
             "metadata": {
-                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
+                "description": "User name for the Virtual Machine."
             },
             "type": "string"
-        },
-        "NorthTrustedAddressSubnet": {
-            "defaultValue": "192.168.3.0/24",
-            "metadata": {
-                "description": "The CIDR block the BIG-IP VEs use when creating the North Trusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
-            },
-            "type": "string"
-        },
-        "NorthUntrustedAddressStartIP": {
-            "defaultValue": "192.168.2.4",
-            "metadata": {
-                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
-            },
-            "type": "string"
-        },
-        "NorthUntrustedAddressSubnet": {
-            "defaultValue": "192.168.2.0/24",
-            "metadata": {
-                "description": "The CIDR block the BIG-IP VEs use when creating the North Untrusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
-            },
-            "type": "string"
-        },
-        "VDMSAddressSubnet": {
-            "defaultValue": "192.168.4.0/24",
-            "metadata": {
-                "description": "The CIDR block the BIG-IP VEs use when creating the VDSS Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
-            },
-            "type": "string"
-        },
-        "WindowsAdminPassword": {
-            "metadata": {
-                "description": "Password for the Windows Virtual Machine."
-            },
-            "type": "securestring"
         },
         "adminPasswordOrKey": {
             "metadata": {
@@ -59,12 +25,11 @@
             },
             "type": "securestring"
         },
-        "adminUsername": {
-            "defaultValue": "xadmin",
+        "WindowsAdminPassword": {
             "metadata": {
-                "description": "User name for the Virtual Machine."
+                "description": "Password for the Windows Virtual Machine."
             },
-            "type": "string"
+            "type": "securestring"
         },
         "authenticationType": {
             "allowedValues": [
@@ -158,6 +123,41 @@
             "defaultValue": "",
             "metadata": {
                 "description": "The license token for the F5 BIG-IP VE (BYOL). This field is required when deploying two or more devices."
+            },
+            "type": "string"
+        },
+        "NorthTrustedAddressStartIP": {
+            "defaultValue": "192.168.3.4",
+            "metadata": {
+                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
+            },
+            "type": "string"
+        },
+        "NorthTrustedAddressSubnet": {
+            "defaultValue": "192.168.3.0/24",
+            "metadata": {
+                "description": "The CIDR block the BIG-IP VEs use when creating the North Trusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
+            },
+            "type": "string"
+        },
+        "NorthUntrustedAddressStartIP": {
+            "defaultValue": "192.168.2.4",
+            "metadata": {
+                "description": "The starting address of the IPs to be used for deployment. You MUST type the full IP Address '10.0.0.10', '10.100.0.40', '192.168.1.5'."
+            },
+            "type": "string"
+        },
+        "NorthUntrustedAddressSubnet": {
+            "defaultValue": "192.168.2.0/24",
+            "metadata": {
+                "description": "The CIDR block the BIG-IP VEs use when creating the North Untrusted Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
+            },
+            "type": "string"
+        },
+        "VDMSAddressSubnet": {
+            "defaultValue": "192.168.4.0/24",
+            "metadata": {
+                "description": "The CIDR block the BIG-IP VEs use when creating the VDSS Subnet.  You MUST type the full CIDR address, for example '10.0.0.0/24', '10.100.0.0/16', '192.168.0.0/24'."
             },
             "type": "string"
         },
