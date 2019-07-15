@@ -1,1 +1,59 @@
-IyEvYmluL2Jhc2gNCmZ1bmN0aW9uIHBhc3N3ZCgpIHsNCiAgZWNobyB8IGY1LXJlc3Qtbm9kZSAvY29uZmlnL2Nsb3VkL2F6dXJlL25vZGVfbW9kdWxlcy9AZjVkZXZjZW50cmFsL2Y1LWNsb3VkLWxpYnMvc2NyaXB0cy9kZWNyeXB0RGF0YUZyb21GaWxlLmpzIC0tZGF0YS1maWxlIC9jb25maWcvY2xvdWQvLnBhc3N3ZCB8IGF3ayAne3ByaW50ICQxfScNCn0NCg0Kd2hpbGUgZ2V0b3B0cyBvOnU6IG9wdGlvbg0KZG8gY2FzZSAiJG9wdGlvbiIgIGluDQogICAgICAgIG8pIGRlY2xhcmF0aW9uVXJsPSRPUFRBUkc7Ow0KICAgICAgICB1KSB1c2VyPSRPUFRBUkc7Ow0KICAgIGVzYWMNCmRvbmUNCg0KZGVwbG95ZWQ9Im5vIg0KZmlsZV9sb2M9Ii9jb25maWcvY2xvdWQvY3VzdG9tX2NvbmZpZyINCmRmbF9tZ210X3BvcnQ9YHRtc2ggbGlzdCBzeXMgaHR0cGQgc3NsLXBvcnQgfCBncmVwIHNzbC1wb3J0IHwgc2VkICdzL3NzbC1wb3J0IC8vO3MvIC8vZydgDQp1cmxfcmVnZXg9IihodHRwOlwvXC98aHR0cHM6XC9cLyk/W2EtejAtOV0rKFtcLVwuXXsxfVthLXowLTldKykqXC5bYS16XXsyLDV9KDpbMC05XXsxLDV9KT8oXC8uKik/JCINCg0KaWYgW1sgJGRlY2xhcmF0aW9uVXJsID1+ICR1cmxfcmVnZXggXV07IHRoZW4NCiAgICByZXNwb25zZV9jb2RlPSQoL3Vzci9iaW4vY3VybCAtLWludGVyZmFjZSBtZ210IC1zayAtdyAiJXtodHRwX2NvZGV9IiAkZGVjbGFyYXRpb25VcmwgLW8gJGZpbGVfbG9jKQ0KICAgIGlmIFtbICRyZXNwb25zZV9jb2RlID09IDIwMCBdXTsgdGhlbg0KICAgICAgICAgZWNobyAiQ3VzdG9tIGNvbmZpZyBkb3dubG9hZCBjb21wbGV0ZTsgY2hlY2tpbmcgZm9yIHZhbGlkIEpTT04uIg0KICAgICAgICAgY2F0ICRmaWxlX2xvYyB8IGpxIC5jbGFzcw0KICAgICAgICAgaWYgW1sgJD8gPT0gMCBdXTsgdGhlbg0KICAgICAgICAgICAgIHJlc3BvbnNlX2NvZGU9JCgvdXNyL2Jpbi9jdXJsIC1za3Z2dSAkdXNlcjokKHBhc3N3ZCkgLXcgIiV7aHR0cF9jb2RlfSIgLVggUE9TVCAtSCAiQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9qc29uIiBodHRwczovL2xvY2FsaG9zdDokZGZsX21nbXRfcG9ydC9tZ210L3NoYXJlZC9hcHBzdmNzL2RlY2xhcmUgLWQgQCRmaWxlX2xvYyAtbyAvZGV2L251bGwpDQoNCiAgICAgICAgICAgICBpZiBbWyAkcmVzcG9uc2VfY29kZSA9PSAyMDAgfHwgJHJlc3BvbnNlX2NvZGUgPT0gNTAyIF1dOyB0aGVuDQogICAgICAgICAgICAgICAgICBlY2hvICJEZXBsb3ltZW50IG9mIGFwcGxpY2F0aW9uIHN1Y2NlZWRlZC4iDQogICAgICAgICAgICAgICAgICBkZXBsb3llZD0ieWVzIg0KICAgICAgICAgICAgIGVsc2UNCiAgICAgICAgICAgICAgICAgZWNobyAiRmFpbGVkIHRvIGRlcGxveSBhcHBsaWNhdGlvbjsgY29udGludWluZyB3aXRoIHJlc3BvbnNlIGNvZGUgJyIkcmVzcG9uc2VfY29kZSInIg0KICAgICAgICAgICAgIGZpDQogICAgICAgICBlbHNlDQogICAgICAgICAgICAgZWNobyAiQ3VzdG9tIGNvbmZpZyB3YXMgbm90IHZhbGlkIEpTT04sIGNvbnRpbnVpbmciDQogICAgICAgICBmaQ0KICAgIGVsc2UNCiAgICAgICAgZWNobyAiRmFpbGVkIHRvIGRvd25sb2FkIGN1c3RvbSBjb25maWc7IGNvbnRpbnVpbmcgd2l0aCByZXNwb25zZSBjb2RlICciJHJlc3BvbnNlX2NvZGUiJyINCiAgICBmaQ0KZWxzZQ0KICAgICBlY2hvICJDdXN0b20gY29uZmlnIHdhcyBub3QgYSBVUkwsIGNvbnRpbnVpbmcuIg0KZmkNCg0KaWYgW1sgJGRlcGxveWVkID09ICJubyIgJiYgJGRlY2xhcmF0aW9uVXJsID09ICJOT1RfU1BFQ0lGSUVEIiBdXTsgdGhlbg0KICAgIGVjaG8gIkFwcGxpY2F0aW9uIGRlcGxveW1lbnQgZmFpbGVkIG9yIGN1c3RvbSBVUkwgd2FzIG5vdCBzcGVjaWZpZWQuIg0KZmkNCg0KZWNobyAiRGVwbG95bWVudCBjb21wbGV0ZS4iDQpleGl0
+#!/bin/bash
+function passwd() {
+  echo | f5-rest-node /config/cloud/azure/node_modules/@f5devcentral/f5-cloud-libs/scripts/decryptDataFromFile.js --data-file /config/cloud/.passwd | awk '{print $1}'
+}
+
+ 
+
+while getopts o:u: option
+do case "$option"  in
+        o) declarationUrl=$OPTARG;;
+        u) user=$OPTARG;;
+    esac
+done
+
+ 
+
+deployed="no"
+file_loc="/config/cloud/custom_config"
+dfl_mgmt_port=`tmsh list sys httpd ssl-port | grep ssl-port | sed 's/ssl-port //;s/ //g'`
+url_regex="(http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$"
+
+ 
+
+if [[ $declarationUrl =~ $url_regex ]]; then
+    response_code=$(/usr/bin/curl -sk -w "%{http_code}" $declarationUrl -o $file_loc)
+    if [[ $response_code == 200 ]]; then
+         echo "Custom config download complete; checking for valid JSON."
+         cat $file_loc | jq .class
+         if [[ $? == 0 ]]; then
+             response_code=$(/usr/bin/curl -skvvu $user:$(passwd) -w "%{http_code}" -X POST -H "Content-Type: application/json" https://localhost:$dfl_mgmt_port/mgmt/shared/appsvcs/declare -d @$file_loc -o /dev/null)
+
+ 
+
+             if [[ $response_code == 200 || $response_code == 502 ]]; then
+                  echo "Deployment of application succeeded."
+                  deployed="yes"
+             else
+                 echo "Failed to deploy application; continuing with response code '"$response_code"'"
+             fi
+         else
+             echo "Custom config was not valid JSON, continuing"
+         fi
+    else
+        echo "Failed to download custom config; continuing with response code '"$response_code"'"
+    fi
+else
+     echo "Custom config was not a URL, continuing."
+fi
+
+ 
+
+if [[ $deployed == "no" && $declarationUrl == "NOT_SPECIFIED" ]]; then
+    echo "Application deployment failed or custom URL was not specified."
+fi
+
+ 
+
+echo "Deployment complete."
+exit
