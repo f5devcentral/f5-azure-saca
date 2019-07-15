@@ -1,7 +1,5 @@
-Sphinx<2.0
+Sphinx==1.6.2
 git+git://github.com/f5devcentral/f5-sphinx-theme@master#egg=f5_sphinx_theme
 recommonmark
+sphinxjp.themes.basicstrap
 sphinxcontrib-googleanalytics
-sphinxcontrib-addmetahtml
-sphinxcontrib-nwdiag
-sphinxcontrib-blockdiag

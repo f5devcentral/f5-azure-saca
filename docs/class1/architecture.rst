@@ -8,7 +8,7 @@ The following is a diagram of the traffic flow of the template that was deployed
 
 .. image:: /_static/f5-azure-scca-overview.png
  :scale: 50%
- 
+
 
 Traffic originates from the Client through a Cloud Access Point.  This would be an Express Route connection, but in the previous template the Public Internet can be used for demonstration purposes.
 
@@ -57,7 +57,7 @@ The F5 External devices and IPS device are capable of deflecting L3/L4 based att
 Integration
 ***********
 
-Behind the scenes this sample environment is employing Azure services. 
+Behind the scenes this sample environment is employing Azure services.
 
 .. image:: /_static/f5-azure-scca-integrated.png
  :scale: 50%
