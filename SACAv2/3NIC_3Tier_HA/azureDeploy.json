@@ -352,10 +352,10 @@
         },
         "appScript": "IyEvYmluL2Jhc2gKZnVuY3Rpb24gcGFzc3dkKCkgewogIGVjaG8gfCBmNS1yZXN0LW5vZGUgL2NvbmZpZy9jbG91ZC9henVyZS9ub2RlX21vZHVsZXMvQGY1ZGV2Y2VudHJhbC9mNS1jbG91ZC1saWJzL3NjcmlwdHMvZGVjcnlwdERhdGFGcm9tRmlsZS5qcyAtLWRhdGEtZmlsZSAvY29uZmlnL2Nsb3VkLy5wYXNzd2QgfCBhd2sgJ3twcmludCAkMX0nCn0KCndoaWxlIGdldG9wdHMgbzp1OiBvcHRpb24KZG8gY2FzZSAiJG9wdGlvbiIgIGluCiAgICAgICAgbykgZGVjbGFyYXRpb25Vcmw9JE9QVEFSRzs7CiAgICAgICAgdSkgdXNlcj0kT1BUQVJHOzsKICAgIGVzYWMKZG9uZQoKZGVwbG95ZWQ9Im5vIgpmaWxlX2xvYz0iL2NvbmZpZy9jbG91ZC9jdXN0b21fY29uZmlnIgpkZmxfbWdtdF9wb3J0PWB0bXNoIGxpc3Qgc3lzIGh0dHBkIHNzbC1wb3J0IHwgZ3JlcCBzc2wtcG9ydCB8IHNlZCAncy9zc2wtcG9ydCAvLztzLyAvL2cnYAp1cmxfcmVnZXg9IihodHRwOlwvXC98aHR0cHM6XC9cLyk/W2EtejAtOV0rKFtcLVwuXXsxfVthLXowLTldKykqXC5bYS16XXsyLDV9KDpbMC05XXsxLDV9KT8oXC8uKik/JCIKCmlmIFtbICRkZWNsYXJhdGlvblVybCA9fiAkdXJsX3JlZ2V4IF1dOyB0aGVuCiAgICByZXNwb25zZV9jb2RlPSQoL3Vzci9iaW4vY3VybCAtLWludGVyZmFjZSBtZ210IC1zayAtdyAiJXtodHRwX2NvZGV9IiAkZGVjbGFyYXRpb25VcmwgLW8gJGZpbGVfbG9jKQogICAgaWYgW1sgJHJlc3BvbnNlX2NvZGUgPT0gMjAwIF1dOyB0aGVuCiAgICAgICAgIGVjaG8gIkN1c3RvbSBjb25maWcgZG93bmxvYWQgY29tcGxldGU7IGNoZWNraW5nIGZvciB2YWxpZCBKU09OLiIKICAgICAgICAgY2F0ICRmaWxlX2xvYyB8IGpxIC5jbGFzcwogICAgICAgICBpZiBbWyAkPyA9PSAwIF1dOyB0aGVuCiAgICAgICAgICAgICByZXNwb25zZV9jb2RlPSQoL3Vzci9iaW4vY3VybCAtc2t2dnUgJHVzZXI6JChwYXNzd2QpIC13ICIle2h0dHBfY29kZX0iIC1YIFBPU1QgLUggIkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbiIgaHR0cHM6Ly9sb2NhbGhvc3Q6JGRmbF9tZ210X3BvcnQvbWdtdC9zaGFyZWQvYXBwc3Zjcy9kZWNsYXJlIC1kIEAkZmlsZV9sb2MgLW8gL2Rldi9udWxsKQoKICAgICAgICAgICAgIGlmIFtbICRyZXNwb25zZV9jb2RlID09IDIwMCB8fCAkcmVzcG9uc2VfY29kZSA9PSA1MDIgXV07IHRoZW4KICAgICAgICAgICAgICAgICAgZWNobyAiRGVwbG95bWVudCBvZiBhcHBsaWNhdGlvbiBzdWNjZWVkZWQuIgogICAgICAgICAgICAgICAgICBkZXBsb3llZD0ieWVzIgogICAgICAgICAgICAgZWxzZQogICAgICAgICAgICAgICAgIGVjaG8gIkZhaWxlZCB0byBkZXBsb3kgYXBwbGljYXRpb247IGNvbnRpbnVpbmcgd2l0aCByZXNwb25zZSBjb2RlICciJHJlc3BvbnNlX2NvZGUiJyIKICAgICAgICAgICAgIGZpCiAgICAgICAgIGVsc2UKICAgICAgICAgICAgIGVjaG8gIkN1c3RvbSBjb25maWcgd2FzIG5vdCB2YWxpZCBKU09OLCBjb250aW51aW5nIgogICAgICAgICBmaQogICAgZWxzZQogICAgICAgIGVjaG8gIkZhaWxlZCB0byBkb3dubG9hZCBjdXN0b20gY29uZmlnOyBjb250aW51aW5nIHdpdGggcmVzcG9uc2UgY29kZSAnIiRyZXNwb25zZV9jb2RlIiciCiAgICBmaQplbHNlCiAgICAgZWNobyAiQ3VzdG9tIGNvbmZpZyB3YXMgbm90IGEgVVJMLCBjb250aW51aW5nLiIKZmkKCmlmIFtbICRkZXBsb3llZCA9PSAibm8iICYmICRkZWNsYXJhdGlvblVybCA9PSAiTk9UX1NQRUNJRklFRCIgXV07IHRoZW4KICAgIGVjaG8gIkFwcGxpY2F0aW9uIGRlcGxveW1lbnQgZmFpbGVkIG9yIGN1c3RvbSBVUkwgd2FzIG5vdCBzcGVjaWZpZWQuIgpmaQoKZWNobyAiRGVwbG95bWVudCBjb21wbGV0ZS4iCmV4aXQ=",
 
-        "availabilitySetName": "[concat(variables('dnsLabelPrefix'), '-avset')]",
-        "availabilitySet2Name": "[concat(variables('dnsLabelPrefix'), '-avset2')]",
-        "availabilitySet3Name": "[concat(variables('dnsLabelPrefix'), '-avset3')]",
-        "availabilitySet4Name": "[concat(variables('dnsLabelPrefix'), '-avset4')]",
+        "availabilitySetName0": "[concat(variables('dnsLabelPrefix'), '-avset0')]",
+        "availabilitySetName1": "[concat(variables('dnsLabelPrefix'), '-avset1')]",
+        "availabilitySetName2": "[concat(variables('dnsLabelPrefix'), '-avset2')]",
+        "availabilitySetName3": "[concat(variables('dnsLabelPrefix'), '-avset3')]",
         
         "backEndAddressPoolArray": [
             {
@@ -703,7 +703,7 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "location": "[variables('location')]",
-            "name": "[variables('availabilitySetName')]",
+            "name": "[variables('availabilitySetName0')]",
             "properties": {
                 "PlatformFaultDomainCount": 2,
                 "PlatformUpdateDomainCount": 2
@@ -717,22 +717,7 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "location": "[variables('location')]",
-            "name": "[variables('availabilitySet2Name')]",
-            "properties": {
-                "PlatformFaultDomainCount": 2,
-                "PlatformUpdateDomainCount": 2
-            },
-            "sku": {
-                "name": "Aligned"
-            },
-            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
-            "type": "Microsoft.Compute/availabilitySets"
-        },
-        {
-            "apiVersion": "[variables('computeApiVersion')]",
-            "condition": "[equals(parameters('IPSTier'),'Yes')]",
-            "location": "[variables('location')]",
-            "name": "[variables('availabilitySet3Name')]",
+            "name": "[variables('availabilitySetName1')]",
             "properties": {
                 "PlatformFaultDomainCount": 2,
                 "PlatformUpdateDomainCount": 2
@@ -747,7 +732,22 @@
             "apiVersion": "[variables('computeApiVersion')]",
             "condition": "[equals(parameters('IPSTier'),'Yes')]",
             "location": "[variables('location')]",
-            "name": "[variables('availabilitySet4Name')]",
+            "name": "[variables('availabilitySetName2')]",
+            "properties": {
+                "PlatformFaultDomainCount": 2,
+                "PlatformUpdateDomainCount": 2
+            },
+            "sku": {
+                "name": "Aligned"
+            },
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
+            "type": "Microsoft.Compute/availabilitySets"
+        },
+        {
+            "apiVersion": "[variables('computeApiVersion')]",
+            "condition": "[equals(parameters('IPSTier'),'Yes')]",
+            "location": "[variables('location')]",
+            "name": "[variables('availabilitySetName3')]",
             "properties": {
                 "PlatformFaultDomainCount": 2,
                 "PlatformUpdateDomainCount": 2
@@ -985,11 +985,6 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-mgmt-ipconfig')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": [
-                                {
-                                    "id": "[concat(variables('nbALBid'), '/backendAddressPools/', 'loadBalancerMgmtBackEnd')]"
-                                }
-                            ],
                             "privateIPAddress": "[variables('mgmtSubnetPrivateAddress4')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1019,11 +1014,6 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-mgmt-ipconfig')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": [
-                                {
-                                    "id": "[concat(variables('nbALBid'), '/backendAddressPools/', 'loadBalancerMgmtBackEnd')]"
-                                }
-                            ],
                             "privateIPAddress": "[variables('mgmtSubnetPrivateAddress5')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1044,8 +1034,7 @@
             "condition": "[equals(parameters('IPSTier'),'Yes')]",
             "dependsOn": [
                 "[variables('vnetId')]",
-                "[variables('mgmtNsgID')]",
-                "[concat('Microsoft.Network/loadBalancers/', variables('NorthboundLoadBalancerName'))]"
+                "[variables('mgmtNsgID')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('mgmtNicName'), '6')]",
@@ -1054,11 +1043,6 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-mgmt-ipconfig')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": [
-                                {
-                                    "id": "[concat(variables('nbALBid'), '/backendAddressPools/', 'loadBalancerMgmtBackEnd')]"
-                                }
-                            ],
                             "privateIPAddress": "[variables('mgmtSubnetPrivateAddress6')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1079,8 +1063,7 @@
             "condition": "[equals(parameters('IPSTier'),'Yes')]",
             "dependsOn": [
                 "[variables('vnetId')]",
-                "[variables('mgmtNsgID')]",
-                "[concat('Microsoft.Network/loadBalancers/', variables('NorthboundLoadBalancerName'))]"
+                "[variables('mgmtNsgID')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('mgmtNicName'), '7')]",
@@ -1089,11 +1072,6 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-mgmt-ipconfig')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": [
-                                {
-                                    "id": "[concat(variables('nbALBid'), '/backendAddressPools/', 'loadBalancerMgmtBackEnd')]"
-                                }
-                            ],
                             "privateIPAddress": "[variables('mgmtSubnetPrivateAddress7')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -2193,13 +2171,14 @@
             "apiVersion": "2018-10-01",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]",
-                "[resourceId('Microsoft.Network/networkInterfaces/', concat(variables('mgmtNicName'), '4'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces/', concat(variables('mgmtNicName'), '4'))]",
+                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName3'))]"
             ],
             "location": "[variables('location')]",
             "name": "[variables('jbvmName')]",
             "properties": {
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName3'))]"
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
@@ -2248,13 +2227,14 @@
             "apiVersion": "2018-10-01",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]",
-                "[resourceId('Microsoft.Network/networkInterfaces/', concat(variables('mgmtNicName'), '5'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces/', concat(variables('mgmtNicName'), '5'))]",
+                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName3'))]"
             ],
             "location": "[variables('location')]",
             "name": "[variables('WinvmName')]",
             "properties": {
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName3'))]"
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
@@ -2303,7 +2283,7 @@
             "condition": "[equals(parameters('IPSTier'),'Yes')]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]",
-                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySet3Name'))]",
+                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName1'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'), '6')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('IPSExtNicName'), '0')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('IPSIntNicName'), '0')]"
@@ -2312,7 +2292,7 @@
             "name": "[concat(variables('IPSFirewallName'), '0')]",
             "properties": {
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet3Name'))]"
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName1'))]"
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
@@ -2377,7 +2357,7 @@
             "condition": "[equals(parameters('IPSTier'),'Yes')]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]",
-                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySet3Name'))]",
+                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName1'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'), '7')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('IPSExtNicName'), '1')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('IPSIntNicName'), '1')]"
@@ -2386,7 +2366,7 @@
             "name": "[concat(variables('IPSFirewallName'), '1')]",
             "properties": {
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet3Name'))]"
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName1'))]"
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
@@ -2450,7 +2430,7 @@
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]",
-                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]",
+                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName0'))]",
                 "[variables('newCustomImageName')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'), '0')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('extNicName'), '0')]",
@@ -2462,7 +2442,7 @@
             "plan": "[if(variables('useCustomImage'), json('null'), variables('imagePlan'))]",
             "properties": {
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet2Name'))]"
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName0'))]"
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
@@ -2505,7 +2485,7 @@
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]",
-                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]",
+                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName0'))]",
                 "[variables('newCustomImageName')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'), '1')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('extNicName'), '1')]",
@@ -2517,7 +2497,7 @@
             "plan": "[if(variables('useCustomImage'), json('null'), variables('imagePlan'))]",
             "properties": {
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet2Name'))]"
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName0'))]"
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
@@ -2560,7 +2540,7 @@
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]",
-                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySet2Name'))]",
+                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName2'))]",
                 "[variables('newCustomImageName')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'), '2')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('extNicName'), '2')]",
@@ -2572,7 +2552,7 @@
             "plan": "[if(variables('useCustomImage'), json('null'), variables('imagePlan'))]",
             "properties": {
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet3Name'))]"
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName2'))]"
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
@@ -2615,7 +2595,7 @@
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]",
-                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySet2Name'))]",
+                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName2'))]",
                 "[variables('newCustomImageName')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'), '3')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('extNicName'), '3')]",
@@ -2627,7 +2607,7 @@
             "plan": "[if(variables('useCustomImage'), json('null'), variables('imagePlan'))]",
             "properties": {
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet3Name'))]"
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName2'))]"
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
@@ -2669,7 +2649,8 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '0')]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '0')]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '1')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '0/start')]",
@@ -2698,6 +2679,7 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '0')]",
                 "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '1')]"
             ],
             "location": "[variables('location')]",
@@ -2726,7 +2708,8 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '2')]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '2')]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '3')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '2/start')]",
@@ -2755,7 +2738,8 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '3')]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '3')]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '2')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '3/start')]",
