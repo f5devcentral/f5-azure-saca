@@ -1,5 +1,5 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "6.0.2.0",
     "outputs": {
         "RDP-URL": {
@@ -356,7 +356,7 @@
         "availabilitySetName1": "[concat(variables('dnsLabelPrefix'), '-avset1')]",
         "availabilitySetName2": "[concat(variables('dnsLabelPrefix'), '-avset2')]",
         "availabilitySetName3": "[concat(variables('dnsLabelPrefix'), '-avset3')]",
-        
+
         "backEndAddressPoolArray": [
             {
                 "id": "[concat(variables('nbALBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"

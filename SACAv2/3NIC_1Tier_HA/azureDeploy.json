@@ -1,5 +1,5 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "6.0.2.0",
     "outputs": {
         "RDP-URL": {
@@ -205,7 +205,7 @@
                 "metricsCmd": "[concat(' --metrics customerId:${custId},deploymentId:${deployId},templateName:failover-lb_3nic-new-stack-supported,templateVersion:6.0.2.0,region:', variables('location'), ',bigIpVersion:', variables('bigIpVersion') ,',licenseType:byol,cloudLibsVersion:', variables('f5CloudLibsTag'), ',cloudName:azure')]"
             }
         },
-        "appScript": "IyEvYmluL2Jhc2gKZnVuY3Rpb24gcGFzc3dkKCkgewogIGVjaG8gfCBmNS1yZXN0LW5vZGUgL2NvbmZpZy9jbG91ZC9henVyZS9ub2RlX21vZHVsZXMvQGY1ZGV2Y2VudHJhbC9mNS1jbG91ZC1saWJzL3NjcmlwdHMvZGVjcnlwdERhdGFGcm9tRmlsZS5qcyAtLWRhdGEtZmlsZSAvY29uZmlnL2Nsb3VkLy5wYXNzd2QgfCBhd2sgJ3twcmludCAkMX0nCn0KCndoaWxlIGdldG9wdHMgbzp1OiBvcHRpb24KZG8gY2FzZSAiJG9wdGlvbiIgIGluCiAgICAgICAgbykgZGVjbGFyYXRpb25Vcmw9JE9QVEFSRzs7CiAgICAgICAgdSkgdXNlcj0kT1BUQVJHOzsKICAgIGVzYWMKZG9uZQoKZGVwbG95ZWQ9Im5vIgpmaWxlX2xvYz0iL2NvbmZpZy9jbG91ZC9jdXN0b21fY29uZmlnIgpkZmxfbWdtdF9wb3J0PWB0bXNoIGxpc3Qgc3lzIGh0dHBkIHNzbC1wb3J0IHwgZ3JlcCBzc2wtcG9ydCB8IHNlZCAncy9zc2wtcG9ydCAvLztzLyAvL2cnYAp1cmxfcmVnZXg9IihodHRwOlwvXC98aHR0cHM6XC9cLyk/W2EtejAtOV0rKFtcLVwuXXsxfVthLXowLTldKykqXC5bYS16XXsyLDV9KDpbMC05XXsxLDV9KT8oXC8uKik/JCIKCmlmIFtbICRkZWNsYXJhdGlvblVybCA9fiAkdXJsX3JlZ2V4IF1dOyB0aGVuCiAgICByZXNwb25zZV9jb2RlPSQoL3Vzci9iaW4vY3VybCAtLWludGVyZmFjZSBtZ210IC1zayAtdyAiJXtodHRwX2NvZGV9IiAkZGVjbGFyYXRpb25VcmwgLW8gJGZpbGVfbG9jKQogICAgaWYgW1sgJHJlc3BvbnNlX2NvZGUgPT0gMjAwIF1dOyB0aGVuCiAgICAgICAgIGVjaG8gIkN1c3RvbSBjb25maWcgZG93bmxvYWQgY29tcGxldGU7IGNoZWNraW5nIGZvciB2YWxpZCBKU09OLiIKICAgICAgICAgY2F0ICRmaWxlX2xvYyB8IGpxIC5jbGFzcwogICAgICAgICBpZiBbWyAkPyA9PSAwIF1dOyB0aGVuCiAgICAgICAgICAgICByZXNwb25zZV9jb2RlPSQoL3Vzci9iaW4vY3VybCAtc2t2dnUgJHVzZXI6JChwYXNzd2QpIC13ICIle2h0dHBfY29kZX0iIC1YIFBPU1QgLUggIkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbiIgaHR0cHM6Ly9sb2NhbGhvc3Q6JGRmbF9tZ210X3BvcnQvbWdtdC9zaGFyZWQvYXBwc3Zjcy9kZWNsYXJlIC1kIEAkZmlsZV9sb2MgLW8gL2Rldi9udWxsKQoKICAgICAgICAgICAgIGlmIFtbICRyZXNwb25zZV9jb2RlID09IDIwMCB8fCAkcmVzcG9uc2VfY29kZSA9PSA1MDIgXV07IHRoZW4KICAgICAgICAgICAgICAgICAgZWNobyAiRGVwbG95bWVudCBvZiBhcHBsaWNhdGlvbiBzdWNjZWVkZWQuIgogICAgICAgICAgICAgICAgICBkZXBsb3llZD0ieWVzIgogICAgICAgICAgICAgZWxzZQogICAgICAgICAgICAgICAgIGVjaG8gIkZhaWxlZCB0byBkZXBsb3kgYXBwbGljYXRpb247IGNvbnRpbnVpbmcgd2l0aCByZXNwb25zZSBjb2RlICciJHJlc3BvbnNlX2NvZGUiJyIKICAgICAgICAgICAgIGZpCiAgICAgICAgIGVsc2UKICAgICAgICAgICAgIGVjaG8gIkN1c3RvbSBjb25maWcgd2FzIG5vdCB2YWxpZCBKU09OLCBjb250aW51aW5nIgogICAgICAgICBmaQogICAgZWxzZQogICAgICAgIGVjaG8gIkZhaWxlZCB0byBkb3dubG9hZCBjdXN0b20gY29uZmlnOyBjb250aW51aW5nIHdpdGggcmVzcG9uc2UgY29kZSAnIiRyZXNwb25zZV9jb2RlIiciCiAgICBmaQplbHNlCiAgICAgZWNobyAiQ3VzdG9tIGNvbmZpZyB3YXMgbm90IGEgVVJMLCBjb250aW51aW5nLiIKZmkKCmlmIFtbICRkZXBsb3llZCA9PSAibm8iICYmICRkZWNsYXJhdGlvblVybCA9PSAiTk9UX1NQRUNJRklFRCIgXV07IHRoZW4KICAgIGVjaG8gIkFwcGxpY2F0aW9uIGRlcGxveW1lbnQgZmFpbGVkIG9yIGN1c3RvbSBVUkwgd2FzIG5vdCBzcGVjaWZpZWQuIgpmaQoKZWNobyAiRGVwbG95bWVudCBjb21wbGV0ZS4iCmV4aXQ=",
+        "appScript": "IyEvYmluL2Jhc2gKZnVuY3Rpb24gcGFzc3dkKCkgewogIGVjaG8gfCBmNS1yZXN0LW5vZGUgL2NvbmZpZy9jbG91ZC9henVyZS9ub2RlX21vZHVsZXMvQGY1ZGV2Y2VudHJhbC9mNS1jbG91ZC1saWJzL3NjcmlwdHMvZGVjcnlwdERhdGFGcm9tRmlsZS5qcyAtLWRhdGEtZmlsZSAvY29uZmlnL2Nsb3VkLy5wYXNzd2QgfCBhd2sgJ3twcmludCAkMX0nCn0KCndoaWxlIGdldG9wdHMgbzp1OiBvcHRpb24KZG8gY2FzZSAiJG9wdGlvbiIgIGluCiAgICAgICAgbykgZGVjbGFyYXRpb25Vcmw9JE9QVEFSRzs7CiAgICAgICAgdSkgdXNlcj0kT1BUQVJHOzsKICAgIGVzYWMKZG9uZQoKZGVwbG95ZWQ9Im5vIgpmaWxlX2xvYz0iL2NvbmZpZy9jbG91ZC9jdXN0b21fY29uZmlnIgpkZmxfbWdtdF9wb3J0PWB0bXNoIGxpc3Qgc3lzIGh0dHBkIHNzbC1wb3J0IHwgZ3JlcCBzc2wtcG9ydCB8IHNlZCAncy9zc2wtcG9ydCAvLztzLyAvL2cnYAp1cmxfcmVnZXg9IihodHRwOlwvXC98aHR0cHM6XC9cLyk",
         "availabilitySet2Name": "[concat(variables('dnsLabelPrefix'), '-avset2')]",
         "availabilitySet3Name": "[concat(variables('dnsLabelPrefix'), '-avset3')]",
         "availabilitySetName": "[concat(variables('dnsLabelPrefix'), '-avset')]",
@@ -265,11 +265,6 @@
         "createNewCustomImage": "[contains(variables('customImage'), 'https://')]",
         "customConfig": "### START (INPUT) CUSTOM CONFIGURATION HERE\n",
         "customImage": "",
-
-        "DeclarationLength": "[length(parameters('declarationUrl'))]",
-        "DeclarationUriCut": "[add(1, lastIndexOf(parameters('declarationUrl'), '/'))]",
-        "DeclarationFileLen": "[sub(variables('DeclarationLength'), variables('DeclarationUriCut'))]",
-        "DeclarationFileName": "[substring(parameters('declarationUrl'), variables('DeclarationUriCut'), variables('DeclarationFileLen'))]",
 
         "dataStorageAccountType": "Standard_LRS",
         "deploymentId": "[concat(variables('subscriptionId'), resourceGroup().id, deployment().name, variables('dnsLabelPrefix'))]",
@@ -405,7 +400,7 @@
         "mgmtSubnetPrivateAddressPrefix": "[substring(variables('ManagementAddressStartIP'), 0, lastindexOf(variables('ManagementAddressStartIP'), '.'))]",
         "mgmtSubnetStartDirty": "[substring(variables('ManagementAddressStartIP'), lastIndexOf(variables('ManagementAddressStartIP'), '.'), sub(length(variables('ManagementAddressStartIP')), lastIndexOf(variables('ManagementAddressStartIP'), '.') ))]",
         "mgmtSubnetStartInt": "[replace(variables('mgmtSubnetStartDirty'), '.','')]",
-        "networkApiVersion": "2017-11-01",
+        "networkApiVersion": "2017-06-01",
         "newCustomImageName": "[concat(variables('dnsLabelPrefix'), 'image')]",
         "newDataStorageAccountName": "[concat(uniqueString(variables('dnsLabelPrefix'), resourceGroup().id, deployment().name), 'data000')]",
         "numberOfExternalIps": 1,
@@ -480,8 +475,6 @@
 
         "tmmRouteGw": "[concat(variables('intSubnetPrivateAddressPrefix'), '.1')]",
 
-        "cmdCreateTMMRoute": "[concat('tmsh create net route 0.0.0.0/0 gw ', variables('tmmRouteGw'))]",
-        
         "useCustomImage": "[not(empty(variables('customImage')))]",
         "vdmsSubnetName": "VDMS",
         
@@ -1480,7 +1473,6 @@
                         "[concat('https://cdn.f5.com/product/cloudsolutions/f5-appsvcs-extension/', variables('f5AS3Tag'), '/dist/lts/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
-                        "[parameters('declarationUrl')]",
                         "http://iasecontent.disa.mil/pki-pke/Certificates_PKCS7_v5.5_DoD.zip",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh",
                         "https://raw.githubusercontent.com/Mikej81/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
@@ -1511,7 +1503,6 @@
                         "[concat('https://cdn.f5.com/product/cloudsolutions/f5-appsvcs-extension/', variables('f5AS3Tag'), '/dist/lts/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
-                        "[parameters('declarationUrl')]",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh"
                     ]
                 },
