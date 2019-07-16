@@ -21,10 +21,10 @@ if [[ $declarationUrl =~ $url_regex ]]; then
          echo "Custom config download complete; checking for valid JSON."
          cat $file_loc | jq .class
          if [[ $? == 0 ]]; then
-             response_code=$(/usr/bin/curl -skvvu $user:$(passwd) -w "%{http_code}" -X POST -H "Content-Type: application/json" https://localhost:$dfl_mgmt_port/mgmt/shared/appsvcs/declare -d @$file_loc -o /dev/null)
+             response_code=$(/usr/bin/curl -skvvu $user:$(passwd) -w "%{http_code}" -X POST -H "Content-Type: application/json" -H 'Expect:' -d "@$file_loc" https://localhost:$dfl_mgmt_port/mgmt/shared/appsvcs/declare -o /dev/null)
 
-             if [[ $response_code == 200 || $response_code == 502 ]]; then
-                  echo "Deployment of application succeeded."
+             if [[ $response_code == 200 || $response_code == 207 || $response_code == 502 ]]; then
+                  echo "Deployment of application succeeded. $response_code"
                   deployed="yes"
              else
                  echo "Failed to deploy application; continuing with response code '"$response_code"'"
