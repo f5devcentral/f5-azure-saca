@@ -1,5 +1,5 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "6.0.2.0",
     "outputs": {
         "RDP-URL": {
@@ -266,11 +266,6 @@
         "customConfig": "### START (INPUT) CUSTOM CONFIGURATION HERE\n",
         "customImage": "",
 
-        "DeclarationLength": "[length(parameters('declarationUrl'))]",
-        "DeclarationUriCut": "[add(1, lastIndexOf(parameters('declarationUrl'), '/'))]",
-        "DeclarationFileLen": "[sub(variables('DeclarationLength'), variables('DeclarationUriCut'))]",
-        "DeclarationFileName": "[substring(parameters('declarationUrl'), variables('DeclarationUriCut'), variables('DeclarationFileLen'))]",
-
         "dataStorageAccountType": "Standard_LRS",
         "deploymentId": "[concat(variables('subscriptionId'), resourceGroup().id, deployment().name, variables('dnsLabelPrefix'))]",
         "dnsLabelPrefix": "[toLower(parameters('dnsLabelPrefix'))]",
@@ -405,7 +400,7 @@
         "mgmtSubnetPrivateAddressPrefix": "[substring(variables('ManagementAddressStartIP'), 0, lastindexOf(variables('ManagementAddressStartIP'), '.'))]",
         "mgmtSubnetStartDirty": "[substring(variables('ManagementAddressStartIP'), lastIndexOf(variables('ManagementAddressStartIP'), '.'), sub(length(variables('ManagementAddressStartIP')), lastIndexOf(variables('ManagementAddressStartIP'), '.') ))]",
         "mgmtSubnetStartInt": "[replace(variables('mgmtSubnetStartDirty'), '.','')]",
-        "networkApiVersion": "2017-11-01",
+        "networkApiVersion": "2017-06-01",
         "newCustomImageName": "[concat(variables('dnsLabelPrefix'), 'image')]",
         "newDataStorageAccountName": "[concat(uniqueString(variables('dnsLabelPrefix'), resourceGroup().id, deployment().name), 'data000')]",
         "numberOfExternalIps": 1,
@@ -480,8 +475,6 @@
 
         "tmmRouteGw": "[concat(variables('intSubnetPrivateAddressPrefix'), '.1')]",
 
-        "cmdCreateTMMRoute": "[concat('tmsh create net route 0.0.0.0/0 gw ', variables('tmmRouteGw'))]",
-        
         "useCustomImage": "[not(empty(variables('customImage')))]",
         "vdmsSubnetName": "VDMS",
         
