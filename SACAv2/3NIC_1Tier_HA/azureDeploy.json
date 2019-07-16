@@ -400,7 +400,7 @@
         "mgmtSubnetPrivateAddressPrefix": "[substring(variables('ManagementAddressStartIP'), 0, lastindexOf(variables('ManagementAddressStartIP'), '.'))]",
         "mgmtSubnetStartDirty": "[substring(variables('ManagementAddressStartIP'), lastIndexOf(variables('ManagementAddressStartIP'), '.'), sub(length(variables('ManagementAddressStartIP')), lastIndexOf(variables('ManagementAddressStartIP'), '.') ))]",
         "mgmtSubnetStartInt": "[replace(variables('mgmtSubnetStartDirty'), '.','')]",
-        "networkApiVersion": "2017-06-01",
+        "networkApiVersion": "2017-11-01",
         "newCustomImageName": "[concat(variables('dnsLabelPrefix'), 'image')]",
         "newDataStorageAccountName": "[concat(uniqueString(variables('dnsLabelPrefix'), resourceGroup().id, deployment().name), 'data000')]",
         "numberOfExternalIps": 1,
