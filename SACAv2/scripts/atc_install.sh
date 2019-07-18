@@ -103,10 +103,15 @@ function getToken() {
 #
 # install each RPM
 #
-find $rpmFileUrl -name *.rpm -type f -exec sh -c '
-    for filename do
-    install=$(/usr/bin/curl -skv -w "%{http_code}" -X POST -H "Content-Type: application/json" -H "X-F5-Auth-Token: $(getToken)" -o /dev/null -d "{"operation":"INSTALL","packageFilePath":"$filename"}"  https://$host:$dfl_mgmt_port$rpmInstallUrl)
-    done' sh {} +
+rpms=$(find $rpmFileUrl -name "*.rpm" -type f)
+for rpm in $rpms
+do
+  filename=$(echo "${rpm##*/}")
+  echo "installing $name"
+  install=$(/usr/bin/curl -skv -w "%{http_code}" -X POST -H "Content-Type: application/json" -H "X-F5-Auth-Token: $(getToken)" -o /dev/null -d "{"operation":"INSTALL","packageFilePath":"$filename"}"  https://$host:$dfl_mgmt_port$rpmInstallUrl)
+  echo "status code $install"
+done
+
 # check for status
 # echo status
 #
