@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "6.0.2.0",
     "outputs": {
         "RDP-URL": {
@@ -365,12 +365,6 @@
                 "id": "[concat(variables('nbILBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
             }
         ],
-        "nbALBidbackEndAddressPool": {
-            "id": "[concat(variables('nbALBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
-        },
-        "nbILBidbackEndAddressPool": {
-            "id": "[concat(variables('nbILBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
-        },
         "bigIpMgmtPort": "[variables('bigIpVersionPortMap')[variables('bigIpNicPortValue')].Port]",
         "bigIpNicPortMap": {
             "1": {
@@ -1095,7 +1089,6 @@
         },
         {
             "apiVersion": "[variables('networkApiVersion')]",
-            "condition": "[equals(parameters('NorthboundLoadBalancerType'),'Public-alb')]",
             "dependsOn": [
                 "[variables('vnetId')]",
                 "[variables('extNsgID')]",
@@ -1121,7 +1114,7 @@
                     {
                         "name": "[concat(variables('resourceGroupName'), '-ext-ipconfig-0')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": "[concat(variables('nbALBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]",
+                            "loadBalancerBackendAddressPools": "[if(equals(parameters('NorthboundLoadBalancerType'),'Public-alb'), take(variables('backEndAddressPoolArray'), 0), skip(variables('backEndAddressPoolArray'), 1))]",
                             "primary": false,
                             "privateIPAddress": "[concat(variables('extSubnetPrivateAddressPrefix'), '.',10)]",
                             "privateIPAllocationMethod": "Static",
@@ -1140,52 +1133,6 @@
         },
         {
             "apiVersion": "[variables('networkApiVersion')]",
-            "condition": "[equals(parameters('NorthboundLoadBalancerType'),'Private-ilb')]",
-            "dependsOn": [
-                "[variables('vnetId')]",
-                "[variables('extNsgID')]",
-                "extpipcopy",
-                "[variables('nbALbId')]",
-                "[variables('nbILbId')]"
-            ],
-            "location": "[variables('location')]",
-            "name": "[concat(variables('extNicName'), '0')]",
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
-                        "properties": {
-                            "primary": true,
-                            "privateIPAddress": "[variables('extSubnetPrivateAddress')]",
-                            "privateIPAllocationMethod": "Static",
-                            "subnet": {
-                                "id": "[variables('extSubnetId')]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('resourceGroupName'), '-ext-ipconfig-0')]",
-                        "properties": {
-                            "loadBalancerBackendAddressPools": "[concat(variables('nbILBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]",
-                            "primary": false,
-                            "privateIPAddress": "[concat(variables('extSubnetPrivateAddressPrefix'), '.',10)]",
-                            "privateIPAllocationMethod": "Static",
-                            "subnet": {
-                                "id": "[variables('extSubnetId')]"
-                            }
-                        }
-                    }
-                ],
-                "networkSecurityGroup": {
-                    "id": "[concat(variables('extNsgId'))]"
-                }
-            },
-            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
-            "type": "Microsoft.Network/networkInterfaces"
-        },
-        {
-            "apiVersion": "[variables('networkApiVersion')]",
-            "condition": "[equals(parameters('NorthboundLoadBalancerType'),'Public-alb')]",
             "dependsOn": [
                 "[variables('vnetId')]",
                 "[variables('extNsgID')]",
@@ -1211,52 +1158,7 @@
                     {
                         "name": "[concat(variables('resourceGroupName'), '-ext-ipconfig-1')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": "[concat(variables('nbALBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]",
-                            "primary": false,
-                            "privateIPAddress": "[concat(variables('extSubnetPrivateAddressPrefix'), '.', 11)]",
-                            "privateIPAllocationMethod": "Static",
-                            "subnet": {
-                                "id": "[variables('extSubnetId')]"
-                            }
-                        }
-                    }
-                ],
-                "networkSecurityGroup": {
-                    "id": "[concat(variables('extNsgId'))]"
-                }
-            },
-            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
-            "type": "Microsoft.Network/networkInterfaces"
-        },
-        {
-            "apiVersion": "[variables('networkApiVersion')]",
-            "condition": "[equals(parameters('NorthboundLoadBalancerType'),'Private-ilb')]",
-            "dependsOn": [
-                "[variables('vnetId')]",
-                "[variables('extNsgID')]",
-                "extpipcopy",
-                "[variables('nbALbId')]",
-                "[variables('nbILbId')]"
-            ],
-            "location": "[variables('location')]",
-            "name": "[concat(variables('extNicName'), '1')]",
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
-                        "properties": {
-                            "primary": true,
-                            "privateIPAddress": "[variables('extSubnetPrivateAddress1')]",
-                            "privateIPAllocationMethod": "Static",
-                            "subnet": {
-                                "id": "[variables('extSubnetId')]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "[concat(variables('resourceGroupName'), '-ext-ipconfig-1')]",
-                        "properties": {
-                            "loadBalancerBackendAddressPools": "[concat(variables('nbILBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]",
+                            "loadBalancerBackendAddressPools": "[if(equals(parameters('NorthboundLoadBalancerType'),'Public-alb'), take(variables('backEndAddressPoolArray'), 0), skip(variables('backEndAddressPoolArray'), 1))]",
                             "primary": false,
                             "privateIPAddress": "[concat(variables('extSubnetPrivateAddressPrefix'), '.', 11)]",
                             "privateIPAllocationMethod": "Static",
