@@ -110,6 +110,20 @@ do
   echo "installing $name"
   install=$(/usr/bin/curl -skv -w "%{http_code}" -X POST -H "Content-Type: application/json" -H "X-F5-Auth-Token: $(getToken)" -o /dev/null -d "{"operation":"INSTALL","packageFilePath":"$filename"}"  https://$host:$dfl_mgmt_port$rpmInstallUrl)
   echo "status code $install"
+  case "$install" in 
+    200)
+        # valid checksum
+        echo "install started $name status: $install "
+        ;;
+    401)
+        # credentials
+        echo "check credentials status: $install"
+        ;;
+    *)
+        # invalid checksum
+        echo "failed $name"
+        ;;
+    esac
 done
 
 # check for status
