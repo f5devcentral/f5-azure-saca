@@ -11,6 +11,7 @@
 # rpm latest
 # curl --interface mgmt https://api.github.com/users/F5Networks/repos | grep releases_url
 #
+# rpm
 # curl -s --interface mgmt https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/dist/f5-declarative-onboarding-1.5.0-11.noarch.rpm -o  /shared/vadc/azure/waagent/custom-script/download/0/f5-declarative-onboarding-1.5.0-11.noarch.rpm
 # curl -s --interface mgmt https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/dist/latest/f5-appsvcs-3.12.0-5.noarch.rpm -o  /shared/vadc/azure/waagent/custom-script/download/0/f5-appsvcs-3.12.0-5.noarch.rpm
 # curl -s --interface mgmt https://raw.githubusercontent.com/F5Networks/f5-telemetry-streaming/master/dist/f5-telemetry-1.4.0-1.noarch.rpm -o  /shared/vadc/azure/waagent/custom-script/download/0/f5-telemetry-1.4.0-1.noarch.rpm
@@ -19,6 +20,28 @@
 # curl -s --interface mgmt https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/dist/latest/f5-appsvcs-3.12.0-5.noarch.rpm.sha256 -o  /shared/vadc/azure/waagent/custom-script/download/0/f5-appsvcs-3.12.0-5.noarch.rpm.sha256
 # curl -s --interface mgmt https://raw.githubusercontent.com/F5Networks/f5-telemetry-streaming/master/dist/f5-telemetry-1.4.0-1.noarch.rpm.sha256 -o  /shared/vadc/azure/waagent/custom-script/download/0/f5-telemetry-1.4.0-1.noarch.rpm.sha256
 #
+#
+# download latest DO
+files=$(curl -s --interface mgmt https://api.github.com/repos/F5Networks/f5-declarative-onboarding/releases/latest | grep "browser_download_url.*rpm" | cut -d : -f 2,3 | tr -d \")
+for file in $files
+do
+  name=$(echo "${file##*/}")
+  result=$(/usr/bin/curl -kvv -w "%{http_code}" $file -o /var/config/rest/downloads/$name)
+done
+# download latest As3
+files=$(curl -s --interface mgmt https://api.github.com/repos/F5Networks/f5-appsvcs-extension/releases/latest | grep "browser_download_url.*rpm" | cut -d : -f 2,3 | tr -d \")
+for file in $files
+do
+  name=$(echo "${file##*/}")
+  result=$(/usr/bin/curl -kvv -w "%{http_code}" $file -o /var/config/rest/downloads/$name)
+done
+# download latest ts
+files=$(curl -s --interface mgmt https://api.github.com/repos/F5Networks/f5-telemetry-streaming/releases/latest | grep "browser_download_url.*rpm" | cut -d : -f 2,3 | tr -d \")
+for file in $files
+do
+  name=$(echo "${file##*/}")
+  result=$(/usr/bin/curl -kvv -w "%{http_code}" $file -o /var/config/rest/downloads/$name)
+done
 #
 # vars
 #
