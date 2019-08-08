@@ -175,22 +175,9 @@ The following is an example configuration diagram for this solution deployment. 
 
 Use this section for optional configuration changes after you have deployed the template.
 
-### Additional public IP addresses
+### Public IP addresses
 
-This ARM template supports using up to 5 public IP addresses.  After you initially deployed the template, if you now want to include additional public IP addresses, use the following guidance.
-
-#### Adding additional public IP addresses to the deployment
-
-The deployment template supports creation of 1-20 external public IP addresses for application traffic (first one is used for external NIC Self IP).  Follow the steps below to add **additional** public IP addresses to the deployment:
-
-- Create a new Azure public IP address resource in the deployment resource group
-- Create a new, secondary IP configuration resource (for example: *myResourceGroupName-ext-ipconfig9*) in the properties of the external Azure network interface (for example: *myResourceGroupName-ext0*)
-
-When you create virtual servers on the BIG-IP VE for these additional addresses, the BIG-IP network virtual server destination IP address should match the private IP addresses of both secondary Azure IP configurations assigned to the backend pool that is referenced by the application's Azure load balancing rule.
-
-## Documentation
-
-For more information on F5 solutions for Azure, including manual configuration procedures for some deployment scenarios, see the Azure section of [Public Cloud Docs](http://clouddocs.f5.com/cloud/public/v1/).
+This ARM template supports using up to 1 public IP addresses.  After you initially deployed the template, you can add desired number of Public IP addresses via the Azure Portal.
 
 ### Service Discovery
 
@@ -283,14 +270,6 @@ We recommend you watch the [Viewing ASM Data in Azure Analytics video](https://w
 **Important**: Be aware that this may (depending on the level of logging required) affect performance of the BIG-IP as a result of the processing to construct and send the log messages over HTTP to the cloud analytics solution.
 It is also important to note this cloud logging iApp template is a *different solution and iApp template* than the F5 Analytics iApp template described [here](https://f5.com/solutions/deployment-guides/analytics-big-ip-v114-v1212-ltm-apm-aam-asm-afm).
 
-Use the following guidance using the iApp template (the iApp now is present on the BIG-IP VE image as a part of the templates).
-
-1. Log on to the BIG-IP VE Configuration utility.
-2. On the Main tab, from the **iApp** menu, click **Application Services > Applications > Create**.
-3. From the **Template** list, select f5.cloud_logger.v1.0.0.tmpl (or later version if applicable).
-
-For assistance running the iApp template, once you open the iApp, from the *Do you want to see inline help?* question, select **Yes, show inline help**.
-
 ## Security Details
 
 This section has the code snippet for each the lines you should ensure are present in your template file if you want to verify the integrity of the helper code in the template.
@@ -315,6 +294,18 @@ You have a choice when it comes to filing issues:
 
 - Use the **Issues** link on the GitHub menu bar in this repository for items such as enhancement or feature requests and non-urgent bug fixes. Tell us as much as you can about what you found and how you found it.
 
-### Contributor License Agreement
+## Contributing
 
 Individuals or business entities who contribute to this project must have completed and submitted the F5 Contributor License Agreement.
+
+## Authors
+
+* **Michael Coleman** - *v2* - [Mikej81](https://github.com/Mikej81)
+* **Eric Chen** - *v1* - [Chen23](https://github.com/chen23)
+* **Vinnie Mazza** - *DevOps* - [vinnie357](https://github.com/vinnie357)
+* **Michael O'Leary** - *Validation* - [mikeoleary](https://github.com/mikeoleary)
+
+See also the list of [contributors](https://github.com/f5devcentral/f5-azure-saca/graphs/contributors) who participated in this project.
+
+## Acknowledgments
+* **Gary Lu** - *Contributions* - [garyluf5](https://github.com/garyluf5)
