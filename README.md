@@ -75,10 +75,7 @@ Additionally, F5 provides checksums for all of our supported templates. For inst
 
 The following is a map that shows the available options for the template parameter **bigIpVersion** as it corresponds to the BIG-IP version itself. Only the latest version of BIG-IP VE is posted in the Azure Marketplace. For older versions, see downloads.f5.com.
 
-| Azure BIG-IP Image Version | BIG-IP Version | Important: Boot location options note |
-| --- | --- | --- |
-| 13.1.100000 | 13.1.1 Build 0.0.4 | Both One and Two Boot Location options are available |
-| latest | This will select the latest BIG-IP version available | Only Two Boot Location options exist. Even if you select a One Boot Location in the template, Two Boot Locations are created |
+13.1.100000 is currently the only version in this release.
 
 ## Supported instance types and hypervisors
 
@@ -105,7 +102,7 @@ Use the appropriate button below to deploy:
 
   [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2FazureDeploy.json)
 
-- **3 Tier [ALPHA]** This deploys the standard F5 "Firewall Sandwich" use-case, with an IPS tier.
+- **3 Tier** This deploys the standard F5 "Firewall Sandwich" use-case, with an IPS tier.
 
   [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FMikej81%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2FazureDeploy.json)
 
