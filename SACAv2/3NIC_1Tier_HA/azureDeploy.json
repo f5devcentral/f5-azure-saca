@@ -1028,11 +1028,11 @@
                             "backendAddressPool": {
                                 "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/backendAddressPools/loadBalancerMgmtBackEnd')]"
                             },
-                            "backendPort": 443,
+                            "backendPort": 8443,
                             "frontendIPConfiguration": {
                                 "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
                             },
-                            "frontendPort": 443,
+                            "frontendPort": 8443,
                             "idleTimeoutInMinutes": 15,
                             "probe": {
                                 "id": "[concat(variables('extLbId'),'/probes/https_alive')]"
@@ -1479,6 +1479,7 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '0')]",
                 "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '1')]"
             ],
             "location": "[variables('location')]",

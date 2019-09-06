@@ -1658,11 +1658,11 @@
                     {
                         "Name": "management_outbound",
                         "properties": {
-                            "backendPort": 443,
+                            "backendPort": 8443,
                             "frontendIPConfiguration": {
                                 "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
                             },
-                            "frontendPort": 443,
+                            "frontendPort": 8443,
                             "idleTimeoutInMinutes": 15,
                             "backendAddressPool": {
                                 "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/backendAddressPools/loadBalancerMgmtBackEnd')]"
