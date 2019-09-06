@@ -1462,7 +1462,7 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "[concat('https://cdn.f5.com/product/cloudsolutions/f5-cloud-libs/', variables('f5CloudLibsTag'), '/f5-cloud-libs.tar.gz')]",
+                        "https://raw.githubusercontent.com/F5Networks/f5-cloud-libs/master/dist/f5-cloud-libs.tar.gz",
                         "[concat('https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
@@ -1493,7 +1493,7 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "[concat('https://cdn.f5.com/product/cloudsolutions/f5-cloud-libs/', variables('f5CloudLibsTag'), '/f5-cloud-libs.tar.gz')]",
+                        "https://raw.githubusercontent.com/F5Networks/f5-cloud-libs/master/dist/f5-cloud-libs.tar.gz",
                         "[concat('https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
