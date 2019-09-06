@@ -130,6 +130,13 @@
             },
             "type": "string"
         },
+        "STIGDevice": {
+            "defaultValue": true,
+            "metadata": {
+                "description": "This setting will determine whether STIGS/SRGS will be applied at Onboarding."
+            },
+            "type": "bool"
+        },
         "restrictedSrcAddress": {
             "defaultValue": "*",
             "metadata": {
@@ -362,22 +369,13 @@
             }
         },
         "bigIpNicPortValue": "[variables('bigIpNicPortMap')['3'].Port]",
-        "bigIpVersion": "13.1.100000",
+        "bigIpVersion": "14.1.003000",
         "bigIpVersionPortMap": {
-            "12.1.303000": {
-                "Port": 443
-            },
             "13.1.100000": {
                 "Port": 8443
             },
-            "14.1.001000": {
+            "14.1.003000": {
                 "Port": 443
-            },
-            "443": {
-                "Port": 443
-            },
-            "latest": {
-                "Port": 8443
             }
         },
         "bigIpMgmtPort": "[variables('bigIpVersionPortMap')[variables('bigIpNicPortValue')].Port]",
@@ -420,19 +418,13 @@
         },
         "imageName": "AllTwoBootLocations",
         "imageNameArray": {
-            "12.1.303000": {
-                "AllOneBootLocation": "big-all-2slot",
-                "AllTwoBootLocations": "big-all-2slot",
-                "LTMOneBootLocation": "big-ltm-2slot",
-                "LTMTwoBootLocations": "big-ltm-2slot"
-            },
             "13.1.100000": {
                 "AllOneBootLocation": "big-all-1slot",
                 "AllTwoBootLocations": "big-all-2slot",
                 "LTMOneBootLocation": "big-ltm-1slot",
                 "LTMTwoBootLocations": "big-ltm-2slot"
             },
-            "14.1.001000": {
+            "14.1.003000": {
                 "AllOneBootLocation": "big-all-1slot",
                 "AllTwoBootLocations": "big-all-2slot",
                 "LTMOneBootLocation": "big-ltm-1slot",
@@ -569,7 +561,12 @@
         "mgmtRouteGw": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.1')]",
 
         "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip && openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer && tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer",
-        "cmdConfigStig": "bash ./bigipstig.sh",
+
+        "stigCmdArray": {
+            "true": "bash ./bigipstig.sh",
+            "false": ""
+        },
+        "cmdConfigStig": "[if(parameters('STIGDevice'), variables('stigCmdArray').true, variables('stigCmdArray').false)]",
 
         "vdmsSubnetName": "VDMS",
         "windowsOSVersion": "2016-Datacenter",

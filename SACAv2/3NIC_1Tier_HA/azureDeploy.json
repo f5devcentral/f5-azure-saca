@@ -126,6 +126,13 @@
             },
             "type": "string"
         },
+        "STIGDevice": {
+            "defaultValue": true,
+            "metadata": {
+                "description": "This setting will determine whether STIGS/SRGS will be applied at Onboarding."
+            },
+            "type": "bool"
+        },
         "NorthTrustedAddressStartIP": {
             "defaultValue": "192.168.3.4",
             "metadata": {
@@ -241,23 +248,14 @@
         "bigIpNicPortValue": "[variables('bigIpNicPortMap')['3'].Port]",
         "bigIpVersion": "14.1.003000",
         "bigIpVersionPortMap": {
-            "12.1.303000": {
-                "Port": 443
-            },
             "13.1.100000": {
                 "Port": 8443
             },
             "14.1.003000": {
                 "Port": 443
-            },
-            "443": {
-                "Port": 443
-            },
-            "latest": {
-                "Port": 8443
             }
         },
-        "cmdConfigStig": "bash ./bigipstig.sh",
+
         "cmdcreateFWLog": "tmsh create security log profile local-afm-log { network replace-all-with { local-afm-log { publisher local-db-publisher filter { log-acl-match-accept enabled log-acl-match-drop enabled log-acl-match-reject enabled } } } }",
         "cmdcreateFWPolicy": "tmsh create security firewall policy log_all_afm rules add { allow_all { action accept log yes place-before first } deny_all { action reject log yes place-after allow_all } }",
         "commandArgs": "[concat('-o ', parameters('declarationUrl'), ' -u svc_user')]",
@@ -293,39 +291,30 @@
                 "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '1.', variables('location'), '.cloudapp.azure.com'), ' unicast-address { { ip ', variables('intSubnetPrivateAddress1'), ' port 1026 } } mirror-ip ', variables('intSubnetPrivateAddress1'))]"
             }
         },
+
+        "stigCmdArray": {
+            "true": "bash ./bigipstig.sh",
+            "false": ""
+        },
+        "cmdConfigStig": "[if(parameters('STIGDevice'), variables('stigCmdArray').true, variables('stigCmdArray').false)]",
+
         "imageName": "AllTwoBootLocations",
         "imageNameArray": {
-            "12.1.303000": {
-                "AllOneBootLocation": "big-all-2slot",
-                "AllTwoBootLocations": "big-all-2slot",
-                "LTMOneBootLocation": "big-ltm-2slot",
-                "LTMTwoBootLocations": "big-ltm-2slot"
-            },
             "13.1.100000": {
                 "AllOneBootLocation": "big-all-1slot",
-                "AllTwoBootLocations": "big-all-2slot",
-                "LTMOneBootLocation": "big-ltm-1slot",
-                "LTMTwoBootLocations": "big-ltm-2slot"
+                "AllTwoBootLocations": "big-all-2slot"
             },
-            "14.1.001000": {
+            "14.1.003000": {
                 "AllOneBootLocation": "big-all-1slot",
-                "AllTwoBootLocations": "big-all-2slot",
-                "LTMOneBootLocation": "big-ltm-1slot",
-                "LTMTwoBootLocations": "big-ltm-2slot"
+                "AllTwoBootLocations": "big-all-2slot"
             },
             "latest": {
                 "AllOneBootLocation": "big-all-2slot",
-                "AllTwoBootLocations": "big-all-2slot",
-                "LTMOneBootLocation": "big-ltm-2slot",
-                "LTMTwoBootLocations": "big-ltm-2slot"
+                "AllTwoBootLocations": "big-all-2slot"
             },
             "offerPostfix": {
-                "big-all-1slot": "byol",
                 "big-all-2slot": "byol",
-                "big-ltm-1slot": "byol",
-                "big-ltm-2slot": "byol",
-                "bigip-virtual-edition-best": "best",
-                "bigip-virtual-edition-good": "good"
+                "bigip-virtual-edition-best": "best"
             }
         },
         "imageNameSub": "[variables('imageNameArray')[variables('bigIpVersion')][variables('imageName')]]",
