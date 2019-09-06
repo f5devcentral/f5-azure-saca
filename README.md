@@ -209,12 +209,12 @@ To launch the template:
 
 In order to pass traffic from your clients to the servers through the BIG-IP system, you must create a virtual server on the BIG-IP VE. To create a BIG-IP virtual server you need to know the private IP address of the secondary IP configuration(s) for each BIG-IP VE network interface created by the template. If you need additional virtual servers for your applications/servers, you can add more secondary IP configurations on the Azure network interface, and corresponding virtual servers on the BIG-IP system. See [virtual-network-multiple-ip-addresses-portal](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-multiple-ip-addresses-portal) for information on multiple IP addresses.
 
-In this template, the Azure public IP address is associated with an Azure Load Balancer that forwards traffic to a backend pool that includes secondary IP configurations for *each* BIG-IP network interface.  You must create a single virtual server with a destination that matches both private IP addresses in the Azure Load Balancer's backend pool.  In this example, the backend pool private IP addresses are 10.0.1.36 and 10.0.1.37.
+In this template, the Azure public IP address is associated with an Azure Load Balancer that forwards traffic to a backend pool that includes secondary IP configurations for *each* BIG-IP network interface.  You must create a single virtual server with a destination that matches both private IP addresses in the Azure Load Balancer's backend pool.  In this example, the backend pool private IP addresses are 10.0.1.36 and 10.0.1.37. You can use a Shared Object address list for the private IP addresses 10.0.1.36 and 10.0.1.37 configured on the BIG-IP and Azure load balancing pool, this allows more control over the IP address space and allows one virtual server to listen on both IPs. At this time, shared object address lists are not compatible with a security policy with a logging profile attached or deployment via an iApp.
 
 1. Once your BIG-IP VE has launched, open the BIG-IP VE Configuration utility.
 2. On the Main tab, click **Local Traffic > Virtual Servers** and then click the **Create** button.
 3. In the **Name** field, give the Virtual Server a unique name.
-4. In the **Destination/Mask** field, type the destination address (for example: 10.0.1.32/27).
+4. In the **Destination/Mask** field, type the destination address (for example: 10.0.1.32/27) or select the shared object address list. 
 5. In the **Service Port** field, type the appropriate port.
 6. Configure the rest of the virtual server as appropriate.
 7. If you used the Service Discovery iApp template: In the Resources section, from the **Default Pool** list, select the name of the pool created by the iApp.
@@ -304,6 +304,7 @@ Individuals or business entities who contribute to this project must have comple
 * **Eric Chen** - *v1* - [Chen23](https://github.com/chen23)
 * **Vinnie Mazza** - *DevOps* - [vinnie357](https://github.com/vinnie357)
 * **Michael O'Leary** - *Validation* - [mikeoleary](https://github.com/mikeoleary)
+* **Rob Eastman** - *v2 Active/Standby* - [F5Rob](https://github.com/F5Rob)
 
 See also the list of [contributors](https://github.com/f5devcentral/f5-azure-saca/graphs/contributors) who participated in this project.
 
