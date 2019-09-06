@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2] - 2019-08-06
+## Changed
+- Made STIG a bool option in Parameters
+- Changed image to 14.1.00300
+
 ## [2.1] - 2019-07-10
 ### Added
 - AV Sets added to all VMs.
