@@ -253,6 +253,9 @@
             },
             "14.1.003000": {
                 "Port": 443
+            },
+            "443": {
+                "Port": 443
             }
         },
 
@@ -438,9 +441,8 @@
         "publicipsku": "Standard",
         "resourceGroupName": "[resourceGroup().name]",
         "routeCmdArray": {
-            "12.1.303000": "[concat('tmsh create sys management-route waagent_route network 168.63.129.16/32 gateway ', variables('mgmtRouteGw'), '; tmsh save sys config')]",
             "13.1.100000": "route",
-            "14.1.001000": "route",
+            "14.1.003000": "route",
             "latest": "route"
         },
         "routeTableName": "BasicUDR",
