@@ -190,7 +190,7 @@
             "type": "string"
         }
     },"variables": {
-        "f5AS3Build": "f5-appsvcs-3.5.1-5.noarch.rpm",
+        "f5AS3Build": "f5-appsvcs-3.13.1-1.noarch.rpm",
         "f5AS3Tag": "v3.6.0",
         "f5CloudIappsLoggerTag": "v1.0.0",
         "f5CloudIappsSdTag": "v2.3.2",
@@ -332,7 +332,7 @@
             "sku": "[variables('skuToUse')]",
             "version": "[variables('bigIpVersion')]"
         },
-        "installCloudLibs": "[concat(variables('singleQuote'), '#!/bin/bash\necho about to execute\nchecks=0\nwhile [ $checks -lt 120 ]; do echo checking mcpd\n/usr/bin/tmsh -a show sys mcp-state field-fmt | grep -q running\nif [ $? == 0 ]; then\necho mcpd ready\nbreak\nfi\necho mcpd not ready yet\nlet checks=checks+1\nsleep 1\ndone\necho loading verifyHash script\n/usr/bin/tmsh load sys config merge file /config/verifyHash\nif [ $? != 0 ]; then\necho cannot validate signature of /config/verifyHash\nexit 1\nfi\necho loaded verifyHash\n\nconfig_loc=\"/config/cloud/\"\nhashed_file_list=\"${config_loc}f5-cloud-libs.tar.gz f5-appsvcs-3.5.1-5.noarch.rpm f5.service_discovery.tmpl f5.cloud_logger.v1.0.0.tmpl\"\nfor file in $hashed_file_list; do\necho \"verifying $file\"\n/usr/bin/tmsh run cli script verifyHash $file\nif [ $? != 0 ]; then\necho \"$file is not valid\"\nexit 1\nfi\necho \"verified $file\"\ndone\necho \"expanding $hashed_file_list\"\ntar xfz /config/cloud/f5-cloud-libs.tar.gz --warning=no-unknown-keyword -C /config/cloud/azure/node_modules/@f5devcentral\ntouch /config/cloud/cloudLibsReady', variables('singleQuote'))]",
+        "installCloudLibs": "[concat(variables('singleQuote'), '#!/bin/bash\necho about to execute\nchecks=0\nwhile [ $checks -lt 120 ]; do echo checking mcpd\n/usr/bin/tmsh -a show sys mcp-state field-fmt | grep -q running\nif [ $? == 0 ]; then\necho mcpd ready\nbreak\nfi\necho mcpd not ready yet\nlet checks=checks+1\nsleep 1\ndone\necho loading verifyHash script\n/usr/bin/tmsh load sys config merge file /config/verifyHash\nif [ $? != 0 ]; then\necho cannot validate signature of /config/verifyHash\nexit 1\nfi\necho loaded verifyHash\n\nconfig_loc=\"/config/cloud/\"\nhashed_file_list=\"${config_loc}f5-cloud-libs.tar.gz ', variables('f5AS3Build'), ' f5.service_discovery.tmpl f5.cloud_logger.v1.0.0.tmpl\"\nfor file in $hashed_file_list; do\necho \"verifying $file\"\n/usr/bin/tmsh run cli script verifyHash $file\nif [ $? != 0 ]; then\necho \"$file is not valid\"\nexit 1\nfi\necho \"verified $file\"\ndone\necho \"expanding $hashed_file_list\"\ntar xfz /config/cloud/f5-cloud-libs.tar.gz --warning=no-unknown-keyword -C /config/cloud/azure/node_modules/@f5devcentral\ntouch /config/cloud/cloudLibsReady', variables('singleQuote'))]",
         
         "installCustomConfig": "[concat(variables('singleQuote'), '#!/bin/bash\n', variables('customConfig'), variables('singleQuote'))]",
         "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip && openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer && tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer",
@@ -1463,7 +1463,7 @@
                 "settings": {
                     "fileUris": [
                         "[concat('https://cdn.f5.com/product/cloudsolutions/f5-cloud-libs/', variables('f5CloudLibsTag'), '/f5-cloud-libs.tar.gz')]",
-                        "[concat('https://cdn.f5.com/product/cloudsolutions/f5-appsvcs-extension/', variables('f5AS3Tag'), '/dist/lts/', variables('f5AS3Build'))]",
+                        "[concat('https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
@@ -1494,7 +1494,7 @@
                 "settings": {
                     "fileUris": [
                         "[concat('https://cdn.f5.com/product/cloudsolutions/f5-cloud-libs/', variables('f5CloudLibsTag'), '/f5-cloud-libs.tar.gz')]",
-                        "[concat('https://cdn.f5.com/product/cloudsolutions/f5-appsvcs-extension/', variables('f5AS3Tag'), '/dist/lts/', variables('f5AS3Build'))]",
+                        "[concat('https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh"
