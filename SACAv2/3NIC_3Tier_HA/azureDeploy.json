@@ -394,10 +394,9 @@
 
         "f5AS3Build": "f5-appsvcs-3.13.1-1.noarch.rpm",
         "f5CloudIappsLoggerTag": "v1.0.0",
-        "f5CloudIappsSdTag": "v2.3.1",
-        "f5CloudLibsAzureTag": "v2.7.1",
-        "f5CloudLibsTag": "v4.7.0",
-        "f5NetworksTag": "v6.0.2.0",
+        "f5CloudIappsSdTag": "v2.3.2",
+        "f5CloudLibsTag": "v4.9.1",
+        
         "failoverCmdArray": {
             "No": {
                 "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.azure.com'), ' unicast-address none')]",
