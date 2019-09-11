@@ -1448,8 +1448,7 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '0')]",
-                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '1')]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '0')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '0/start')]",
@@ -1479,7 +1478,6 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '0')]",
                 "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '1')]"
             ],
             "location": "[variables('location')]",
