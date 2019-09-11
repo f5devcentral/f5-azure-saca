@@ -2616,10 +2616,11 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '0')]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '0')]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '1')]"
             ],
             "location": "[variables('location')]",
-            "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '0/start')]",
+            "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '-0/start')]",
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
@@ -2646,10 +2647,11 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '0')]",
                 "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '1')]"
             ],
             "location": "[variables('location')]",
-            "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '1/start')]",
+            "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '-1/start')]",
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
@@ -2674,10 +2676,11 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '2')]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '2')]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '3')]"
             ],
             "location": "[variables('location')]",
-            "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '2/start')]",
+            "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '-2/start')]",
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
@@ -2704,10 +2707,11 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '2')]",
                 "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '3')]"
             ],
             "location": "[variables('location')]",
-            "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '3/start')]",
+            "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '-3/start')]",
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
