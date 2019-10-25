@@ -362,7 +362,7 @@
                 ]
             }
         },
-        "jbubuntuOSVersion": "16.04.0-LTS",
+        "jbubuntuOSVersion": "18.04-LTS",
         "jbvmName": "[concat(parameters('instanceName'), '-linux-jumpbox')]",
         "jbvmSize": "Standard_A1",
         "linuxConfiguration": {
@@ -473,7 +473,7 @@
 
         "virtualNetworkName": "SCCA_VNet",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-        "windowsOSVersion": "2016-Datacenter"
+        "windowsOSVersion": "2019-Datacenter"
     },
     "resources": [
         {
