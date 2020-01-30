@@ -1026,6 +1026,7 @@
             "location": "[variables('location')]",
             "name": "[concat(variables('extNicName'), '0')]",
             "properties": {
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
@@ -1070,6 +1071,7 @@
             "location": "[variables('location')]",
             "name": "[concat(variables('extNicName'), '1')]",
             "properties": {
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
@@ -1111,6 +1113,7 @@
             "location": "[variables('location')]",
             "name": "[concat(variables('extNicName'), '2')]",
             "properties": {
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
@@ -1149,6 +1152,7 @@
             "location": "[variables('location')]",
             "name": "[concat(variables('extNicName'), '3')]",
             "properties": {
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
@@ -1189,6 +1193,7 @@
             "name": "[concat(variables('intNicName'), '0')]",
             "properties": {
                 "enableIPForwarding": true,
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
@@ -1228,6 +1233,7 @@
             "name": "[concat(variables('intNicName'), '1')]",
             "properties": {
                 "enableIPForwarding": true,
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
@@ -1266,6 +1272,7 @@
             "name": "[concat(variables('intNicName'), '2')]",
             "properties": {
                 "enableIPForwarding": true,
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
@@ -1304,6 +1311,7 @@
             "name": "[concat(variables('intNicName'), '3')]",
             "properties": {
                 "enableIPForwarding": true,
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
@@ -1343,6 +1351,7 @@
             "name": "[concat(variables('IPSExtNicName'), '0')]",
             "properties": {
                 "enableIPForwarding": true,
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-ext-ipconfig')]",
@@ -1383,6 +1392,7 @@
             "name": "[concat(variables('IPSExtNicName'), '1')]",
             "properties": {
                 "enableIPForwarding": true,
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-ext-ipconfig')]",
@@ -1422,6 +1432,7 @@
             "name": "[concat(variables('IPSIntNicName'), '0')]",
             "properties": {
                 "enableIPForwarding": true,
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
@@ -1460,6 +1471,7 @@
             "name": "[concat(variables('IPSIntNicName'), '1')]",
             "properties": {
                 "enableIPForwarding": true,
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",

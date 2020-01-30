@@ -700,6 +700,7 @@
             "location": "[variables('location')]",
             "name": "[concat(variables('extNicName'), '0')]",
             "properties": {
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
@@ -743,6 +744,7 @@
             "location": "[variables('location')]",
             "name": "[concat(variables('extNicName'), '1')]",
             "properties": {
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
@@ -787,6 +789,7 @@
             "name": "[concat(variables('intNicName'), '0')]",
             "properties": {
                 "enableIPForwarding": true,
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
@@ -828,6 +831,7 @@
             "name": "[concat(variables('intNicName'), '1')]",
             "properties": {
                 "enableIPForwarding": true,
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
