@@ -431,13 +431,13 @@
         
         "routeCmd": "route",
         "stigCmdArray": {
-            "true": "bash ./bigipstig.sh",
+            "true": "bash ./bigipstig.sh;",
             "false": ""
         },
         "cmdConfigStig": "[if(parameters('STIGDevice'), variables('stigCmdArray').true, variables('stigCmdArray').false)]",
-        "cmdcreateFWLog": "tmsh create security log profile local-afm-log { network replace-all-with { local-afm-log { publisher local-db-publisher filter { log-acl-match-accept enabled log-acl-match-drop enabled log-acl-match-reject enabled } } } }",
-        "cmdcreateFWPolicy": "tmsh create security firewall policy log_all_afm rules add { allow_all { action accept log yes place-before first } deny_all { action reject log yes place-after allow_all } }",
-        "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip && openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer && tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer",
+        "cmdcreateFWLog": "tmsh create security log profile local-afm-log { network replace-all-with { local-afm-log { publisher local-db-publisher filter { log-acl-match-accept enabled log-acl-match-drop enabled log-acl-match-reject enabled } } } };",
+        "cmdcreateFWPolicy": "tmsh create security firewall policy log_all_afm rules add { allow_all { action accept log yes place-before first } deny_all { action reject log yes place-after allow_all } };",
+        "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip && openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer && tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer;",
         
         "customConfig": "[concat(variables('cmdConfigStig'), variables('cmdcreateFWLog'), variables('cmdcreateFWPolicy'), variables('installDODRootCA'))]",
                 
@@ -1014,11 +1014,11 @@
         {
             "apiVersion": "[variables('networkApiVersion')]",
             "location": "[variables('location')]",
-            "name": "[concat(variables('dnsLabel'), '-mgmt-nsg')]",
+            "name": "[concat(variables('dnsLabelPrefix'), '-mgmt-nsg')]",
             "properties": {
                 "securityRules": [
                     {
-                        "name": "mgmt_allow_https",
+                        "name": "https_allow_443",
                         "properties": {
                             "access": "Allow",
                             "description": "",
@@ -1027,7 +1027,7 @@
                             "direction": "Inbound",
                             "priority": 101,
                             "protocol": "Tcp",
-                            "sourceAddressPrefix": "[parameters('restrictedSrcAddress')]",
+                            "sourceAddressPrefix": "*",
                             "sourcePortRange": "*"
                         }
                     },
@@ -1041,7 +1041,21 @@
                             "direction": "Inbound",
                             "priority": 102,
                             "protocol": "Tcp",
-                            "sourceAddressPrefix": "[parameters('restrictedSrcAddress')]",
+                            "sourceAddressPrefix": "*",
+                            "sourcePortRange": "*"
+                        }
+                    },
+                    {
+                        "name": "rdp_allow_3389",
+                        "properties": {
+                            "access": "Allow",
+                            "description": "",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "3389",
+                            "direction": "Inbound",
+                            "priority": 103,
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "*",
                             "sourcePortRange": "*"
                         }
                     }
@@ -1154,7 +1168,35 @@
                 ],
                 "probes": [
                     {
-                        "name": "httpsProbe",
+                        "name": "ssh_alive",
+                        "properties": {
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2,
+                            "port": 22,
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "rdp_alive",
+                        "properties": {
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2,
+                            "port": 3389,
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "http_alive",
+                        "properties": {
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2,
+                            "port": 80,
+                            "protocol": "Http",
+                            "requestPath": "/"
+                        }
+                    },
+                    {
+                        "name": "https_alive",
                         "properties": {
                             "intervalInSeconds": 15,
                             "numberOfProbes": 3,
@@ -1544,7 +1586,10 @@
                         "[concat('https://cdn.f5.com/product/cloudsolutions/f5-cloud-libs/', variables('f5CloudLibsTag'), '/f5-cloud-libs.tar.gz')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/f5-appsvcs-extension/', variables('f5AS3Tag'), '/dist/lts/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
-                        "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]"
+                        "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
+                        "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
+                        "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh",
+                        "https://raw.githubusercontent.com/Mikej81/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
                     ]
                 },
                 "type": "CustomScript",
@@ -1571,7 +1616,8 @@
                         "[concat('https://cdn.f5.com/product/cloudsolutions/f5-cloud-libs/', variables('f5CloudLibsTag'), '/f5-cloud-libs.tar.gz')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/f5-appsvcs-extension/', variables('f5AS3Tag'), '/dist/lts/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
-                        "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]"
+                        "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
+                        "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh"
                     ]
                 },
                 "type": "CustomScript",
