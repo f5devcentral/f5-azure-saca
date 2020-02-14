@@ -5,7 +5,7 @@ while [ $checks -lt 120 ]; do echo checking mcpd
 mcpdServiceState=$(bigstart status mcpd | awk '{print $2}')
 tmshMcpState=$(/usr/bin/tmsh show sys mcp-state field-fmt | grep phase | awk '{print $2}')
 #/usr/bin/tmsh -a show sys mcp-state field-fmt | grep -q running
-if [ $tmshMcpState == "running" ]; then
+if [ "$tmshMcpState" == "running" ]; then
 echo mcpd ready
 break
 fi
