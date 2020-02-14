@@ -1094,19 +1094,59 @@
                 ],
                 "loadBalancingRules": [
                     {
-                        "Name": "external-access",
+                        "name": "rdp_vs",
+                        "properties": {
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
+                            },
+                            "backendPort": 3389,
+                            "enableFloatingIP": false,
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
+                            },
+                            "frontendPort": 3389,
+                            "idleTimeoutInMinutes": 4,
+                            "loadDistribution": "Default",
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/probes/rdp_alive')]"
+                            },
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "ssh_vs",
+                        "properties": {
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
+                            },
+                            "backendPort": 22,
+                            "enableFloatingIP": false,
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
+                            },
+                            "frontendPort": 22,
+                            "idleTimeoutInMinutes": 4,
+                            "loadDistribution": "Default",
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/probes/ssh_alive')]"
+                            },
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "Name": "management_outbound",
                         "properties": {
                             "backendAddressPool": {
                                 "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/backendAddressPools/loadBalancerMgmtBackEnd')]"
                             },
-                            "backendPort": 443,
+                            "backendPort": 8443,
                             "frontendIPConfiguration": {
                                 "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
                             },
-                            "frontendPort": 443,
+                            "frontendPort": 8443,
                             "idleTimeoutInMinutes": 15,
                             "probe": {
-                                "id": "[concat(variables('extLbId'),'/probes/httpsProbe')]"
+                                "id": "[concat(variables('extLbId'),'/probes/https_alive')]"
                             },
                             "protocol": "Tcp"
                         }
