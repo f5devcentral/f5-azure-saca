@@ -359,8 +359,10 @@
         "f5NetworksTag": "v7.2.0.0",
         "f5CloudIappsLoggerTag": "v1.0.0",
         "f5CloudIappsSdTag": "v2.3.2",
-        "f5AS3Build": "f5-appsvcs-3.5.1-5.noarch.rpm",
-        "f5AS3Tag": "v3.6.0",
+
+        "f5AS3Build": "f5-appsvcs-3.16.0-6.noarch.rpm",
+        "f5cloudlibsBuild": "f5-cloud-libs-4.15.0.tar.gz",
+        "f5AS3Tag": "v3.16.0",
 
         "vdmsSubnetName": "VDMS",
 
@@ -1588,8 +1590,8 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "[concat('https://cdn.f5.com/product/cloudsolutions/f5-cloud-libs/', variables('f5CloudLibsTag'), '/f5-cloud-libs.tar.gz')]",
-                        "[concat('https://cdn.f5.com/product/cloudsolutions/f5-appsvcs-extension/', variables('f5AS3Tag'), '/dist/lts/', variables('f5AS3Build'))]",
+                        "[concat('https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/', variables('f5cloudlibsBuild'))]",
+                        "[concat('https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
@@ -1618,8 +1620,8 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "[concat('https://cdn.f5.com/product/cloudsolutions/f5-cloud-libs/', variables('f5CloudLibsTag'), '/f5-cloud-libs.tar.gz')]",
-                        "[concat('https://cdn.f5.com/product/cloudsolutions/f5-appsvcs-extension/', variables('f5AS3Tag'), '/dist/lts/', variables('f5AS3Build'))]",
+                        "[concat('https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/', variables('f5cloudlibsBuild'))]",
+                        "[concat('https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh"
