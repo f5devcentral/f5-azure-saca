@@ -22,7 +22,7 @@ fi
 echo loaded verifyHash
 
 config_loc="/config/cloud/"
-hashed_file_list="${config_loc}f5-cloud-libs.tar.gz f5-appsvcs-3.5.1-5.noarch.rpm f5.service_discovery.tmpl f5.cloud_logger.v1.0.0.tmpl"
+hashed_file_list=""
 for file in $hashed_file_list; do
 echo "verifying $file"
 /usr/bin/tmsh run cli script verifyHash "$file"
