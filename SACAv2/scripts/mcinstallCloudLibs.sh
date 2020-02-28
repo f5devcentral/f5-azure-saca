@@ -1,37 +1,47 @@
 #!/bin/bash
-echo about to execute
-checks=0
-while [ $checks -lt 300 ]; do echo checking mcpd
-mcpdServiceState=$(bigstart status mcpd | awk '{print $2}')
-tmshMcpState=$(/usr/bin/tmsh show sys mcp-state field-fmt | grep phase | awk '{print $2}')
-#/usr/bin/tmsh -a show sys mcp-state field-fmt | grep -q running
-if [ "$tmshMcpState" == "running" ]; then
-echo mcpd ready
-break
-fi
-echo mcpd not ready yet service: "$mcpdServiceState" state: "$tmshMcpState" check: $checks
-let checks=checks+1
-sleep 1
+startTime=$(date +%s)
+echo "timestamp start: $(date)"
+function timer () {
+    echo "Time Elapsed: $(( ${1} / 3600 ))h $(( (${1} / 60) % 60 ))m $(( ${1} % 60 ))s"
+}
+# CHECK TO SEE NETWORK IS READY
+count=0
+while true
+do
+  STATUS=$(curl -s -k -I example.com | grep HTTP)
+  if [[ $STATUS == *"200"* ]]; then
+    echo "internet access check passed"
+    break
+  elif [ $count -le 6 ]; then
+    echo "Status code: $STATUS  Not done yet..."
+    count=$[$count+1]
+  else
+    echo "GIVE UP..."
+    break
+  fi
+  sleep 10
 done
-echo Bypass loading verifyHash script
-#/usr/bin/tmsh load sys config merge file /config/verifyHash
-#if [ $? != 0 ]; then
-#echo cannot validate signature of /config/verifyHash
-#exit 1
-#fi
-echo Bypass loaded verifyHash
 
-config_loc="/config/cloud/"
-#hashed_file_list=""
-#for file in $hashed_file_list; do
-#echo "verifying $file"
-#/usr/bin/tmsh run cli script verifyHash "$file"
-#if [ $? != 0 ]; then
-#echo "$file is not valid"
-#exit 1
-#fi
-#echo "verified $file"
-#done
-#echo "expanding $hashed_file_list"
-tar xfz /config/cloud/f5-cloud-libs.tar.gz --warning=no-unknown-keyword -C /config/cloud/azure/node_modules/@f5devcentral
+echo  about to execute
+checks=0
+while [ $checks -lt 120 ]; do echo checking mcpd
+    tmsh -a show sys mcp-state field-fmt | grep -q running
+   if [ $? == 0 ]; then
+       echo mcpd ready
+       break
+   fi
+   echo mcpd not ready yet
+   let checks=checks+1
+   sleep 10
+done 
+
+curl -s -f --retry 20 -o /config/cloud/f5-cloud-libs.tar.gz https://cdn.f5.com/product/cloudsolutions/f5-cloud-libs/v4.13.5/f5-cloud-libs.tar.gz
+curl -s -f --retry 20 -o /config/cloud/f5-cloud-libs-azure.tar.gz https://cdn.f5.com/product/cloudsolutions/f5-cloud-libs-azure/v2.12.0/f5-cloud-libs-azure.tar.gz
+curl -s -f --retry 20 -o /config/cloud/f5.service_discovery.tmpl https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/v2.3.2/f5.service_discovery.tmpl
+
+echo  expanding f5-cloud-libs.tar.gz
+tar xvfz /config/cloud/f5-cloud-libs.tar.gz -C /config/cloud/azure/node_modules/@f5devcentral
+echo  expanding f5-cloud-libs-azure.tar.gz
+tar xvfz /config/cloud/f5-cloud-libs-azure.tar.gz -C /config/cloud/azure/node_modules/@f5devcentral
+echo  cloud libs install complete
 touch /config/cloud/cloudLibsReady
