@@ -29,7 +29,7 @@
         "WindowsAdminPassword": {
             "type": "securestring",
             "metadata": {
-            "description": "Password for the Windows Virtual Machine."
+                "description": "Password for the Windows Virtual Machine."
             }
         },
         "declarationUrl": {
@@ -99,6 +99,29 @@
             "defaultValue": "Standard_DS3_v2",
             "metadata": {
                 "description": "Instance size of the Virtual Machine."
+            },
+            "type": "string"
+        },
+        "bigIpVersion": {
+            "allowedValues": [
+                "15.0.100000",
+                "14.1.200000",
+                "latest"
+            ],
+            "defaultValue": "15.0.100000",
+            "metadata": {
+                "description": "F5 BIG-IP version you want to use."
+            },
+            "type": "string"
+        },
+        "imageName": {
+            "allowedValues": [
+                "LTMTwoBootLocations",
+                "AllTwoBootLocations"
+            ],
+            "defaultValue": "AllTwoBootLocations",
+            "metadata": {
+                "description": "F5 SKU (image) you want to deploy. Note: The disk size of the VM will be determined based on the option you select.  **Important**: If intending to provision multiple modules, ensure the appropriate value is selected, such as ****AllTwoBootLocations or AllOneBootLocation****."
             },
             "type": "string"
         },
@@ -303,7 +326,7 @@
             },
             "Yes": {
                 "hashCmd": "[concat('custId=`echo \"', variables('subscriptionId'), '\"|sha512sum|cut -d \" \" -f 1`; deployId=`echo \"', variables('deploymentId'), '\"|sha512sum|cut -d \" \" -f 1`')]",
-                "metricsCmd": "[concat(' --metrics customerId:${custId},deploymentId:${deployId},templateName:failover-lb_3nic-new-stack-supported,templateVersion:6.0.2.0,region:', variables('location'), ',bigIpVersion:', variables('bigIpVersion') ,',licenseType:byol,cloudLibsVersion:', variables('f5CloudLibsTag'), ',cloudName:azure')]"
+                "metricsCmd": "[concat(' --metrics customerId:${custId},deploymentId:${deployId},templateName:failover-lb_3nic-new-stack-supported,templateVersion:6.0.2.0,region:', variables('location'), ',bigIpVersion:', parameters('bigIpVersion') ,',licenseType:byol,cloudLibsVersion:', variables('f5CloudLibsTag'), ',cloudName:azure')]"
             }
         },
         "appScript": "IyEvYmluL2Jhc2gKZnVuY3Rpb24gcGFzc3dkKCkgewogIGVjaG8gfCBmNS1yZXN0LW5vZGUgL2NvbmZpZy9jbG91ZC9henVyZS9ub2RlX21vZHVsZXMvQGY1ZGV2Y2VudHJhbC9mNS1jbG91ZC1saWJzL3NjcmlwdHMvZGVjcnlwdERhdGFGcm9tRmlsZS5qcyAtLWRhdGEtZmlsZSAvY29uZmlnL2Nsb3VkLy5wYXNzd2QgfCBhd2sgJ3twcmludCAkMX0nCn0KCndoaWxlIGdldG9wdHMgbzp1OiBvcHRpb24KZG8gY2FzZSAiJG9wdGlvbiIgIGluCiAgICAgICAgbykgZGVjbGFyYXRpb25Vcmw9JE9QVEFSRzs7CiAgICAgICAgdSkgdXNlcj0kT1BUQVJHOzsKICAgIGVzYWMKZG9uZQoKZGVwbG95ZWQ9Im5vIgpmaWxlX2xvYz0iL2NvbmZpZy9jbG91ZC9jdXN0b21fY29uZmlnIgpkZmxfbWdtdF9wb3J0PWB0bXNoIGxpc3Qgc3lzIGh0dHBkIHNzbC1wb3J0IHwgZ3JlcCBzc2wtcG9ydCB8IHNlZCAncy9zc2wtcG9ydCAvLztzLyAvL2cnYAp1cmxfcmVnZXg9IihodHRwOlwvXC98aHR0cHM6XC9cLyk/W2EtejAtOV0rKFtcLVwuXXsxfVthLXowLTldKykqXC5bYS16XXsyLDV9KDpbMC05XXsxLDV9KT8oXC8uKik/JCIKCmlmIFtbICRkZWNsYXJhdGlvblVybCA9fiAkdXJsX3JlZ2V4IF1dOyB0aGVuCiAgICByZXNwb25zZV9jb2RlPSQoL3Vzci9iaW4vY3VybCAtLWludGVyZmFjZSBtZ210IC1zayAtdyAiJXtodHRwX2NvZGV9IiAkZGVjbGFyYXRpb25VcmwgLW8gJGZpbGVfbG9jKQogICAgaWYgW1sgJHJlc3BvbnNlX2NvZGUgPT0gMjAwIF1dOyB0aGVuCiAgICAgICAgIGVjaG8gIkN1c3RvbSBjb25maWcgZG93bmxvYWQgY29tcGxldGU7IGNoZWNraW5nIGZvciB2YWxpZCBKU09OLiIKICAgICAgICAgY2F0ICRmaWxlX2xvYyB8IGpxIC5jbGFzcwogICAgICAgICBpZiBbWyAkPyA9PSAwIF1dOyB0aGVuCiAgICAgICAgICAgICByZXNwb25zZV9jb2RlPSQoL3Vzci9iaW4vY3VybCAtc2t2dnUgJHVzZXI6JChwYXNzd2QpIC13ICIle2h0dHBfY29kZX0iIC1YIFBPU1QgLUggIkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbiIgLUggJ0V4cGVjdDonIC1kICJAJGZpbGVfbG9jIiBodHRwczovL2xvY2FsaG9zdDokZGZsX21nbXRfcG9ydC9tZ210L3NoYXJlZC9hcHBzdmNzL2RlY2xhcmUgLW8gL2Rldi9udWxsKQoKICAgICAgICAgICAgIGlmIFtbICRyZXNwb25zZV9jb2RlID09IDIwMCB8fCAkcmVzcG9uc2VfY29kZSA9PSAyMDcgfHwgJHJlc3BvbnNlX2NvZGUgPT0gNTAyIF1dOyB0aGVuCiAgICAgICAgICAgICAgICAgIGVjaG8gIkRlcGxveW1lbnQgb2YgYXBwbGljYXRpb24gc3VjY2VlZGVkLiAkcmVzcG9uc2VfY29kZSIKICAgICAgICAgICAgICAgICAgZGVwbG95ZWQ9InllcyIKICAgICAgICAgICAgIGVsc2UKICAgICAgICAgICAgICAgICBlY2hvICJGYWlsZWQgdG8gZGVwbG95IGFwcGxpY2F0aW9uOyBjb250aW51aW5nIHdpdGggcmVzcG9uc2UgY29kZSAnIiRyZXNwb25zZV9jb2RlIiciCiAgICAgICAgICAgICBmaQogICAgICAgICBlbHNlCiAgICAgICAgICAgICBlY2hvICJDdXN0b20gY29uZmlnIHdhcyBub3QgdmFsaWQgSlNPTiwgY29udGludWluZyIKICAgICAgICAgZmkKICAgIGVsc2UKICAgICAgICBlY2hvICJGYWlsZWQgdG8gZG93bmxvYWQgY3VzdG9tIGNvbmZpZzsgY29udGludWluZyB3aXRoIHJlc3BvbnNlIGNvZGUgJyIkcmVzcG9uc2VfY29kZSInIgogICAgZmkKZWxzZQogICAgIGVjaG8gIkN1c3RvbSBjb25maWcgd2FzIG5vdCBhIFVSTCwgY29udGludWluZy4iCmZpCgppZiBbWyAkZGVwbG95ZWQgPT0gIm5vIiAmJiAkZGVjbGFyYXRpb25VcmwgPT0gIk5PVF9TUEVDSUZJRUQiIF1dOyB0aGVuCiAgICBlY2hvICJBcHBsaWNhdGlvbiBkZXBsb3ltZW50IGZhaWxlZCBvciBjdXN0b20gVVJMIHdhcyBub3Qgc3BlY2lmaWVkLiIKZmkKCmVjaG8gIkRlcGxveW1lbnQgY29tcGxldGUuIgpleGl0",
@@ -322,7 +345,7 @@
         },
         "availabilitySetId3": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('availabilitySetName3'))]"
-        },      
+        },
         "backEndAddressPoolArray": [
             {
                 "id": "[concat(variables('nbALBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
@@ -350,7 +373,7 @@
         },
         "bigIpNicPortMap": {
             "1": {
-                "Port": "[variables('bigIpVersion')]"
+                "Port": "[parameters('bigIpVersion')]"
             },
             "2": {
                 "Port": "443"
@@ -369,16 +392,18 @@
             }
         },
         "bigIpNicPortValue": "[variables('bigIpNicPortMap')['3'].Port]",
-        "bigIpVersion": "14.1.003000",
         "bigIpVersionPortMap": {
-            "13.1.100000": {
-                "Port": 8443
-            },
-            "14.1.003000": {
-                "Port": 443
-            },
             "443": {
                 "Port": 443
+            },
+            "15.0.100000": {
+                "Port": 8443
+            },
+            "14.1.200000": {
+                "Port": 8443
+            },
+            "latest": {
+                "Port": 8443
             }
         },
         "bigIpMgmtPort": "[variables('bigIpVersionPortMap')[variables('bigIpNicPortValue')].Port]",
@@ -391,45 +416,44 @@
         "deploymentId": "[concat(variables('subscriptionId'), resourceGroup().id, deployment().name, variables('dnsLabelPrefix'))]",
         "dnsLabelPrefix": "[toLower(parameters('dnsLabelPrefix'))]",
         "enableNetworkFailover": "Yes",
-
         "f5AS3Build": "f5-appsvcs-3.13.1-1.noarch.rpm",
         "f5CloudIappsLoggerTag": "v1.0.0",
         "f5CloudIappsSdTag": "v2.3.2",
         "f5CloudLibsTag": "v4.9.1",
-        
         "failoverCmdArray": {
             "No": {
-                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.azure.com'), ' unicast-address none')]",
-                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '1.', variables('location'), '.cloudapp.azure.com'), ' unicast-address none')]"
+                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address none')]",
+                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '1.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address none')]"
             },
             "Yes": {
-                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.azure.com'), ' unicast-address { { ip ', variables('intSubnetPrivateAddress'), ' port 1026 } } mirror-ip ', variables('intSubnetPrivateAddress'))]",
-                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '1.', variables('location'), '.cloudapp.azure.com'), ' unicast-address { { ip ', variables('intSubnetPrivateAddress1'), ' port 1026 } } mirror-ip ', variables('intSubnetPrivateAddress1'))]"
+                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnetPrivateAddress'), ' port 1026 } } mirror-ip ', variables('intSubnetPrivateAddress'))]",
+                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '1.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnetPrivateAddress1'), ' port 1026 } } mirror-ip ', variables('intSubnetPrivateAddress1'))]"
             }
         },
         "failoverCmd2Array": {
             "No": {
-                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.azure.com'), ' unicast-address none')]",
-                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.azure.com'), ' unicast-address none')]"
+                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address none')]",
+                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address none')]"
             },
             "Yes": {
-                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.azure.com'), ' unicast-address { { ip ', variables('int2SubnetPrivateAddress'), ' port 1026 } } mirror-ip ', variables('int2SubnetPrivateAddress'))]",
-                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.azure.com'), ' unicast-address { { ip ', variables('int2SubnetPrivateAddress1'), ' port 1026 } } mirror-ip ', variables('int2SubnetPrivateAddress1'))]"
+                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('int2SubnetPrivateAddress'), ' port 1026 } } mirror-ip ', variables('int2SubnetPrivateAddress'))]",
+                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('int2SubnetPrivateAddress1'), ' port 1026 } } mirror-ip ', variables('int2SubnetPrivateAddress1'))]"
             }
         },
-        "imageName": "AllTwoBootLocations",
+
+        "imageNameSub": "[variables('imageNameArray')[parameters('bigIpVersion')][parameters('imageName')]]",
         "imageNameArray": {
-            "13.1.100000": {
+            "15.0.100000": {
                 "AllOneBootLocation": "big-all-1slot",
                 "AllTwoBootLocations": "big-all-2slot",
                 "LTMOneBootLocation": "big-ltm-1slot",
                 "LTMTwoBootLocations": "big-ltm-2slot"
             },
-            "14.1.003000": {
+            "14.1.200000": {
                 "AllOneBootLocation": "big-all-1slot",
                 "AllTwoBootLocations": "big-all-2slot",
                 "LTMOneBootLocation": "big-ltm-1slot",
-                "LTMTwoBootLocations": "big-ltm-2slot"                
+                "LTMTwoBootLocations": "big-ltm-2slot"
             },
             "latest": {
                 "AllOneBootLocation": "big-all-2slot",
@@ -446,7 +470,6 @@
                 "bigip-virtual-edition-good": "good"
             }
         },
-        "imageNameSub": "[variables('imageNameArray')[variables('bigIpVersion')][variables('imageName')]]",
         "imagePlan": {
             "name": "[variables('skuToUse')]",
             "product": "[variables('offerToUse')]",
@@ -456,13 +479,11 @@
             "offer": "[variables('offerToUse')]",
             "publisher": "f5-networks",
             "sku": "[variables('skuToUse')]",
-            "version": "[variables('bigIpVersion')]"
+            "version": "[parameters('bigIpVersion')]"
         },
         "installCloudLibs": "[concat(variables('singleQuote'), '#!/bin/bash\necho about to execute\nchecks=0\nwhile [ $checks -lt 120 ]; do echo checking mcpd\n/usr/bin/tmsh -a show sys mcp-state field-fmt | grep -q running\nif [ $? == 0 ]; then\necho mcpd ready\nbreak\nfi\necho mcpd not ready yet\nlet checks=checks+1\nsleep 1\ndone\necho loading verifyHash script\n/usr/bin/tmsh load sys config merge file /config/verifyHash\nif [ $? != 0 ]; then\necho cannot validate signature of /config/verifyHash\nexit 1\nfi\necho loaded verifyHash\n\nconfig_loc=\"/config/cloud/\"\nhashed_file_list=\"${config_loc}f5-cloud-libs.tar.gz ', variables('f5AS3Build'),' f5.service_discovery.tmpl f5.cloud_logger.v1.0.0.tmpl\"\nfor file in $hashed_file_list; do\necho \"verifying $file\"\n/usr/bin/tmsh run cli script verifyHash $file\nif [ $? != 0 ]; then\necho \"$file is not valid\"\nexit 1\nfi\necho \"verified $file\"\ndone\necho \"expanding $hashed_file_list\"\ntar xfz /config/cloud/f5-cloud-libs.tar.gz --warning=no-unknown-keyword -C /config/cloud/azure/node_modules/@f5devcentral\ntouch /config/cloud/cloudLibsReady', variables('singleQuote'))]",
-
         "installCustomConfig": "[concat(variables('singleQuote'), '#!/bin/bash\n', variables('customConfig'), variables('singleQuote'))]",
         "instanceName": "[toLower(parameters('instanceName'))]",
-
         "nbALBid": "[resourceId('Microsoft.Network/loadBalancers',variables('NorthboundLoadBalancerName'))]",
         "extNicName": "[concat(variables('dnsLabelPrefix'), '-ext')]",
         "extNsgID": "[resourceId('Microsoft.Network/networkSecurityGroups/',concat(variables('dnsLabelPrefix'),'-ext-nsg'))]",
@@ -471,13 +492,12 @@
         "extSubnetName": "external",
         "extSubnetPrivateAddressPrefix": "[substring(parameters('NorthUntrustedAddressStartIP'), 0, lastindexOf(parameters('NorthUntrustedAddressStartIP'), '.'))]",
         "extSubnetStartDirty": "[substring(parameters('NorthUntrustedAddressStartIP'), lastIndexOf(parameters('NorthUntrustedAddressStartIP'), '.'), sub(length(parameters('NorthUntrustedAddressStartIP')), lastIndexOf(parameters('NorthUntrustedAddressStartIP'), '.')))]",
-        "extSubnetStartInt":"[replace(variables('extSubnetStartDirty'), '.','')]",
+        "extSubnetStartInt": "[replace(variables('extSubnetStartDirty'), '.','')]",
         "extSubnetPrivateAddress": "[parameters('NorthUntrustedAddressStartIP')]",
         "extSubnetPrivateAddress1": "[concat(variables('extSubnetPrivateAddressPrefix'), '.',add(int(variables('extSubnetStartInt')), 1))]",
         "NorthboundLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-nb-alb')]",
         "mgmtLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-mgmt-alb')]",
         "extpublicIPAddressNamePrefix": "[concat(variables('dnsLabelPrefix'), '-ext-pip')]",
-        
         "mgmtPublicIPAddressIdPrefix": "[resourceId('Microsoft.Network/publicIPAddresses', variables('mgmtPublicIPAddressName'))]",
         "mgmtPublicIPAddressName": "[concat(variables('dnsLabelPrefix'), '-mgmt-pip')]",
         "nbILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('NorthboundLoadBalancerNameb'))]",
@@ -486,7 +506,7 @@
         "intSubnetName": "internal",
         "intSubnetPrivateAddressPrefix": "[substring(parameters('NorthTrustedAddressStartIP'), 0, lastindexOf(parameters('NorthTrustedAddressStartIP'), '.'))]",
         "intSubnetStartDirty": "[substring(parameters('NorthTrustedAddressStartIP'), lastIndexOf(parameters('NorthTrustedAddressStartIP'), '.'), sub(length(parameters('NorthTrustedAddressStartIP')), lastIndexOf(parameters('NorthTrustedAddressStartIP'), '.') ))]",
-        "intSubnetStartInt":"[replace(variables('intSubnetStartDirty'), '.', '')]",
+        "intSubnetStartInt": "[replace(variables('intSubnetStartDirty'), '.', '')]",
         "intSubnetPrivateAddress": "[parameters('NorthTrustedAddressStartIP')]",
         "intSubnetPrivateAddress1": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 1))]",
         "intSubnetPrivateAddress2": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 10))]",
@@ -496,14 +516,13 @@
         "internalLoadBalancerProbePort": "3456",
         "internalLoadBalancerType": "Per-protocol",
         "tmmRouteGw": "[concat(variables('extSubnetPrivateAddressPrefix'), '.1')]",
-
         "mgmtALBid": "[resourceId('Microsoft.Network/loadBalancers',variables('mgmtLoadBalancerName'))]",
         "sbILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('SouthboundLoadBalancerName'))]",
         "SouthboundLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-sb-ilb')]",
         "ext2SubnetName": "external2",
         "ext2SubnetPrivateAddressPrefix": "[substring(parameters('SouthUntrustedAddressStartIP'), 0, lastindexOf(parameters('SouthUntrustedAddressStartIP'), '.'))]",
         "ext2SubnetStartDirty": "[substring(parameters('SouthUntrustedAddressStartIP'), lastIndexOf(parameters('SouthUntrustedAddressStartIP'), '.'), sub(length(parameters('SouthUntrustedAddressStartIP')), lastIndexOf(parameters('SouthUntrustedAddressStartIP'), '.')))]",
-        "ext2SubnetStartInt":"[replace(variables('ext2SubnetStartDirty'), '.','')]",
+        "ext2SubnetStartInt": "[replace(variables('ext2SubnetStartDirty'), '.','')]",
         "ext2SubnetPrivateAddress": "[parameters('SouthUntrustedAddressStartIP')]",
         "ext2SubnetPrivateAddress1": "[concat(variables('ext2SubnetPrivateAddressPrefix'), '.',add(int(variables('ext2SubnetStartInt')), 1))]",
         "ext2SubnetId": "[concat(variables('vnetId'), '/subnets/', variables('ext2subnetName'))]",
@@ -511,13 +530,12 @@
         "int2SubnetId": "[concat(variables('vnetId'), '/subnets/', variables('int2subnetName'))]",
         "int2SubnetPrivateAddressPrefix": "[substring(parameters('SouthTrustedAddressStartIP'), 0, lastindexOf(parameters('SouthTrustedAddressStartIP'), '.'))]",
         "int2SubnetStartDirty": "[substring(parameters('SouthTrustedAddressStartIP'), lastIndexOf(parameters('SouthTrustedAddressStartIP'), '.'), sub(length(parameters('SouthTrustedAddressStartIP')), lastIndexOf(parameters('SouthTrustedAddressStartIP'), '.') ))]",
-        "int2SubnetStartInt":"[replace(variables('int2SubnetStartDirty'), '.', '')]",
+        "int2SubnetStartInt": "[replace(variables('int2SubnetStartDirty'), '.', '')]",
         "int2SubnetPrivateAddress": "[parameters('SouthTrustedAddressStartIP')]",
         "int2SubnetPrivateAddress1": "[concat(variables('int2SubnetPrivateAddressPrefix'), '.', add(int(variables('Int2SubnetStartInt')), 1))]",
         "int2SubnetPrivateAddress2": "[concat(variables('int2SubnetPrivateAddressPrefix'), '.', add(int(variables('Int2SubnetStartInt')), 10))]",
         "int2SubnetPrivateAddress3": "[concat(variables('int2SubnetPrivateAddressPrefix'), '.', add(int(variables('Int2SubnetStartInt')), 11))]",
         "tmmRoute2Gw": "[concat(variables('int2SubnetPrivateAddressPrefix'), '.1')]",
-
         "IPSILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('IPSLoadBalancerName'))]",
         "IPSLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-ips-ilb')]",
         "IPSFirewallName": "[concat(variables('dnsLabelPrefix'),'-ips-fw')]",
@@ -526,22 +544,23 @@
         "IPSExtSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('IPSExtSubnetName'))]",
         "IPSExtSubnetPrivateAddressPrefix": "[substring(parameters('IPSUntrustedAddressStartIP'), 0, lastindexOf(parameters('IPSUntrustedAddressStartIP'), '.'))]",
         "IPSExtSubnetStartDirty": "[substring(parameters('IPSUntrustedAddressStartIP'), lastIndexOf(parameters('IPSUntrustedAddressStartIP'), '.'), sub(length(parameters('IPSUntrustedAddressStartIP')), lastIndexOf(parameters('IPSUntrustedAddressStartIP'), '.')))]",
-        "IPSExtSubnetStartInt":"[replace(variables('IPSExtSubnetStartDirty'), '.','')]",
+        "IPSExtSubnetStartInt": "[replace(variables('IPSExtSubnetStartDirty'), '.','')]",
         "IPSExtSubnetPrivateAddress": "[parameters('IPSUntrustedAddressStartIP')]",
         "IPSExtSubnetPrivateAddress1": "[concat(variables('IPSExtSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSExtSubnetStartInt')), 1))]",
         "IPSExtSubnetPrivateAddress2": "[concat(variables('IPSExtSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSExtSubnetStartInt')), 10))]",
         "IPSExtSubnetPrivateAddress3": "[concat(variables('IPSExtSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSExtSubnetStartInt')), 11))]",
-
         "IPSIntNicName": "[concat(variables('dnsLabelPrefix'), '-IPSInt')]",
         "IPSIntSubnetName": "ips-internal",
         "IPSIntSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('IPSIntSubnetName'))]",
         "IPSIntSubnetPrivateAddressPrefix": "[substring(parameters('IPSTrustedAddressStartIP'), 0, lastindexOf(parameters('IPSTrustedAddressStartIP'), '.'))]",
         "IPSIntSubnetStartDirty": "[substring(parameters('IPSTrustedAddressStartIP'), lastIndexOf(parameters('IPSTrustedAddressStartIP'), '.'), sub(length(parameters('IPSTrustedAddressStartIP')), lastIndexOf(parameters('IPSTrustedAddressStartIP'), '.')))]",
-        "IPSIntSubnetStartInt":"[replace(variables('IPSIntSubnetStartDirty'), '.','')]",
+        "IPSIntSubnetStartInt": "[replace(variables('IPSIntSubnetStartDirty'), '.','')]",
         "IPSIntSubnetPrivateAddress": "[parameters('IPSTrustedAddressStartIP')]",
         "IPSIntSubnetPrivateAddress1": "[concat(variables('IPSIntSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSIntSubnetStartInt')), 1))]",
         "IPSIntSubnetPrivateAddress2": "[concat(variables('IPSIntSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSIntSubnetStartInt')), 10))]",
         "IPSIntSubnetPrivateAddress3": "[concat(variables('IPSIntSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSIntSubnetStartInt')), 11))]",
+
+        "isAcceleratedNetworkingSupported": "[if(not(contains(parameters('bigIpVersion'),  '14.1.200000')), bool('true'), bool('false'))]",
 
         "mgmtNicName": "[concat(variables('dnsLabelPrefix'), '-mgmt')]",
         "mgmtSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('mgmtSubnetName'))]",
@@ -551,7 +570,7 @@
         "mgmtSubnetPrivateAddress": "[variables('ManagementAddressStartIP')]",
         "mgmtSubnetPrivateAddressPrefix": "[substring(variables('ManagementAddressStartIP'), 0, lastindexOf(variables('ManagementAddressStartIP'), '.'))]",
         "mgmtSubnetStartDirty": "[substring(variables('ManagementAddressStartIP'), lastIndexOf(variables('ManagementAddressStartIP'), '.'), sub(length(variables('ManagementAddressStartIP')), lastIndexOf(variables('ManagementAddressStartIP'), '.') ))]",
-        "mgmtSubnetStartInt":"[replace(variables('mgmtSubnetStartDirty'), '.','')]",
+        "mgmtSubnetStartInt": "[replace(variables('mgmtSubnetStartDirty'), '.','')]",
         "mgmtSubnetPrivateAddress1": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 5))]",
         "mgmtSubnetPrivateAddress2": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 6))]",
         "mgmtSubnetPrivateAddress3": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 7))]",
@@ -560,15 +579,12 @@
         "mgmtSubnetPrivateAddress6": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 61))]",
         "mgmtSubnetPrivateAddress7": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 62))]",
         "mgmtRouteGw": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.1')]",
-
         "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip && openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer && tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer",
-
         "stigCmdArray": {
             "true": "bash ./bigipstig.sh",
             "false": ""
         },
         "cmdConfigStig": "[if(parameters('STIGDevice'), variables('stigCmdArray').true, variables('stigCmdArray').false)]",
-
         "vdmsSubnetName": "VDMS",
         "windowsOSVersion": "2019-Datacenter",
         "WinvmName": "[concat(parameters('instanceName'), 'win2k16')]",
@@ -600,10 +616,8 @@
             }
         },
         "location": "[resourceGroup().location]",
-
         "cmdcreateFWLog": "tmsh create security log profile local-afm-log { network replace-all-with { local-afm-log { publisher local-db-publisher filter { log-acl-match-accept enabled log-acl-match-drop enabled log-acl-match-reject enabled } } } }",
         "cmdcreateFWPolicy": "tmsh create security firewall policy log_all_afm rules add { allow_all { action accept log yes place-before first } deny_all { action reject log yes place-after allow_all } }",
-        
         "networkApiVersion": "2017-11-01",
         "newCustomImageName": "[concat(variables('dnsLabelPrefix'), 'image')]",
         "newDataStorageAccountName": "[concat(uniqueString(variables('dnsLabelPrefix'), resourceGroup().id, deployment().name), 'data000')]",
@@ -650,11 +664,8 @@
         ],
         "publicIPAddressType": "Static",
         "resourceGroupName": "[resourceGroup().name]",
-        "routeCmdArray": {
-            "13.1.100000": "route",
-            "14.1.003000": "route",
-            "latest": "route"
-        },
+
+        "routeCmd": "route",
         "singleQuote": "'",
         "skuToUse": "[concat('f5-', variables('imageNameSub'),'-byol')]",
         "storageApiVersion": "2017-10-01",
@@ -671,12 +682,9 @@
                 }
             }
         },
-
         "subscriptionID": "[subscription().subscriptionId]",
         "useCustomImage": "[not(empty(variables('customImage')))]",
-
         "verifyHash64": "Y2xpIHNjcmlwdCAvQ29tbW9uL3ZlcmlmeUhhc2ggewpwcm9jIHNjcmlwdDo6cnVuIHt9IHsKICAgICAgICBpZiB7W2NhdGNoIHsKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS1jbG91ZC1saWJzLnRhci5neikgNTU2MWUwMmI3NjRkN2I5YWNmNTJlZDU5M2ExYmZlNDkyMDNiOWZmNWU5ZWE5NDdlMThkNjA0ZmU0MDQ0NjIzMzY0Y2Q1Zjk5YzM5Yzg1ZDRlZjg3MTFhZDUxZmFiODFjZTAxMDdkOGMyNzY4MjRhZWYwMzE0Nzk4ZjczODQ2MGMKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS1jbG91ZC1saWJzLWF3cy50YXIuZ3opIDA3NmM5NjljYmZmZjEyZWZhY2NlMDg3OTgyMDI2MmI3Nzg3Yzk4NjQ1ZjExMDU2NjdjYzQ5MjdkNGFjZmUyNDY2ZWQ2NGM3NzdiNmQzNTk1N2Y2ZGY3YWUyNjY5MzdkZGU0MmZlZjRjOGIxZjg3MDAyMGEzNjZmN2Y5MTBmZmI1CiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUtY2xvdWQtbGlicy1henVyZS50YXIuZ3opIDkwMzcyMDNiMWFmMzEyODhiYTY5OTMyMDRhMmFiZjNiZDY2MGY2MmU3ZGZiMmQ1ODI1OTA5ZGQ2OTEzM2NlNWI0ZjVjNzI1YWZhYmQ3ZDJhY2FhNjkzNjY5Yzg3OGRhYTA0YTYzNzUzMTRkOTg1YmEwN2M4YTM2ZGNjYzYxYzVhCiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUtY2xvdWQtbGlicy1nY2UudGFyLmd6KSAxNjc3ODM1ZTY5OTY3ZmQ5ODgyZWFkMDNjYmRkMjRiNDI2NjI3MTMzYjhkYjllNDFmNmRlNWEyNmZlZjk5YzJkN2I2OTU5NzhhYzE4OWYwMGY2MWMwNzM3ZTZkYmI2MzhkNDJkZWE0M2E4NjdlZjRjMDFkOTUwN2QwZWUxZmIyZgogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LWNsb3VkLWxpYnMtb3BlbnN0YWNrLnRhci5neikgNWM4M2ZlNmE5M2E2ZmNlYjVhMmU4NDM3YjVlZDhjYzlmYWY0YzE2MjFiZmM5ZTZhMDc3OWY2YzIxMzdiNDVlYWI4YWUwZTdlZDc0NWM4Y2Y4MjFiOTM3MTI0NWNhMjk3NDljYTBiN2U1NjYzOTQ5ZDc3NDk2Yjg3MjhmNGIwZjkKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS1jbG91ZC1saWJzLWNvbnN1bC50YXIuZ3opIGEzMmFhYjM5NzA3M2RmOTJjYmJiYTUwNjdlNTgyM2U5YjVmYWZjYTg2MmEyNThiNjBiNmI0MGFhMDk3NWMzOTg5ZDFlMTEwZjcwNjE3N2IyZmZiZTRkZGU2NTMwNWEyNjBhNTg1NjU5NGNlN2FkNGVmMGM0N2I2OTRhZTRhNTEzCiAgICAgICAgICAgIHNldCBoYXNoZXMoYXNtLXBvbGljeS1saW51eC50YXIuZ3opIDYzYjVjMmE1MWNhMDljNDNiZDg5YWYzNzczYmJhYjg3YzcxYTZlN2Y2YWQ5NDEwYjIyOWI0ZTBhMWM0ODNkNDZmMWE5ZmZmMzlkOTk0NDA0MWIwMmVlOTI2MDcyNDAyNzQxNGRlNTkyZTk5ZjRjMjQ3NTQxNTMyM2UxOGE3MmUwCiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuaHR0cC52MS4yLjByYzQudG1wbCkgNDdjMTlhODNlYmZjN2JkMWU5ZTljMzVmMzQyNDk0NWVmODY5NGFhNDM3ZWVkZDE3YjZhMzg3Nzg4ZDRkYjEzOTZmZWZlNDQ1MTk5YjQ5NzA2NGQ3Njk2N2IwZDUwMjM4MTU0MTkwY2EwYmQ3Mzk0MTI5OGZjMjU3ZGY0ZGMwMzQKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5odHRwLnYxLjIuMHJjNi50bXBsKSA4MTFiMTRiZmZhYWI1ZWQwMzY1ZjAxMDZiYjVjZTVlNGVjMjIzODU2NTVlYTNhYzA0ZGUyYTM5YmQ5OTQ0ZjUxZTM3MTQ2MTlkYWU3Y2E0MzY2MmM5NTZiNTIxMjIyODg1OGYwNTkyNjcyYTI1NzlkNGE4Nzc2OTE4NmUyY2JmZQogICAgICAgICAgICBzZXQgaGFzaGVzKGY1Lmh0dHAudjEuMi4wcmM3LnRtcGwpIDIxZjQxMzM0MmU5YTdhMjgxYTBmMGUxMzAxZTc0NWFhODZhZjIxYTY5N2QyZTZmZGMyMWRkMjc5NzM0OTM2NjMxZTkyZjM0YmYxYzJkMjUwNGMyMDFmNTZjY2Q3NWM1YzEzYmFhMmZlNzY1MzIxMzY4OWVjM2M5ZTI3ZGZmNzdkCiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuYXdzX2FkdmFuY2VkX2hhLnYxLjMuMHJjMS50bXBsKSA5ZTU1MTQ5YzAxMGMxZDM5NWFiZGFlM2MzZDJjYjgzZWMxM2QzMWVkMzk0MjQ2OTVlODg2ODBjZjNlZDVhMDEzZDYyNmIzMjY3MTFkM2Q0MGVmMmRmNDZiNzJkNDE0YjRjYjhlNGY0NDVlYTA3MzhkY2JkMjVjNGM4NDNhYzM5ZAogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LmF3c19hZHZhbmNlZF9oYS52MS40LjByYzEudG1wbCkgZGUwNjg0NTUyNTc0MTJhOTQ5ZjFlYWRjY2FlZTg1MDYzNDdlMDRmZDY5YmZiNjQ1MDAxYjc2ZjIwMDEyNzY2OGU0YTA2YmUyYmJiOTRlMTBmZWZjMjE1Y2ZjMzY2NWIwNzk0NWU2ZDczM2NiZTFhNGZhMWI4OGU4ODE1OTAzOTYKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5hd3NfYWR2YW5jZWRfaGEudjEuNC4wcmMyLnRtcGwpIDZhYjBiZmZjNDI2ZGY3ZDMxOTEzZjlhNDc0YjFhMDc4NjA0MzVlMzY2YjA3ZDc3YjMyMDY0YWNmYjI5NTJjMWYyMDdiZWFlZDc3MDEzYTE1ZTQ0ZDgwZDc0ZjMyNTNlN2NmOWZiYmUxMmE5MGVjNzEyOGRlNmZhY2QwOTdkNjhmCiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuYXdzX2FkdmFuY2VkX2hhLnYxLjQuMHJjMy50bXBsKSAyZjIzMzliNGJjM2EyM2M5Y2ZkNDJhYWUyYTZkZTM5YmEwNjU4MzY2ZjI1OTg1ZGUyZWE1MzQxMGE3NDVmMGYxOGVlZGM0OTFiMjBmNGE4ZGJhOGRiNDg5NzAwOTZlMmVmZGNhN2I4ZWZmZmExYTgzYTc4ZTVhYWRmMjE4YjEzNAogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LmF3c19hZHZhbmNlZF9oYS52MS40LjByYzQudG1wbCkgMjQxOGFjOGIxZjE4ODRjNWMwOTZjYmFjNmE5NGQ0MDU5YWFhZjA1OTI3YTZhNDUwOGZkMWYyNWI4Y2M2MDc3NDk4ODM5ZmJkZGE4MTc2ZDJjZjJkMjc0YTI3ZTZhMWRhZTJhMWUzYTBhOTk5MWJjNjVmYzc0ZmMwZDAyY2U5NjMKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5hd3NfYWR2YW5jZWRfaGEudjEuNC4wcmM1LnRtcGwpIDVlNTgyMTg3YWUxYTYzMjNlMDk1ZDQxZWRkZDQxMTUxZDZiZDM4ZWI4M2M2MzQ0MTBkNDUyN2EzZDBlMjQ2YThmYzYyNjg1YWIwODQ5ZGUyYWRlNjJiMDI3NWY1MTI2NGQyZGVhY2NiYzE2Yjc3MzQxN2Y4NDdhNGExZWE5YmM0CiAgICAgICAgICAgIHNldCBoYXNoZXMoYXNtLXBvbGljeS50YXIuZ3opIDJkMzllYzYwZDAwNmQwNWQ4YTE1NjdhMWQ4YWFlNzIyNDE5ZThiMDYyYWQ3N2Q2ZDlhMzE2NTI5NzFlNWU2N2JjNDA0M2Q4MTY3MWJhMmE4YjEyZGQyMjllYTQ2ZDIwNTE0NGY3NTM3NGVkNGNhZTU4Y2VmYThmOWFiNjUzM2U2CiAgICAgICAgICAgIHNldCBoYXNoZXMoZGVwbG95X3dhZi5zaCkgMWEzYTNjNjI3NGFiMDhhN2RjMmNiNzNhZWRjOGQyYjJhMjNjZDllMGViMDZhMmUxNTM0YjM2MzJmMjUwZjFkODk3MDU2ZjIxOWQ1YjM1ZDNlZWQxMjA3MDI2ZTg5OTg5Zjc1NDg0MGZkOTI5NjljNTE1YWU0ZDgyOTIxNGZiNzQKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5wb2xpY3lfY3JlYXRvci50bXBsKSAwNjUzOWUwOGQxMTVlZmFmZTU1YWE1MDdlY2I0ZTQ0M2U4M2JkYjFmNTgyNWE5NTE0OTU0ZWY2Y2E1NmQyNDBlZDAwYzdiNWQ2N2JkOGY2N2I4MTVlZTlkZDQ2NDUxOTg0NzAxZDA1OGM4OWRhZTI0MzRjODk3MTVkMzc1YTYyMAogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LnNlcnZpY2VfZGlzY292ZXJ5LnRtcGwpIDQ4MTFhOTUzNzJkMWRiZGJiNGY2MmY4YmNjNDhkNGJjOTE5ZmE0OTJjZGEwMTJjODFlM2EyZmU2M2Q3OTY2Y2MzNmJhODY3N2VkMDQ5YTgxNGE5MzA0NzMyMzRmMzAwZDNmOGJjZWQyYjBkYjYzMTc2ZDUyYWM5OTY0MGNlODFiCiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuY2xvdWRfbG9nZ2VyLnYxLjAuMC50bXBsKSA2NGEwZWQzYjVlMzJhMDM3YmE0ZTcxZDQ2MDM4NWZlOGI1ZTFhZWNjMjdkYzBlODUxNGI1MTE4NjM5NTJlNDE5YTg5ZjRhMmE0MzMyNmFiYjU0M2JiYTliYzM0Mzc2YWZhMTE0Y2VkYTk1MGQyYzNiZDA4ZGFiNzM1ZmY1YWQyMAogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LWFwcHN2Y3MtMy4xMy4xLTEubm9hcmNoLnJwbSkgZGFiMjU2N2VhYjA3ZTJlZjNjYmZjZmU4OTFkNmEzNTcyMjkzNGIzMzcyYTEwNTcxZjA0MjYyZjRhNzJiNzA5Mzg0NzIyMmM0MjZhNDEwODJhZDRiNTlmZTI5Y2E4Mzg0YmUzNDk0NGRiNzg3OWFlZmU2Y2FiMTM0MjIzMjQzODAKCiAgICAgICAgICAgIHNldCBmaWxlX3BhdGggW2xpbmRleCAkdG1zaDo6YXJndiAxXQogICAgICAgICAgICBzZXQgZmlsZV9uYW1lIFtmaWxlIHRhaWwgJGZpbGVfcGF0aF0KCiAgICAgICAgICAgIGlmIHshW2luZm8gZXhpc3RzIGhhc2hlcygkZmlsZV9uYW1lKV19IHsKICAgICAgICAgICAgICAgIHRtc2g6OmxvZyBlcnIgIk5vIGhhc2ggZm91bmQgZm9yICRmaWxlX25hbWUiCiAgICAgICAgICAgICAgICBleGl0IDEKICAgICAgICAgICAgfQoKICAgICAgICAgICAgc2V0IGV4cGVjdGVkX2hhc2ggJGhhc2hlcygkZmlsZV9uYW1lKQogICAgICAgICAgICBzZXQgY29tcHV0ZWRfaGFzaCBbbGluZGV4IFtleGVjIC91c3IvYmluL29wZW5zc2wgZGdzdCAtciAtc2hhNTEyICRmaWxlX3BhdGhdIDBdCiAgICAgICAgICAgIGlmIHsgJGV4cGVjdGVkX2hhc2ggZXEgJGNvbXB1dGVkX2hhc2ggfSB7CiAgICAgICAgICAgICAgICBleGl0IDAKICAgICAgICAgICAgfQogICAgICAgICAgICB0bXNoOjpsb2cgZXJyICJIYXNoIGRvZXMgbm90IG1hdGNoIGZvciAkZmlsZV9wYXRoIgogICAgICAgICAgICBleGl0IDEKICAgICAgICB9XX0gewogICAgICAgICAgICB0bXNoOjpsb2cgZXJyIHtVbmV4cGVjdGVkIGVycm9yIGluIHZlcmlmeUhhc2h9CiAgICAgICAgICAgIGV4aXQgMQogICAgICAgIH0KICAgIH0KfQ==",
-
         "virtualNetworkName": "SCCA_VNet",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
     },
@@ -940,7 +948,7 @@
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
         },
-                {
+        {
             "apiVersion": "[variables('networkApiVersion')]",
             "dependsOn": [
                 "[variables('vnetId')]"
@@ -1026,7 +1034,7 @@
             "location": "[variables('location')]",
             "name": "[concat(variables('extNicName'), '0')]",
             "properties": {
-                "enableAcceleratedNetworking": true,
+                "enableAcceleratedNetworking": "[variables('isAcceleratedNetworkingSupported')]",
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
@@ -1071,7 +1079,7 @@
             "location": "[variables('location')]",
             "name": "[concat(variables('extNicName'), '1')]",
             "properties": {
-                "enableAcceleratedNetworking": true,
+                "enableAcceleratedNetworking": "[variables('isAcceleratedNetworkingSupported')]",
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
@@ -1113,7 +1121,7 @@
             "location": "[variables('location')]",
             "name": "[concat(variables('extNicName'), '2')]",
             "properties": {
-                "enableAcceleratedNetworking": true,
+                "enableAcceleratedNetworking": "[variables('isAcceleratedNetworkingSupported')]",
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
@@ -1129,7 +1137,9 @@
                     {
                         "name": "[concat(variables('resourceGroupName'), '-ext-ipconfig2')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": ["[variables('SBBackEndAddressPool')]"],
+                            "loadBalancerBackendAddressPools": [
+                                "[variables('SBBackEndAddressPool')]"
+                            ],
                             "primary": false,
                             "privateIPAddress": "[concat(variables('ext2SubnetPrivateAddressPrefix'), '.',10)]",
                             "privateIPAllocationMethod": "Static",
@@ -1152,7 +1162,7 @@
             "location": "[variables('location')]",
             "name": "[concat(variables('extNicName'), '3')]",
             "properties": {
-                "enableAcceleratedNetworking": true,
+                "enableAcceleratedNetworking": "[variables('isAcceleratedNetworkingSupported')]",
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
@@ -1168,7 +1178,9 @@
                     {
                         "name": "[concat(variables('resourceGroupName'), '-ext-ipconfig3')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": ["[variables('SBBackEndAddressPool')]"],
+                            "loadBalancerBackendAddressPools": [
+                                "[variables('SBBackEndAddressPool')]"
+                            ],
                             "primary": false,
                             "privateIPAddress": "[concat(variables('ext2SubnetPrivateAddressPrefix'), '.',11)]",
                             "privateIPAllocationMethod": "Static",
@@ -1193,7 +1205,7 @@
             "name": "[concat(variables('intNicName'), '0')]",
             "properties": {
                 "enableIPForwarding": true,
-                "enableAcceleratedNetworking": true,
+                "enableAcceleratedNetworking": "[variables('isAcceleratedNetworkingSupported')]",
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
@@ -1233,7 +1245,7 @@
             "name": "[concat(variables('intNicName'), '1')]",
             "properties": {
                 "enableIPForwarding": true,
-                "enableAcceleratedNetworking": true,
+                "enableAcceleratedNetworking": "[variables('isAcceleratedNetworkingSupported')]",
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
@@ -1272,7 +1284,7 @@
             "name": "[concat(variables('intNicName'), '2')]",
             "properties": {
                 "enableIPForwarding": true,
-                "enableAcceleratedNetworking": true,
+                "enableAcceleratedNetworking": "[variables('isAcceleratedNetworkingSupported')]",
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
@@ -1311,7 +1323,7 @@
             "name": "[concat(variables('intNicName'), '3')]",
             "properties": {
                 "enableIPForwarding": true,
-                "enableAcceleratedNetworking": true,
+                "enableAcceleratedNetworking": "[variables('isAcceleratedNetworkingSupported')]",
                 "ipConfigurations": [
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
@@ -1367,7 +1379,9 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig-secondary')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": ["[variables('IPSBackEndAddressPool')]"],
+                            "loadBalancerBackendAddressPools": [
+                                "[variables('IPSBackEndAddressPool')]"
+                            ],
                             "privateIPAddress": "[variables('IPSExtSubnetPrivateAddress2')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1408,7 +1422,9 @@
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig-secondary')]",
                         "properties": {
-                            "loadBalancerBackendAddressPools": ["[variables('IPSBackEndAddressPool')]"],
+                            "loadBalancerBackendAddressPools": [
+                                "[variables('IPSBackEndAddressPool')]"
+                            ],
                             "privateIPAddress": "[variables('IPSExtSubnetPrivateAddress3')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
@@ -1588,85 +1604,85 @@
                     }
                 ],
                 "probes": [
-                  {
-                    "name": "ssh_alive",
-                    "properties": {
-                      "protocol": "Tcp",
-                      "port": 22,
-                      "intervalInSeconds": 15,
-                      "numberOfProbes": 2
+                    {
+                        "name": "ssh_alive",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 22,
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
+                    },
+                    {
+                        "name": "rdp_alive",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 3389,
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
+                    },
+                    {
+                        "name": "http_alive",
+                        "properties": {
+                            "protocol": "Http",
+                            "port": 80,
+                            "requestPath": "/",
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
+                    },
+                    {
+                        "name": "https_alive",
+                        "properties": {
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 3,
+                            "port": 443,
+                            "protocol": "Tcp"
+                        }
                     }
-                  },
-                  {
-                    "name": "rdp_alive",
-                    "properties": {
-                      "protocol": "Tcp",
-                      "port": 3389,
-                      "intervalInSeconds": 15,
-                      "numberOfProbes": 2
-                    }
-                  },
-                  {
-                    "name": "http_alive",
-                    "properties": {
-                      "protocol": "Http",
-                      "port": 80,
-                      "requestPath": "/",
-                      "intervalInSeconds": 15,
-                      "numberOfProbes": 2
-                    }
-                  },
-                  {
-                    "name": "https_alive",
-                    "properties": {
-                        "intervalInSeconds": 15,
-                        "numberOfProbes": 3,
-                        "port": 443,
-                        "protocol": "Tcp"
-                    }
-                }
                 ],
                 "loadBalancingRules": [
-                  {
-                    "name": "rdp_vs",
-                    "properties": {
-                      "frontendIPConfiguration": {
-                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
-                      },
-                      "frontendPort": 3389,
-                      "backendPort": 3389,
-                      "enableFloatingIP": false,
-                      "idleTimeoutInMinutes": 4,
-                      "protocol": "Tcp",
-                      "loadDistribution": "Default",
-                      "backendAddressPool": {
-                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
-                      },
-                      "probe": {
-                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/probes/rdp_alive')]"
-                      }
-                    }
-                  },
-                  {
-                    "name": "ssh_vs",
-                    "properties": {
-                      "frontendIPConfiguration": {
-                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
-                      },
-                      "frontendPort": 22,
-                      "backendPort": 22,
-                      "enableFloatingIP": false,
-                      "idleTimeoutInMinutes": 4,
-                      "protocol": "Tcp",
-                      "loadDistribution": "Default",
-                      "backendAddressPool": {
-                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
-                      },
-                      "probe": {
-                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/probes/ssh_alive')]"
-                      }
-                    }
-                  },
+                    {
+                        "name": "rdp_vs",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
+                            },
+                            "frontendPort": 3389,
+                            "backendPort": 3389,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/probes/rdp_alive')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "ssh_vs",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
+                            },
+                            "frontendPort": 22,
+                            "backendPort": 22,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/probes/ssh_alive')]"
+                            }
+                        }
+                    },
                     {
                         "Name": "management_outbound",
                         "properties": {
@@ -1678,10 +1694,10 @@
                             "idleTimeoutInMinutes": 15,
                             "backendAddressPool": {
                                 "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/backendAddressPools/loadBalancerMgmtBackEnd')]"
-                              },
-                              "probe": {
+                            },
+                            "probe": {
                                 "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerName')), '/probes/https_alive')]"
-                              },
+                            },
                             "protocol": "Tcp"
                         }
                     }
@@ -1721,74 +1737,74 @@
                 ],
                 "probes": [
                     {
-                      "name": "ssh_alive",
-                      "properties": {
-                        "protocol": "Tcp",
-                        "port": 22,
-                        "intervalInSeconds": 15,
-                        "numberOfProbes": 2
-                      }
+                        "name": "ssh_alive",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 22,
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
                     },
                     {
-                      "name": "rdp_alive",
-                      "properties": {
-                        "protocol": "Tcp",
-                        "port": 3389,
-                        "intervalInSeconds": 15,
-                        "numberOfProbes": 2
-                      }
+                        "name": "rdp_alive",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 3389,
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
                     },
                     {
-                      "name": "http_alive",
-                      "properties": {
-                        "protocol": "Http",
-                        "port": 80,
-                        "requestPath": "/",
-                        "intervalInSeconds": 15,
-                        "numberOfProbes": 2
-                      }
+                        "name": "http_alive",
+                        "properties": {
+                            "protocol": "Http",
+                            "port": 80,
+                            "requestPath": "/",
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
                     }
                 ],
                 "loadBalancingRules": [
                     {
-                      "name": "rdp_vs",
-                      "properties": {
-                        "frontendIPConfiguration": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerNameb')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
-                        },
-                        "frontendPort": 3389,
-                        "backendPort": 3389,
-                        "enableFloatingIP": false,
-                        "idleTimeoutInMinutes": 4,
-                        "protocol": "Tcp",
-                        "loadDistribution": "Default",
-                        "backendAddressPool": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerNameb')), '/backendAddressPools/loadBalancerBackEnd')]"
-                        },
-                        "probe": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerNameb')), '/probes/rdp_alive')]"
+                        "name": "rdp_vs",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerNameb')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
+                            },
+                            "frontendPort": 3389,
+                            "backendPort": 3389,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerNameb')), '/backendAddressPools/loadBalancerBackEnd')]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerNameb')), '/probes/rdp_alive')]"
+                            }
                         }
-                      }
                     },
                     {
-                      "name": "ssh_vs",
-                      "properties": {
-                        "frontendIPConfiguration": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerNameb')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
-                        },
-                        "frontendPort": 22,
-                        "backendPort": 22,
-                        "enableFloatingIP": false,
-                        "idleTimeoutInMinutes": 4,
-                        "protocol": "Tcp",
-                        "loadDistribution": "Default",
-                        "backendAddressPool": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerNameb')), '/backendAddressPools/loadBalancerBackEnd')]"
-                        },
-                        "probe": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerNameb')), '/probes/ssh_alive')]"
+                        "name": "ssh_vs",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerNameb')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
+                            },
+                            "frontendPort": 22,
+                            "backendPort": 22,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerNameb')), '/backendAddressPools/loadBalancerBackEnd')]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('NorthboundLoadBalancerNameb')), '/probes/ssh_alive')]"
+                            }
                         }
-                      }
                     }
                 ]
             },
@@ -1825,74 +1841,74 @@
                 ],
                 "probes": [
                     {
-                      "name": "ssh_alive",
-                      "properties": {
-                        "protocol": "Tcp",
-                        "port": 22,
-                        "intervalInSeconds": 15,
-                        "numberOfProbes": 2
-                      }
+                        "name": "ssh_alive",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 22,
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
                     },
                     {
-                      "name": "rdp_alive",
-                      "properties": {
-                        "protocol": "Tcp",
-                        "port": 3389,
-                        "intervalInSeconds": 15,
-                        "numberOfProbes": 2
-                      }
+                        "name": "rdp_alive",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 3389,
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
                     },
                     {
-                      "name": "http_alive",
-                      "properties": {
-                        "protocol": "Http",
-                        "port": 80,
-                        "requestPath": "/",
-                        "intervalInSeconds": 15,
-                        "numberOfProbes": 2
-                      }
+                        "name": "http_alive",
+                        "properties": {
+                            "protocol": "Http",
+                            "port": 80,
+                            "requestPath": "/",
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
                     }
                 ],
                 "loadBalancingRules": [
                     {
-                      "name": "rdp_vs",
-                      "properties": {
-                        "frontendIPConfiguration": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('SouthboundLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
-                        },
-                        "frontendPort": 3389,
-                        "backendPort": 3389,
-                        "enableFloatingIP": false,
-                        "idleTimeoutInMinutes": 4,
-                        "protocol": "Tcp",
-                        "loadDistribution": "Default",
-                        "backendAddressPool": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('SouthboundLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
-                        },
-                        "probe": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('SouthboundLoadBalancerName')), '/probes/rdp_alive')]"
+                        "name": "rdp_vs",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('SouthboundLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
+                            },
+                            "frontendPort": 3389,
+                            "backendPort": 3389,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('SouthboundLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('SouthboundLoadBalancerName')), '/probes/rdp_alive')]"
+                            }
                         }
-                      }
                     },
                     {
-                      "name": "ssh_vs",
-                      "properties": {
-                        "frontendIPConfiguration": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('SouthboundLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
-                        },
-                        "frontendPort": 22,
-                        "backendPort": 22,
-                        "enableFloatingIP": false,
-                        "idleTimeoutInMinutes": 4,
-                        "protocol": "Tcp",
-                        "loadDistribution": "Default",
-                        "backendAddressPool": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('SouthboundLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
-                        },
-                        "probe": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('SouthboundLoadBalancerName')), '/probes/ssh_alive')]"
+                        "name": "ssh_vs",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('SouthboundLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
+                            },
+                            "frontendPort": 22,
+                            "backendPort": 22,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('SouthboundLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('SouthboundLoadBalancerName')), '/probes/ssh_alive')]"
+                            }
                         }
-                      }
                     }
                 ]
             },
@@ -1930,32 +1946,32 @@
                 ],
                 "probes": [
                     {
-                      "name": "ssh_alive",
-                      "properties": {
-                        "protocol": "Tcp",
-                        "port": 22,
-                        "intervalInSeconds": 15,
-                        "numberOfProbes": 2
-                      }
+                        "name": "ssh_alive",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 22,
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
                     },
                     {
-                      "name": "rdp_alive",
-                      "properties": {
-                        "protocol": "Tcp",
-                        "port": 3389,
-                        "intervalInSeconds": 15,
-                        "numberOfProbes": 2
-                      }
+                        "name": "rdp_alive",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 3389,
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
                     },
                     {
-                      "name": "http_alive",
-                      "properties": {
-                        "protocol": "Http",
-                        "port": 80,
-                        "requestPath": "/",
-                        "intervalInSeconds": 15,
-                        "numberOfProbes": 2
-                      }
+                        "name": "http_alive",
+                        "properties": {
+                            "protocol": "Http",
+                            "port": 80,
+                            "requestPath": "/",
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
                     },
                     {
                         "name": "https_alive",
@@ -1969,44 +1985,44 @@
                 ],
                 "loadBalancingRules": [
                     {
-                      "name": "rdp_vs",
-                      "properties": {
-                        "frontendIPConfiguration": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('IPSLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
-                        },
-                        "frontendPort": 3389,
-                        "backendPort": 3389,
-                        "enableFloatingIP": false,
-                        "idleTimeoutInMinutes": 4,
-                        "protocol": "Tcp",
-                        "loadDistribution": "Default",
-                        "backendAddressPool": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('IPSLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
-                        },
-                        "probe": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('IPSLoadBalancerName')), '/probes/rdp_alive')]"
+                        "name": "rdp_vs",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('IPSLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
+                            },
+                            "frontendPort": 3389,
+                            "backendPort": 3389,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('IPSLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('IPSLoadBalancerName')), '/probes/rdp_alive')]"
+                            }
                         }
-                      }
                     },
                     {
-                      "name": "ssh_vs",
-                      "properties": {
-                        "frontendIPConfiguration": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('IPSLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
-                        },
-                        "frontendPort": 22,
-                        "backendPort": 22,
-                        "enableFloatingIP": false,
-                        "idleTimeoutInMinutes": 4,
-                        "protocol": "Tcp",
-                        "loadDistribution": "Default",
-                        "backendAddressPool": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('IPSLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
-                        },
-                        "probe": {
-                          "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('IPSLoadBalancerName')), '/probes/ssh_alive')]"
+                        "name": "ssh_vs",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('IPSLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
+                            },
+                            "frontendPort": 22,
+                            "backendPort": 22,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('IPSLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('IPSLoadBalancerName')), '/probes/ssh_alive')]"
+                            }
                         }
-                      }
                     }
                 ]
             },
@@ -2040,40 +2056,40 @@
                             },
                             "privateIPAddressVersion": "IPv4"
                         }
-                     }
+                    }
                 ],
                 "probes": [
-                  {
-                    "name": "ssh_alive",
-                    "properties": {
-                      "protocol": "Tcp",
-                      "port": 22,
-                      "intervalInSeconds": 15,
-                      "numberOfProbes": 2
+                    {
+                        "name": "ssh_alive",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 22,
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        }
                     }
-                  }
                 ],
                 "loadBalancingRules": [
-                  {
-                    "name": "for_outbound",
-                    "properties": {
-                      "frontendIPConfiguration": {
-                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('mgmtLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
-                      },
-                      "frontendPort": 1234,
-                      "backendPort": 3389,
-                      "enableFloatingIP": false,
-                      "idleTimeoutInMinutes": 4,
-                      "protocol": "Tcp",
-                      "loadDistribution": "Default",
-                      "backendAddressPool": {
-                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('mgmtLoadBalancerName')), '/backendAddressPools/loadBalancerMgmtBackEnd')]"
-                      },
-                      "probe": {
-                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('mgmtLoadBalancerName')), '/probes/ssh_alive')]"
-                      }
+                    {
+                        "name": "for_outbound",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('mgmtLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
+                            },
+                            "frontendPort": 1234,
+                            "backendPort": 3389,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('mgmtLoadBalancerName')), '/backendAddressPools/loadBalancerMgmtBackEnd')]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('mgmtLoadBalancerName')), '/probes/ssh_alive')]"
+                            }
+                        }
                     }
-                  }
                 ]
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2640,7 +2656,7 @@
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
-                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs'), ' >> /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.azure.com'), ' --license ', parameters('licenseKey1'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ltm:nominal,ilx:nominal,afm:nominal,asm:nominal,apm:nominal; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRouteGw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('extSubnetPrivateAddress'),  ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnetPrivateAddress'),  ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].first, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnetPrivateAddress'), ' --create-group --device-group Sync --sync-type sync-failover --device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.azure.com'), ' --network-failover --auto-sync --save-on-auto-sync; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmdArray')[variables('bigIpVersion')], '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('cmdcreateFWLog'), ' && ', variables('cmdcreateFWPolicy'), ' && bash /config/cloud/deploy_app.sh ', variables('commandArgs'), ';', variables('installDODRootCA'), ';', variables('cmdConfigStig'), ';')]"
+                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs'), ' >> /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey1'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ltm:nominal,ilx:nominal,afm:nominal,asm:nominal,apm:nominal; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRouteGw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('extSubnetPrivateAddress'),  ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnetPrivateAddress'),  ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].first, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnetPrivateAddress'), ' --create-group --device-group Sync --sync-type sync-failover --device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --network-failover --auto-sync --save-on-auto-sync; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('cmdcreateFWLog'), ' && ', variables('cmdcreateFWPolicy'), ' && bash /config/cloud/deploy_app.sh ', variables('commandArgs'), ';', variables('installDODRootCA'), ';', variables('cmdConfigStig'), ';')]"
                 },
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
@@ -2671,7 +2687,7 @@
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
-                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs'), ' >> /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted;', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress1'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '1.', variables('location'), '.cloudapp.azure.com'), ' --license ', parameters('licenseKey2'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ltm:nominal,ilx:nominal,afm:nominal,asm:nominal,apm:nominal; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress1'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRouteGw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('extSubnetPrivateAddress1'),  ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnetPrivateAddress1'),  ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].second, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress1'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnetPrivateAddress1'), ' --join-group --device-group Sync --sync --remote-host ', variables('mgmtSubnetPrivateAddress'), ' --remote-user svc_user --remote-password-url file:///config/cloud/.passwd', '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmdArray')[variables('bigIpVersion')], '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('cmdConfigStig'), ';')]"
+                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs'), ' >> /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted;', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress1'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '1.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey2'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ltm:nominal,ilx:nominal,afm:nominal,asm:nominal,apm:nominal; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress1'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRouteGw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('extSubnetPrivateAddress1'),  ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnetPrivateAddress1'),  ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].second, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress1'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnetPrivateAddress1'), ' --join-group --device-group Sync --sync --remote-host ', variables('mgmtSubnetPrivateAddress'), ' --remote-user svc_user --remote-password-url file:///config/cloud/.passwd', '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('cmdConfigStig'), ';')]"
                 },
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
@@ -2702,7 +2718,7 @@
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
-                "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs'), ' >> /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.azure.com'), ' --license ', parameters('licenseKey3'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ltm:nominal,ilx:nominal,afm:nominal,asm:nominal,apm:nominal; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRoute2Gw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('ext2SubnetPrivateAddress'),  ',vlan:external --self-ip name:self_3nic,address:', variables('int2SubnetPrivateAddress'),  ',vlan:internal --log-level info; ', variables('failoverCmd2Array')[variables('enableNetworkFailover')].first, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('int2SubnetPrivateAddress'), ' --create-group --device-group Sync --sync-type sync-failover --device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.azure.com'), ' --network-failover --auto-sync --save-on-auto-sync; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmdArray')[variables('bigIpVersion')], '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('cmdcreateFWLog'), ' && ', variables('cmdcreateFWPolicy'), ' && bash /config/cloud/deploy_app.sh ', variables('commandArgs'), ';', variables('installDODRootCA'), ';', variables('cmdConfigStig'), ';')]"
+                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs'), ' >> /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey3'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ltm:nominal,ilx:nominal,afm:nominal,asm:nominal,apm:nominal; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRoute2Gw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('ext2SubnetPrivateAddress'),  ',vlan:external --self-ip name:self_3nic,address:', variables('int2SubnetPrivateAddress'),  ',vlan:internal --log-level info; ', variables('failoverCmd2Array')[variables('enableNetworkFailover')].first, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('int2SubnetPrivateAddress'), ' --create-group --device-group Sync --sync-type sync-failover --device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --network-failover --auto-sync --save-on-auto-sync; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('cmdcreateFWLog'), ' && ', variables('cmdcreateFWPolicy'), ' && bash /config/cloud/deploy_app.sh ', variables('commandArgs'), ';', variables('installDODRootCA'), ';', variables('cmdConfigStig'), ';')]"
                 },
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
@@ -2735,7 +2751,7 @@
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
-                "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs'), ' >> /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted;', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.azure.com'), ' --license ', parameters('licenseKey4'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ltm:nominal,ilx:nominal,afm:nominal,asm:nominal,apm:nominal; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRoute2Gw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('ext2SubnetPrivateAddress1'),  ',vlan:external --self-ip name:self_3nic,address:', variables('int2SubnetPrivateAddress1'),  ',vlan:internal --log-level info; ', variables('failoverCmd2Array')[variables('enableNetworkFailover')].second, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('int2SubnetPrivateAddress1'), ' --join-group --device-group Sync --sync --remote-host ', variables('mgmtSubnetPrivateAddress2'), ' --remote-user svc_user --remote-password-url file:///config/cloud/.passwd', '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmdArray')[variables('bigIpVersion')], '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('cmdConfigStig'), ';')]"
+                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs'), ' >> /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted;', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey4'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ltm:nominal,ilx:nominal,afm:nominal,asm:nominal,apm:nominal; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRoute2Gw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('ext2SubnetPrivateAddress1'),  ',vlan:external --self-ip name:self_3nic,address:', variables('int2SubnetPrivateAddress1'),  ',vlan:internal --log-level info; ', variables('failoverCmd2Array')[variables('enableNetworkFailover')].second, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('int2SubnetPrivateAddress1'), ' --join-group --device-group Sync --sync --remote-host ', variables('mgmtSubnetPrivateAddress2'), ' --remote-user svc_user --remote-password-url file:///config/cloud/.passwd', '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('cmdConfigStig'), ';')]"
                 },
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
@@ -2754,7 +2770,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions"
         }
     ],
-"outputs": {
+    "outputs": {
         "RDP-URL": {
             "type": "string",
             "value": "[concat('rdp://',reference(concat(variables('extPublicIPAddressIdPrefix'), '0')).dnsSettings.fqdn)]"
