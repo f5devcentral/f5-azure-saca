@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [2.6.1] - 2020-03-03
 ### Changed
 - 3 Tier: Changed DeclarationURL to Tier 1 and Tier 3 Declaration URLs to allow seperate AS3 declarations for each tier.
+- Adjusted outputs to proper PIP FQDN output
 ### Added
 - Added PAYG template options
 
