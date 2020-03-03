@@ -1077,7 +1077,18 @@
                             "sourceAddressPrefix": "[parameters('restrictedSrcAddress')]",
                             "sourcePortRange": "*"
                         }
-                    },
+                    }
+                ]
+            },
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
+            "type": "Microsoft.Network/networkSecurityGroups"
+        },
+        {
+            "apiVersion": "[variables('networkApiVersion')]",
+            "location": "[variables('location')]",
+            "name": "[concat(variables('dnsLabel'), '-ext-nsg')]",
+            "properties": {
+                "securityRules": [
                     {
                         "name": "ssh_allow_22",
                         "properties": {
@@ -1091,18 +1102,21 @@
                             "sourceAddressPrefix": "[parameters('restrictedSrcAddress')]",
                             "sourcePortRange": "*"
                         }
+                    },
+                    {
+                        "name": "rdp_allow_3389",
+                        "properties": {
+                            "access": "Allow",
+                            "description": "",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "3389",
+                            "direction": "Inbound",
+                            "priority": 103,
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "[parameters('restrictedSrcAddress')]",
+                            "sourcePortRange": "*"
+                        }
                     }
-                ]
-            },
-            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
-            "type": "Microsoft.Network/networkSecurityGroups"
-        },
-        {
-            "apiVersion": "[variables('networkApiVersion')]",
-            "location": "[variables('location')]",
-            "name": "[concat(variables('dnsLabel'), '-ext-nsg')]",
-            "properties": {
-                "securityRules": [
                 ]
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -1141,19 +1155,59 @@
                 ],
                 "loadBalancingRules": [
                     {
-                        "Name": "external-access",
+                        "name": "rdp_vs",
+                        "properties": {
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
+                            },
+                            "backendPort": 3389,
+                            "enableFloatingIP": false,
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
+                            },
+                            "frontendPort": 3389,
+                            "idleTimeoutInMinutes": 4,
+                            "loadDistribution": "Default",
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/probes/rdp_alive')]"
+                            },
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "ssh_vs",
+                        "properties": {
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/backendAddressPools/loadBalancerBackEnd')]"
+                            },
+                            "backendPort": 22,
+                            "enableFloatingIP": false,
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
+                            },
+                            "frontendPort": 22,
+                            "idleTimeoutInMinutes": 4,
+                            "loadDistribution": "Default",
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/probes/ssh_alive')]"
+                            },
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "Name": "management_outbound",
                         "properties": {
                             "backendAddressPool": {
                                 "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/backendAddressPools/loadBalancerMgmtBackEnd')]"
                             },
-                            "backendPort": 443,
+                            "backendPort": 8443,
                             "frontendIPConfiguration": {
                                 "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('externalLoadBalancerName')), '/frontendIpConfigurations/loadBalancerFrontEnd1')]"
                             },
-                            "frontendPort": 443,
+                            "frontendPort": 8443,
                             "idleTimeoutInMinutes": 15,
                             "probe": {
-                                "id": "[concat(variables('extLbId'),'/probes/httpsProbe')]"
+                                "id": "[concat(variables('extLbId'),'/probes/https_alive')]"
                             },
                             "protocol": "Tcp"
                         }
@@ -1161,7 +1215,35 @@
                 ],
                 "probes": [
                     {
-                        "name": "httpsProbe",
+                        "name": "ssh_alive",
+                        "properties": {
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2,
+                            "port": 22,
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "rdp_alive",
+                        "properties": {
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2,
+                            "port": 3389,
+                            "protocol": "Tcp"
+                        }
+                    },
+                    {
+                        "name": "http_alive",
+                        "properties": {
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2,
+                            "port": 80,
+                            "protocol": "Http",
+                            "requestPath": "/"
+                        }
+                    },
+                    {
+                        "name": "https_alive",
                         "properties": {
                             "intervalInSeconds": 15,
                             "numberOfProbes": 3,
