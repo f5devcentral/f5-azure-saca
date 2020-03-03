@@ -1,8 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.6.1] - 2020-03-03
+### Changed
+- Changed DeclarationURL to Tier 1 and Tier 3 Declaration URLs to allow seperate AS3 declarations for each tier.
+### Added
+- Added PAYG template options
+
+## [2.5] - 2020-03-02
+### Fixed
+- Resolved issue with Accelerated Networking
+### Changed
+- Rewrote and updated templates closer to F5 *supported* 7.0 templates.
+
+
 ## [2.2] - 2019-08-06
-## Changed
+### Changed
 - Made STIG a bool option in Parameters
 - Changed image to 14.1.00300
 

@@ -33,16 +33,16 @@
             }
         },
         "Tier1DeclarationUrl": {
-            "defaultValue": "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/AS3/sccaBaseline.json",
+            "defaultValue": "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/AS3/paygsccaBaseline.json",
             "metadata": {
-                "description": "URL for the Tier 1 AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration."
+                "description": "URL for the AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration."
             },
             "type": "string"
         },
         "Tier3DeclarationUrl": {
-            "defaultValue": "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/AS3/sccaBaseline.json",
+            "defaultValue": "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/AS3/paygsccaBaseline.json",
             "metadata": {
-                "description": "URL for the Tier 3 AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration."
+                "description": "URL for the AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration."
             },
             "type": "string"
         },
@@ -121,14 +121,27 @@
             },
             "type": "string"
         },
-        "imageName": {
+"imageName": {
             "allowedValues": [
-                "LTMTwoBootLocations",
-                "AllTwoBootLocations"
+                "Best25Mbps",
+                "Best200Mbps",
+                "Best1Gbps",
+                "Best10Gbps",
+                "Better25Mbps",
+                "Better200Mbps",
+                "Better1Gbps",
+                "Better10Gbps",
+                "Good25Mbps",
+                "Good200Mbps",
+                "Good1Gbps",
+                "Good10Gbps",
+                "AdvancedWaf25Mbps",
+                "AdvancedWaf200Mbps",
+                "AdvancedWaf1Gbps"
             ],
-            "defaultValue": "AllTwoBootLocations",
+            "defaultValue": "Best1Gbps",
             "metadata": {
-                "description": "F5 SKU (image) you want to deploy. Note: The disk size of the VM will be determined based on the option you select.  **Important**: If intending to provision multiple modules, ensure the appropriate value is selected, such as ****AllTwoBootLocations or AllOneBootLocation****."
+                "description": "F5 SKU (image) you want to deploy. Note: The disk size of the VM will be determined based on the option you select.  **Important**: 10Gbps SKUs are supported only with BIGIP VE v15 or later. If intending to provision multiple modules, ensure the appropriate value is selected, such as **Best** instead of **Good**."
             },
             "type": "string"
         },
@@ -449,46 +462,85 @@
             }
         },
 
-        "imageNameSub": "[variables('imageNameArray')[parameters('bigIpVersion')][parameters('imageName')]]",
-        "imageNameArray": {
-            "15.0.100000": {
-                "AllOneBootLocation": "big-all-1slot",
-                "AllTwoBootLocations": "big-all-2slot",
-                "LTMOneBootLocation": "big-ltm-1slot",
-                "LTMTwoBootLocations": "big-ltm-2slot"
+        "paygImageMap": {
+            "advancedwaf1gbps": {
+                "offer": "f5-big-ip-advanced-waf",
+                "sku": "f5-bigip-virtual-edition-1g-waf-hourly"
             },
-            "14.1.200000": {
-                "AllOneBootLocation": "big-all-1slot",
-                "AllTwoBootLocations": "big-all-2slot",
-                "LTMOneBootLocation": "big-ltm-1slot",
-                "LTMTwoBootLocations": "big-ltm-2slot"
+            "advancedwaf200mbps": {
+                "offer": "f5-big-ip-advanced-waf",
+                "sku": "f5-bigip-virtual-edition-200m-waf-hourly"
             },
-            "latest": {
-                "AllOneBootLocation": "big-all-2slot",
-                "AllTwoBootLocations": "big-all-2slot",
-                "LTMOneBootLocation": "big-ltm-2slot",
-                "LTMTwoBootLocations": "big-ltm-2slot"
+            "advancedwaf25mbps": {
+                "offer": "f5-big-ip-advanced-waf",
+                "sku": "f5-bigip-virtual-edition-25m-waf-hourly"
             },
-            "offerPostfix": {
-                "big-all-1slot": "byol",
-                "big-all-2slot": "byol",
-                "big-ltm-1slot": "byol",
-                "big-ltm-2slot": "byol",
-                "bigip-virtual-edition-best": "best",
-                "bigip-virtual-edition-good": "good"
+            "best1gbps": {
+                "offer": "f5-big-ip-best",
+                "sku": "f5-bigip-virtual-edition-1g-best-hourly"
+            },
+            "best10gbps": {
+                "offer": "f5-big-ip-best",
+                "sku": "f5-bigip-virtual-edition-10g-best-hourly"
+            },
+            "best200mbps": {
+                "offer": "f5-big-ip-best",
+                "sku": "f5-bigip-virtual-edition-200m-best-hourly"
+            },
+            "best25mbps": {
+                "offer": "f5-big-ip-best",
+                "sku": "f5-bigip-virtual-edition-25m-best-hourly"
+            },
+            "better1gbps": {
+                "offer": "f5-big-ip-better",
+                "sku": "f5-bigip-virtual-edition-1g-better-hourly"
+            },
+            "better10gbps": {
+                "offer": "f5-big-ip-better",
+                "sku": "f5-bigip-virtual-edition-10g-better-hourly"
+            },
+            "better200mbps": {
+                "offer": "f5-big-ip-better",
+                "sku": "f5-bigip-virtual-edition-200m-better-hourly"
+            },
+            "better25mbps": {
+                "offer": "f5-big-ip-better",
+                "sku": "f5-bigip-virtual-edition-25m-better-hourly"
+            },
+            "good1gbps": {
+                "offer": "f5-big-ip-good",
+                "sku": "f5-bigip-virtual-edition-1g-good-hourly"
+            },
+            "good10gbps": {
+                "offer": "f5-big-ip-good",
+                "sku": "f5-bigip-virtual-edition-10g-good-hourly"
+            },
+            "good200mbps": {
+                "offer": "f5-big-ip-good",
+                "sku": "f5-bigip-virtual-edition-200m-good-hourly"
+            },
+            "good25mbps": {
+                "offer": "f5-big-ip-good",
+                "sku": "f5-bigip-virtual-edition-25m-good-hourly"
+            },
+            "perappveadvancedwaf200mbps": {
+                "offer": "f5-big-ip-per-app-ve",
+                "sku": "f5-big-ip-per-app-ve-awf-200m-hourly"
+            },
+            "perappveadvancedwaf25mbps": {
+                "offer": "f5-big-ip-per-app-ve",
+                "sku": "f5-big-ip-per-app-ve-awf-25m-hourly"
+            },
+            "perappveltm200mbps": {
+                "offer": "f5-big-ip-per-app-ve",
+                "sku": "f5-big-ip-per-app-ve-ltm-200m-hourly"
+            },
+            "perappveltm25mbps": {
+                "offer": "f5-big-ip-per-app-ve",
+                "sku": "f5-big-ip-per-app-ve-ltm-25m-hourly"
             }
         },
-        "imagePlan": {
-            "name": "[variables('skuToUse')]",
-            "product": "[variables('offerToUse')]",
-            "publisher": "f5-networks"
-        },
-        "imageReference": {
-            "offer": "[variables('offerToUse')]",
-            "publisher": "f5-networks",
-            "sku": "[variables('skuToUse')]",
-            "version": "[parameters('bigIpVersion')]"
-        },
+
         "installCloudLibs": "[concat(variables('singleQuote'), '#!/bin/bash\necho about to execute\nchecks=0\nwhile [ $checks -lt 120 ]; do echo checking mcpd\n/usr/bin/tmsh -a show sys mcp-state field-fmt | grep -q running\nif [ $? == 0 ]; then\necho mcpd ready\nbreak\nfi\necho mcpd not ready yet\nlet checks=checks+1\nsleep 1\ndone\necho loading verifyHash script\n/usr/bin/tmsh load sys config merge file /config/verifyHash\nif [ $? != 0 ]; then\necho cannot validate signature of /config/verifyHash\nexit 1\nfi\necho loaded verifyHash\n\nconfig_loc=\"/config/cloud/\"\nhashed_file_list=\"${config_loc}f5-cloud-libs.tar.gz ', variables('f5AS3Build'),' f5.service_discovery.tmpl f5.cloud_logger.v1.0.0.tmpl\"\nfor file in $hashed_file_list; do\necho \"verifying $file\"\n/usr/bin/tmsh run cli script verifyHash $file\nif [ $? != 0 ]; then\necho \"$file is not valid\"\nexit 1\nfi\necho \"verified $file\"\ndone\necho \"expanding $hashed_file_list\"\ntar xfz /config/cloud/f5-cloud-libs.tar.gz --warning=no-unknown-keyword -C /config/cloud/azure/node_modules/@f5devcentral\ntouch /config/cloud/cloudLibsReady', variables('singleQuote'))]",
         "installCustomConfig": "[concat(variables('singleQuote'), '#!/bin/bash\n', variables('customConfig'), variables('singleQuote'))]",
         "instanceName": "[toLower(parameters('instanceName'))]",
@@ -630,7 +682,7 @@
         "newCustomImageName": "[concat(variables('dnsLabelPrefix'), 'image')]",
         "newDataStorageAccountName": "[concat(uniqueString(variables('dnsLabelPrefix'), resourceGroup().id, deployment().name), 'data000')]",
         "numberOfExternalIps": 1,
-        "offerToUse": "[concat('f5-big-ip-', variables('imageNameArray').offerPostfix[variables('imageNameSub')])]",
+
         "osProfiles": {
             "password": {
                 "adminPassword": "[variables('adminPasswordOrKey')]",
@@ -675,7 +727,21 @@
 
         "routeCmd": "route",
         "singleQuote": "'",
-        "skuToUse": "[concat('f5-', variables('imageNameSub'),'-byol')]",
+
+        "imageNameToLower": "[toLower(parameters('imageName'))]",
+        "skuToUse": "[variables('paygImageMap')[variables('imageNameToLower')]['sku']]",
+        "offerToUse": "[variables('paygImageMap')[variables('imageNameToLower')]['offer']]",
+        "imagePlan": {
+            "name": "[variables('skuToUse')]",
+            "product": "[variables('offerToUse')]",
+            "publisher": "f5-networks"
+        },
+        "imageReference": {
+            "offer": "[variables('offerToUse')]",
+            "publisher": "f5-networks",
+            "sku": "[variables('skuToUse')]",
+            "version": "[parameters('bigIpVersion')]"
+        },
         "storageApiVersion": "2017-10-01",
         "storageProfileArray": {
             "customImage": {
