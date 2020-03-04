@@ -360,9 +360,6 @@
         "availabilitySetId2": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('availabilitySetName2'))]"
         },
-        "availabilitySetId3": {
-            "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('availabilitySetName3'))]"
-        },
         "backEndAddressPoolArray": [
             {
                 "id": "[concat(variables('nbALBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
@@ -384,9 +381,6 @@
         },
         "IPSBackEndAddressPool": {
             "id": "[concat(variables('IPSILBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
-        },
-        "MgmtBackEndAddressPool": {
-            "id": "[concat(variables('mgmtALBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
         },
         "bigIpNicPortMap": {
             "1": {
@@ -554,8 +548,10 @@
         "NorthboundLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-nb-alb')]",
         "mgmtLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-mgmt-alb')]",
         "extpublicIPAddressNamePrefix": "[concat(variables('dnsLabelPrefix'), '-ext-pip')]",
-        "mgmtPublicIPAddressIdPrefix": "[resourceId('Microsoft.Network/publicIPAddresses', variables('mgmtPublicIPAddressName'))]",
+
         "mgmtPublicIPAddressName": "[concat(variables('dnsLabelPrefix'), '-mgmt-pip')]",
+        "mgmtPublicIPAddressIdPrefix": "[resourceId('Microsoft.Network/publicIPAddresses', variables('mgmtPublicIPAddressName'))]",
+        
         "nbILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('NorthboundLoadBalancerNameb'))]",
 
         "intNicName": "[concat(variables('dnsLabelPrefix'), '-int')]",
@@ -568,7 +564,6 @@
         "intSubnetPrivateAddress1": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 1))]",
         "intSubnetPrivateAddress2": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 10))]",
         "intSubnetPrivateAddress3": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 11))]",
-        "internalLoadBalancerAddress": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 65))]",
 
         "intSubnet1Name": "internalSouth",
         "intSubnet1Id": "[concat(variables('vnetId'), '/subnets/', variables('intSubnet1Name'))]",
@@ -579,9 +574,6 @@
         "intSubnet1PrivateAddress1": "[concat(variables('intSubnet1PrivateAddressPrefix'), '.', add(int(variables('IntSubnet1StartInt')), 1))]",
         "intSubnet1PrivateAddress2": "[concat(variables('intSubnet1PrivateAddressPrefix'), '.', add(int(variables('IntSubnet1StartInt')), 10))]",
         "intSubnet1PrivateAddress3": "[concat(variables('intSubnet1PrivateAddressPrefix'), '.', add(int(variables('IntSubnet1StartInt')), 11))]",
-
-        "internalLoadBalancerProbePort": "3456",
-        "internalLoadBalancerType": "Per-protocol",
 
         "NorthboundLoadBalancerNameb": "[concat(variables('dnsLabelPrefix'),'-nb-ilb')]",
         
@@ -630,6 +622,7 @@
         "mgmtSubnetName": "management",
         "ManagementAddressSubnet": "192.168.1.0/24",
         "ManagementAddressStartIP": "192.168.1.4",
+
         "mgmtSubnetPrivateAddress": "[variables('ManagementAddressStartIP')]",
         "mgmtSubnetPrivateAddressPrefix": "[substring(variables('ManagementAddressStartIP'), 0, lastindexOf(variables('ManagementAddressStartIP'), '.'))]",
         "mgmtSubnetStartDirty": "[substring(variables('ManagementAddressStartIP'), lastIndexOf(variables('ManagementAddressStartIP'), '.'), sub(length(variables('ManagementAddressStartIP')), lastIndexOf(variables('ManagementAddressStartIP'), '.') ))]",

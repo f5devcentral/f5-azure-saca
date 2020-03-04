@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "6.0.2.0",
     "parameters": {
         "adminUsername": {
@@ -364,9 +364,6 @@
         "availabilitySetId2": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('availabilitySetName2'))]"
         },
-        "availabilitySetId3": {
-            "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('availabilitySetName3'))]"
-        },
         "backEndAddressPoolArray": [
             {
                 "id": "[concat(variables('nbALBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
@@ -388,9 +385,6 @@
         },
         "IPSBackEndAddressPool": {
             "id": "[concat(variables('IPSILBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
-        },
-        "MgmtBackEndAddressPool": {
-            "id": "[concat(variables('mgmtALBid'), '/backendAddressPools/', 'loadBalancerBackEnd')]"
         },
         "bigIpNicPortMap": {
             "1": {
@@ -526,8 +520,10 @@
         "NorthboundLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-nb-alb')]",
         "mgmtLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-mgmt-alb')]",
         "extpublicIPAddressNamePrefix": "[concat(variables('dnsLabelPrefix'), '-ext-pip')]",
+
         "mgmtPublicIPAddressIdPrefix": "[resourceId('Microsoft.Network/publicIPAddresses', variables('mgmtPublicIPAddressName'))]",
         "mgmtPublicIPAddressName": "[concat(variables('dnsLabelPrefix'), '-mgmt-pip')]",
+
         "nbILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('NorthboundLoadBalancerNameb'))]",
         "intNicName": "[concat(variables('dnsLabelPrefix'), '-int')]",
         "intSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('intsubnetName'))]",
@@ -539,10 +535,9 @@
         "intSubnetPrivateAddress1": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 1))]",
         "intSubnetPrivateAddress2": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 10))]",
         "intSubnetPrivateAddress3": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 11))]",
-        "internalLoadBalancerAddress": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 65))]",
+
         "NorthboundLoadBalancerNameb": "[concat(variables('dnsLabelPrefix'),'-nb-ilb')]",
-        "internalLoadBalancerProbePort": "3456",
-        "internalLoadBalancerType": "Per-protocol",
+
         "tmmRouteGw": "[concat(variables('extSubnetPrivateAddressPrefix'), '.1')]",
         "mgmtALBid": "[resourceId('Microsoft.Network/loadBalancers',variables('mgmtLoadBalancerName'))]",
         "sbILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('SouthboundLoadBalancerName'))]",
