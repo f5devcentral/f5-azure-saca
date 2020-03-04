@@ -438,7 +438,7 @@
         "deploymentId": "[concat(variables('subscriptionId'), resourceGroup().id, deployment().name, variables('dnsLabelPrefix'))]",
         "dnsLabelPrefix": "[toLower(parameters('dnsLabelPrefix'))]",
         "enableNetworkFailover": "Yes",
-        "f5AS3Build": "f5-appsvcs-3.13.1-1.noarch.rpm",
+        "f5AS3Build": "f5-appsvcs-3.16.0-6.noarch.rpm",
         "f5CloudIappsLoggerTag": "v1.0.0",
         "f5CloudIappsSdTag": "v2.3.2",
         "f5CloudLibsTag": "v4.9.1",
