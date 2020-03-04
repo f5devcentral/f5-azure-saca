@@ -5,15 +5,17 @@ All notable changes to this project will be documented in this file.
 ## TODO
 
 - remove unused variables
-- add deploy buttons for PAYG
+- add deploy buttons for PAYG Licensed
+- add deploy button for BIGIQ Licensed
 
-## [2.6.1] - 2020-03-03
+## [2.6.1] - 2020-03-04
 
 ### Changed
 
 - 3 Tier: Changed DeclarationURL to Tier 1 and Tier 3 Declaration URLs to allow seperate AS3 declarations for each tier.
 - Adjusted outputs to proper PIP FQDN output
 - Extensive Changes to Microsoft.Compute/virtualMachines/extensions commandToExecute to help optimize time and clean up order of operations.
+- Updated BYOL template AS3 release, and moved everything to b64 scripts
 
 ### Added
 
