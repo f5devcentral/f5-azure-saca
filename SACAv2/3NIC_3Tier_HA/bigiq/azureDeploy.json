@@ -2835,13 +2835,5 @@
         }
     ],
     "outputs": {
-        "RDP-URL": {
-            "type": "string",
-            "value": "[concat('rdp://',reference(concat(variables('extPublicIPAddressNamePrefix'), '0')).dnsSettings.fqdn)]"
-        },
-        "SSH-URL": {
-            "type": "string",
-            "value": "[concat('ssh://', parameters('adminUsername'), '@', reference(concat(variables('extPublicIPAddressNamePrefix'), '0')).dnsSettings.fqdn)]"
-        }
     }
 }

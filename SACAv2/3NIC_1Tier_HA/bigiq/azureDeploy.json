@@ -1647,13 +1647,5 @@
         }
     ],
     "outputs": {
-        "GUI-URL": {
-            "type": "string",
-            "value": "[concat('https://',reference(concat(variables('mgmtPublicIPAddressId'), '0')).dnsSettings.fqdn, ':', variables('bigIpMgmtPort'))]"
-        },
-        "SSH-URL": {
-            "type": "string",
-            "value": "[concat(reference(concat(variables('mgmtPublicIPAddressId'), '0')).dnsSettings.fqdn,' ',22)]"
-        }
     }
 }
