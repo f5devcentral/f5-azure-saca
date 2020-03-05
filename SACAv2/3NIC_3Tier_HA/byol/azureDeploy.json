@@ -2700,13 +2700,13 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/f5-cloud-libs.tar.gz",
-                        "[concat('https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
+                        "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/f5-cloud-libs.tar.gz",
+                        "[concat('https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
-                        "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
+                        "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh",
-                        "https://raw.githubusercontent.com/Mikej81/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
+                        "https://raw.githubusercontent.com/f5devcentral/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
                     ]
                 },
                 "type": "CustomScript",
@@ -2731,8 +2731,8 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/f5-cloud-libs.tar.gz",
-                        "[concat('https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
+                        "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/f5-cloud-libs.tar.gz",
+                        "[concat('https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh"
@@ -2762,13 +2762,13 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/f5-cloud-libs.tar.gz",
-                        "[concat('https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
+                        "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/f5-cloud-libs.tar.gz",
+                        "[concat('https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
-                        "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
+                        "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh",
-                        "https://raw.githubusercontent.com/Mikej81/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
+                        "https://raw.githubusercontent.com/f5devcentral/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
                     ]
                 },
                 "type": "CustomScript",
@@ -2795,8 +2795,8 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/f5-cloud-libs.tar.gz",
-                        "[concat('https://raw.githubusercontent.com/Mikej81/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
+                        "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/f5-cloud-libs.tar.gz",
+                        "[concat('https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh"
