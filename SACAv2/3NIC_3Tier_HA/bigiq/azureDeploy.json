@@ -2731,7 +2731,7 @@
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh",
-                        "https://raw.githubusercontent.com/f5devcentral/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
+                        "https://raw.githubusercontent.com/mikej81/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
                     ]
                 },
                 "type": "CustomScript",
@@ -2793,7 +2793,7 @@
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh",
-                        "https://raw.githubusercontent.com/f5devcentral/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
+                        "https://raw.githubusercontent.com/mikej81/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
                     ]
                 },
                 "type": "CustomScript",
