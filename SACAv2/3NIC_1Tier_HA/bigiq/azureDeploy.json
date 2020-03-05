@@ -3,7 +3,7 @@
     "contentVersion": "7.2.0.0",
     "parameters": {
         "adminUsername": {
-            "defaultValue": "azureuser",
+            "defaultValue": "xadmin",
             "metadata": {
                 "description": "User name for the Virtual Machine."
             },
@@ -33,6 +33,7 @@
             "type": "securestring"
         },
         "dnsLabel": {
+            "defaultValue": "f5dns01",
             "metadata": {
                 "description": "Unique DNS Name for the Public IP address used to access the Virtual Machine."
             },
@@ -268,7 +269,7 @@
             "type": "string"
         },
         "declarationUrl": {
-            "defaultValue": "NOT_SPECIFIED",
+            "defaultValue": "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/AS3/sccaBaseline.json",
             "metadata": {
                 "description": "URL for the AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration."
             },
@@ -546,6 +547,7 @@
         "extSubnetName": "external",
         "extSubnetPrivateAddress": "[parameters('NorthUntrustedAddressStartIP')]",
         "extSubnetPrivateAddress1": "[concat(variables('extSubnetPrivateAddressPrefix'), '.',add(int(variables('extSubnetStartInt')), 1))]",
+
         "extSubnetPrivateAddressPrefix": "[substring(parameters('NorthUntrustedAddressStartIP'), 0, lastindexOf(parameters('NorthUntrustedAddressStartIP'), '.'))]",
         "extSubnetStartDirty": "[substring(parameters('NorthUntrustedAddressStartIP'), lastIndexOf(parameters('NorthUntrustedAddressStartIP'), '.'), sub(length(parameters('NorthUntrustedAddressStartIP')), lastIndexOf(parameters('NorthUntrustedAddressStartIP'), '.')))]",
         "extSubnetStartInt": "[replace(variables('extSubnetStartDirty'), '.','')]",
@@ -888,7 +890,7 @@
                             "loadBalancerBackendAddressPools": "[if(equals(variables('numberOfExternalIps'), 0), take(variables('backEndAddressPoolArray'), 0), take(variables('backEndAddressPoolArray'), 1))]",
                             "primary": false,
                             "privateIPAllocationMethod": "Static",
-                            "privateIPAddress": "[concat(variables('extSubnetPrivateAddressPrefix'), 10)]",
+                            "privateIPAddress": "[concat(variables('extSubnetPrivateAddressPrefix'), '.', 10)]",
                             "subnet": {
                                 "id": "[variables('extSubnetId')]"
                             }
@@ -932,7 +934,7 @@
                             "loadBalancerBackendAddressPools": "[if(equals(variables('numberOfExternalIps'), 0), take(variables('backEndAddressPoolArray'), 0), take(variables('backEndAddressPoolArray'), 1))]",
                             "primary": false,
                             "privateIPAllocationMethod": "Static",
-                            "privateIPAddress": "[concat(variables('extSubnetPrivateAddressPrefix'), 11)]",
+                            "privateIPAddress": "[concat(variables('extSubnetPrivateAddressPrefix'), '.', 11)]",
                             "subnet": {
                                 "id": "[variables('extSubnetId')]"
                             }
