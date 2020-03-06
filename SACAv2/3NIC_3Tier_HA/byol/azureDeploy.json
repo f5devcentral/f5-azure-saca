@@ -363,10 +363,6 @@
     },
     "variables": {
         "tagValues": "[parameters('tagValues')]",
-        "failovertagValues": {
-            "f5_cloud_failover_label": "scca",
-            "f5_cloud_failover_nic_map": "external"
-        },
         "adminPasswordOrKey": "[replace(parameters('adminPasswordOrKey'),'\\n', '\n')]",
         "allowUsageAnalytics": {
             "No": {
@@ -375,10 +371,13 @@
             },
             "Yes": {
                 "hashCmd": "[concat('custId=`echo \"', variables('subscriptionId'), '\"|sha512sum|cut -d \" \" -f 1`; deployId=`echo \"', variables('deploymentId'), '\"|sha512sum|cut -d \" \" -f 1`')]",
-                "metricsCmd": "[concat(' --metrics customerId:${custId},deploymentId:${deployId},templateName:failover-lb_3nic-new-stack-supported,templateVersion:6.0.2.0,region:', variables('location'), ',bigIpVersion:', parameters('bigIpVersion') ,',licenseType:byol,cloudLibsVersion:', variables('f5CloudLibsTag'), ',cloudName:azure')]"
+                "metricsCmd": "[concat(' --metrics customerId:${custId},deploymentId:${deployId},templateName:failover_3nic-new-stack-supported-payg,templateVersion:7.2.0.0,region:', variables('location'), ',bigIpVersion:', parameters('bigIpVersion') ,',licenseType:payg,cloudLibsVersion:', variables('f5CloudLibsTag'), ',cloudName:azure')]"
             }
         },
-        "routeTableName": "BasicUDR",
+                "failovertagValues": {
+            "f5_cloud_failover_label": "scca",
+            "f5_cloud_failover_nic_map": "external"
+        },
         "appScript": "IyEvYmluL2Jhc2gKZnVuY3Rpb24gcGFzc3dkKCkgewogIGVjaG8gfCBmNS1yZXN0LW5vZGUgL2NvbmZpZy9jbG91ZC9henVyZS9ub2RlX21vZHVsZXMvQGY1ZGV2Y2VudHJhbC9mNS1jbG91ZC1saWJzL3NjcmlwdHMvZGVjcnlwdERhdGFGcm9tRmlsZS5qcyAtLWRhdGEtZmlsZSAvY29uZmlnL2Nsb3VkLy5wYXNzd2QgfCBhd2sgJ3twcmludCAkMX0nCn0KCndoaWxlIGdldG9wdHMgbzp1OiBvcHRpb24KZG8gY2FzZSAiJG9wdGlvbiIgIGluCiAgICAgICAgbykgZGVjbGFyYXRpb25Vcmw9JE9QVEFSRzs7CiAgICAgICAgdSkgdXNlcj0kT1BUQVJHOzsKICAgIGVzYWMKZG9uZQoKZGVwbG95ZWQ9Im5vIgpmaWxlX2xvYz0iL2NvbmZpZy9jbG91ZC9jdXN0b21fY29uZmlnIgpkZmxfbWdtdF9wb3J0PWB0bXNoIGxpc3Qgc3lzIGh0dHBkIHNzbC1wb3J0IHwgZ3JlcCBzc2wtcG9ydCB8IHNlZCAncy9zc2wtcG9ydCAvLztzLyAvL2cnYAp1cmxfcmVnZXg9IihodHRwOlwvXC98aHR0cHM6XC9cLyk/W2EtejAtOV0rKFtcLVwuXXsxfVthLXowLTldKykqXC5bYS16XXsyLDV9KDpbMC05XXsxLDV9KT8oXC8uKik/JCIKCmlmIFtbICRkZWNsYXJhdGlvblVybCA9fiAkdXJsX3JlZ2V4IF1dOyB0aGVuCiAgICByZXNwb25zZV9jb2RlPSQoL3Vzci9iaW4vY3VybCAtLWludGVyZmFjZSBtZ210IC1zayAtdyAiJXtodHRwX2NvZGV9IiAkZGVjbGFyYXRpb25VcmwgLW8gJGZpbGVfbG9jKQogICAgaWYgW1sgJHJlc3BvbnNlX2NvZGUgPT0gMjAwIF1dOyB0aGVuCiAgICAgICAgIGVjaG8gIkN1c3RvbSBjb25maWcgZG93bmxvYWQgY29tcGxldGU7IGNoZWNraW5nIGZvciB2YWxpZCBKU09OLiIKICAgICAgICAgY2F0ICRmaWxlX2xvYyB8IGpxIC5jbGFzcwogICAgICAgICBpZiBbWyAkPyA9PSAwIF1dOyB0aGVuCiAgICAgICAgICAgICByZXNwb25zZV9jb2RlPSQoL3Vzci9iaW4vY3VybCAtc2t2dnUgJHVzZXI6JChwYXNzd2QpIC13ICIle2h0dHBfY29kZX0iIC1YIFBPU1QgLUggIkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbiIgLUggJ0V4cGVjdDonIC1kICJAJGZpbGVfbG9jIiBodHRwczovL2xvY2FsaG9zdDokZGZsX21nbXRfcG9ydC9tZ210L3NoYXJlZC9hcHBzdmNzL2RlY2xhcmUgLW8gL2Rldi9udWxsKQoKICAgICAgICAgICAgIGlmIFtbICRyZXNwb25zZV9jb2RlID09IDIwMCB8fCAkcmVzcG9uc2VfY29kZSA9PSAyMDcgfHwgJHJlc3BvbnNlX2NvZGUgPT0gNTAyIF1dOyB0aGVuCiAgICAgICAgICAgICAgICAgIGVjaG8gIkRlcGxveW1lbnQgb2YgYXBwbGljYXRpb24gc3VjY2VlZGVkLiAkcmVzcG9uc2VfY29kZSIKICAgICAgICAgICAgICAgICAgZGVwbG95ZWQ9InllcyIKICAgICAgICAgICAgIGVsc2UKICAgICAgICAgICAgICAgICBlY2hvICJGYWlsZWQgdG8gZGVwbG95IGFwcGxpY2F0aW9uOyBjb250aW51aW5nIHdpdGggcmVzcG9uc2UgY29kZSAnIiRyZXNwb25zZV9jb2RlIiciCiAgICAgICAgICAgICBmaQogICAgICAgICBlbHNlCiAgICAgICAgICAgICBlY2hvICJDdXN0b20gY29uZmlnIHdhcyBub3QgdmFsaWQgSlNPTiwgY29udGludWluZyIKICAgICAgICAgZmkKICAgIGVsc2UKICAgICAgICBlY2hvICJGYWlsZWQgdG8gZG93bmxvYWQgY3VzdG9tIGNvbmZpZzsgY29udGludWluZyB3aXRoIHJlc3BvbnNlIGNvZGUgJyIkcmVzcG9uc2VfY29kZSInIgogICAgZmkKZWxzZQogICAgIGVjaG8gIkN1c3RvbSBjb25maWcgd2FzIG5vdCBhIFVSTCwgY29udGludWluZy4iCmZpCgppZiBbWyAkZGVwbG95ZWQgPT0gIm5vIiAmJiAkZGVjbGFyYXRpb25VcmwgPT0gIk5PVF9TUEVDSUZJRUQiIF1dOyB0aGVuCiAgICBlY2hvICJBcHBsaWNhdGlvbiBkZXBsb3ltZW50IGZhaWxlZCBvciBjdXN0b20gVVJMIHdhcyBub3Qgc3BlY2lmaWVkLiIKZmkKCmVjaG8gIkRlcGxveW1lbnQgY29tcGxldGUuIgpleGl0",
         "availabilitySetName0": "[concat(variables('dnsLabelPrefix'), '-avset0')]",
         "availabilitySetName1": "[concat(variables('dnsLabelPrefix'), '-avset1')]",
@@ -461,12 +460,10 @@
         "deploymentId": "[concat(variables('subscriptionId'), resourceGroup().id, deployment().name, variables('dnsLabelPrefix'))]",
         "dnsLabelPrefix": "[toLower(parameters('dnsLabelPrefix'))]",
         "enableNetworkFailover": "Yes",
-
         "f5AS3Build": "f5-appsvcs-3.16.0-6.noarch.rpm",
         "f5CloudIappsLoggerTag": "v1.0.0",
         "f5CloudIappsSdTag": "v2.3.2",
         "f5CloudLibsTag": "v4.9.1",
-
         "failoverCmdArray": {
             "No": {
                 "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address none')]",
@@ -483,11 +480,222 @@
                 "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address none')]"
             },
             "Yes": {
-                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('int2SubnetPrivateAddress'), ' port 1026 } } mirror-ip ', variables('int2SubnetPrivateAddress'))]",
-                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('int2SubnetPrivateAddress1'), ' port 1026 } } mirror-ip ', variables('int2SubnetPrivateAddress1'))]"
+                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnet2PrivateAddress'), ' port 1026 } } mirror-ip ', variables('intSubnet2PrivateAddress'))]",
+                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnet2PrivateAddress1'), ' port 1026 } } mirror-ip ', variables('intSubnet2PrivateAddress1'))]"
             }
         },
 
+        "installCustomConfig": "[concat(variables('singleQuote'), '#!/bin/bash\n', variables('customConfig'), variables('singleQuote'))]",
+        "instanceName": "[toLower(parameters('instanceName'))]",
+        "nbALBid": "[resourceId('Microsoft.Network/loadBalancers',variables('NorthboundLoadBalancerName'))]",
+        "extNicName": "[concat(variables('dnsLabelPrefix'), '-ext')]",
+        "extNsgID": "[resourceId('Microsoft.Network/networkSecurityGroups/',concat(variables('dnsLabelPrefix'),'-ext-nsg'))]",
+        "extPublicIPAddressIdPrefix": "[resourceId('Microsoft.Network/publicIPAddresses', variables('extPublicIPAddressNamePrefix'))]",
+        "extSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('extsubnetName'))]",
+        "extSubnetName": "external",
+        "extSubnetPrivateAddressPrefix": "[substring(parameters('NorthUntrustedAddressStartIP'), 0, lastindexOf(parameters('NorthUntrustedAddressStartIP'), '.'))]",
+        "extSubnetStartDirty": "[substring(parameters('NorthUntrustedAddressStartIP'), lastIndexOf(parameters('NorthUntrustedAddressStartIP'), '.'), sub(length(parameters('NorthUntrustedAddressStartIP')), lastIndexOf(parameters('NorthUntrustedAddressStartIP'), '.')))]",
+        "extSubnetStartInt": "[replace(variables('extSubnetStartDirty'), '.','')]",
+        "extSubnetPrivateAddress": "[parameters('NorthUntrustedAddressStartIP')]",
+        "extSubnetPrivateAddress1": "[concat(variables('extSubnetPrivateAddressPrefix'), '.',add(int(variables('extSubnetStartInt')), 1))]",
+        "NorthboundLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-nb-alb')]",
+        "mgmtLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-mgmt-alb')]",
+        "extpublicIPAddressNamePrefix": "[concat(variables('dnsLabelPrefix'), '-ext-pip')]",
+
+        "mgmtPublicIPAddressName": "[concat(variables('dnsLabelPrefix'), '-mgmt-pip')]",
+        "mgmtPublicIPAddressIdPrefix": "[resourceId('Microsoft.Network/publicIPAddresses', variables('mgmtPublicIPAddressName'))]",
+        
+        "nbILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('NorthboundLoadBalancerNameb'))]",
+
+        "intNicName": "[concat(variables('dnsLabelPrefix'), '-int')]",
+        "intSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('intsubnetName'))]",
+        "intSubnetName": "internalNorth",
+        "intSubnetPrivateAddressPrefix": "[substring(parameters('NorthTrustedAddressStartIP'), 0, lastindexOf(parameters('NorthTrustedAddressStartIP'), '.'))]",
+        "intSubnetStartDirty": "[substring(parameters('NorthTrustedAddressStartIP'), lastIndexOf(parameters('NorthTrustedAddressStartIP'), '.'), sub(length(parameters('NorthTrustedAddressStartIP')), lastIndexOf(parameters('NorthTrustedAddressStartIP'), '.') ))]",
+        "intSubnetStartInt": "[replace(variables('intSubnetStartDirty'), '.', '')]",
+        "intSubnetPrivateAddress": "[parameters('NorthTrustedAddressStartIP')]",
+        "intSubnetPrivateAddress1": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 1))]",
+        "intSubnetPrivateAddress2": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 10))]",
+        "intSubnetPrivateAddress3": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 11))]",
+
+        "intSubnet2Name": "internalSouth",
+        "intSubnet2Id": "[concat(variables('vnetId'), '/subnets/', variables('intSubnet2Name'))]",
+        "intSubnet2PrivateAddressPrefix": "[substring(parameters('SouthTrustedAddressStartIP'), 0, lastindexOf(parameters('SouthTrustedAddressStartIP'), '.'))]",
+        "intSubnet2StartDirty": "[substring(parameters('SouthTrustedAddressStartIP'), lastIndexOf(parameters('SouthTrustedAddressStartIP'), '.'), sub(length(parameters('SouthTrustedAddressStartIP')), lastIndexOf(parameters('SouthTrustedAddressStartIP'), '.') ))]",
+        "intSubnet2StartInt": "[replace(variables('intSubnet2StartDirty'), '.', '')]",
+        "intSubnet2PrivateAddress": "[parameters('SouthTrustedAddressStartIP')]",
+        "intSubnet2PrivateAddress1": "[concat(variables('intSubnet2PrivateAddressPrefix'), '.', add(int(variables('intSubnet2StartInt')), 1))]",
+        "intSubnet2PrivateAddress2": "[concat(variables('intSubnet2PrivateAddressPrefix'), '.', add(int(variables('intSubnet2StartInt')), 10))]",
+        "intSubnet2PrivateAddress3": "[concat(variables('intSubnet2PrivateAddressPrefix'), '.', add(int(variables('intSubnet2StartInt')), 11))]",
+
+        "NorthboundLoadBalancerNameb": "[concat(variables('dnsLabelPrefix'),'-nb-ilb')]",
+        
+        "tmmRouteGw": "[concat(variables('extSubnetPrivateAddressPrefix'), '.1')]",
+
+        "mgmtALBid": "[resourceId('Microsoft.Network/loadBalancers',variables('mgmtLoadBalancerName'))]",
+        "sbILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('SouthboundLoadBalancerName'))]",
+        "SouthboundLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-sb-ilb')]",
+        "ext2SubnetName": "external2",
+        "ext2SubnetPrivateAddressPrefix": "[substring(parameters('SouthUntrustedAddressStartIP'), 0, lastindexOf(parameters('SouthUntrustedAddressStartIP'), '.'))]",
+        "ext2SubnetStartDirty": "[substring(parameters('SouthUntrustedAddressStartIP'), lastIndexOf(parameters('SouthUntrustedAddressStartIP'), '.'), sub(length(parameters('SouthUntrustedAddressStartIP')), lastIndexOf(parameters('SouthUntrustedAddressStartIP'), '.')))]",
+        "ext2SubnetStartInt": "[replace(variables('ext2SubnetStartDirty'), '.','')]",
+        "ext2SubnetPrivateAddress": "[parameters('SouthUntrustedAddressStartIP')]",
+        "ext2SubnetPrivateAddress1": "[concat(variables('ext2SubnetPrivateAddressPrefix'), '.',add(int(variables('ext2SubnetStartInt')), 1))]",
+        "ext2SubnetId": "[concat(variables('vnetId'), '/subnets/', variables('ext2subnetName'))]",
+
+        "tmmRoute2Gw": "[concat(variables('intSubnet2PrivateAddressPrefix'), '.1')]",
+        "IPSILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('IPSLoadBalancerName'))]",
+        "IPSLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-ips-ilb')]",
+        "IPSFirewallName": "[concat(variables('dnsLabelPrefix'),'-ips-fw')]",
+        "IPSExtNicName": "[concat(variables('dnsLabelPrefix'), '-IPSExt')]",
+        "IPSExtSubnetName": "ips-external",
+        "IPSExtSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('IPSExtSubnetName'))]",
+        "IPSExtSubnetPrivateAddressPrefix": "[substring(parameters('IPSUntrustedAddressStartIP'), 0, lastindexOf(parameters('IPSUntrustedAddressStartIP'), '.'))]",
+        "IPSExtSubnetStartDirty": "[substring(parameters('IPSUntrustedAddressStartIP'), lastIndexOf(parameters('IPSUntrustedAddressStartIP'), '.'), sub(length(parameters('IPSUntrustedAddressStartIP')), lastIndexOf(parameters('IPSUntrustedAddressStartIP'), '.')))]",
+        "IPSExtSubnetStartInt": "[replace(variables('IPSExtSubnetStartDirty'), '.','')]",
+        "IPSExtSubnetPrivateAddress": "[parameters('IPSUntrustedAddressStartIP')]",
+        "IPSExtSubnetPrivateAddress1": "[concat(variables('IPSExtSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSExtSubnetStartInt')), 1))]",
+        "IPSExtSubnetPrivateAddress2": "[concat(variables('IPSExtSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSExtSubnetStartInt')), 10))]",
+        "IPSExtSubnetPrivateAddress3": "[concat(variables('IPSExtSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSExtSubnetStartInt')), 11))]",
+        "IPSIntNicName": "[concat(variables('dnsLabelPrefix'), '-IPSInt')]",
+        "IPSIntSubnetName": "ips-internal",
+        "IPSIntSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('IPSIntSubnetName'))]",
+        "IPSIntSubnetPrivateAddressPrefix": "[substring(parameters('IPSTrustedAddressStartIP'), 0, lastindexOf(parameters('IPSTrustedAddressStartIP'), '.'))]",
+        "IPSIntSubnetStartDirty": "[substring(parameters('IPSTrustedAddressStartIP'), lastIndexOf(parameters('IPSTrustedAddressStartIP'), '.'), sub(length(parameters('IPSTrustedAddressStartIP')), lastIndexOf(parameters('IPSTrustedAddressStartIP'), '.')))]",
+        "IPSIntSubnetStartInt": "[replace(variables('IPSIntSubnetStartDirty'), '.','')]",
+        "IPSIntSubnetPrivateAddress": "[parameters('IPSTrustedAddressStartIP')]",
+        "IPSIntSubnetPrivateAddress1": "[concat(variables('IPSIntSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSIntSubnetStartInt')), 1))]",
+        "IPSIntSubnetPrivateAddress2": "[concat(variables('IPSIntSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSIntSubnetStartInt')), 10))]",
+        "IPSIntSubnetPrivateAddress3": "[concat(variables('IPSIntSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSIntSubnetStartInt')), 11))]",
+
+        "isAcceleratedNetworkingSupported": "[if(not(contains(parameters('bigIpVersion'),  '14.1.200000')), bool('true'), bool('false'))]",
+
+        "mgmtNicName": "[concat(variables('dnsLabelPrefix'), '-mgmt')]",
+        "mgmtSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('mgmtSubnetName'))]",
+        "mgmtSubnetName": "management",
+        "ManagementAddressSubnet": "192.168.1.0/24",
+        "ManagementAddressStartIP": "192.168.1.4",
+
+        "mgmtSubnetPrivateAddress": "[variables('ManagementAddressStartIP')]",
+        "mgmtSubnetPrivateAddressPrefix": "[substring(variables('ManagementAddressStartIP'), 0, lastindexOf(variables('ManagementAddressStartIP'), '.'))]",
+        "mgmtSubnetStartDirty": "[substring(variables('ManagementAddressStartIP'), lastIndexOf(variables('ManagementAddressStartIP'), '.'), sub(length(variables('ManagementAddressStartIP')), lastIndexOf(variables('ManagementAddressStartIP'), '.') ))]",
+        "mgmtSubnetStartInt": "[replace(variables('mgmtSubnetStartDirty'), '.','')]",
+        "mgmtSubnetPrivateAddress1": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 5))]",
+        "mgmtSubnetPrivateAddress2": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 6))]",
+        "mgmtSubnetPrivateAddress3": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 7))]",
+        "mgmtSubnetPrivateAddress4": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 50))]",
+        "mgmtSubnetPrivateAddress5": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 51))]",
+        "mgmtSubnetPrivateAddress6": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 61))]",
+        "mgmtSubnetPrivateAddress7": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 62))]",
+
+        "stigCmdArray": {
+            "true": "bash ./bigipstig.sh;",
+            "false": ""
+        },
+        "cmdConfigStig": "[if(parameters('STIGDevice'), variables('stigCmdArray').true, variables('stigCmdArray').false)]",
+        "createFWLogArray": {
+            "true": "tmsh create security log profile local-afm-log { network replace-all-with { local-afm-log { publisher local-db-publisher filter { log-acl-match-accept enabled log-acl-match-drop enabled log-acl-match-reject enabled } } } };",
+            "false": ""
+        },
+        "cmdcreateFWLog": "[if(contains(parameters('Tier1bigIpModules'), 'afm'), variables('createFWLogArray').true, variables('createFWLogArray').false)]",
+        "cmdcreateFWLog2": "[if(contains(parameters('Tier3bigIpModules'), 'afm'), variables('createFWLogArray').true, variables('createFWLogArray').false)]",
+        "createFWPolicyArray": {
+            "true": "tmsh create security firewall policy log_all_afm rules add { allow_all { action accept log yes place-before first } deny_all { action reject log yes place-after allow_all } };",
+            "false": ""
+        },
+        "cmdcreateFWPolicy": "[if(contains(parameters('Tier1bigIpModules'), 'afm'), variables('createFWPolicyArray').true, variables('createFWPolicyArray').false)]",
+        "cmdcreateFWPolicy2": "[if(contains(parameters('Tier1bigIpModules'), 'afm'), variables('createFWPolicyArray').true, variables('createFWPolicyArray').false)]",
+        "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip; openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer; tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer;",
+        "firewallConfig": "[concat(variables('cmdcreateFWLog'), variables('cmdcreateFWPolicy'))]",
+        "firewallConfig2": "[concat(variables('cmdcreateFWLog2'), variables('cmdcreateFWPolicy2'))]",
+        
+        "sacaConfig": "[variables('cmdConfigStig')]",
+
+        "vdmsSubnetName": "VDMS",
+        "windowsOSVersion": "2019-Datacenter",
+        "WinvmName": "[concat(variables('dnsLabelPrefix'), '-win-jb')]",
+        "jbimageOffer": "UbuntuServer",
+        "jbimagePublisher": "Canonical",
+        "jblinuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+                "publicKeys": [
+                    {
+                        "keyData": "[parameters('adminPasswordOrKey')]",
+                        "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]"
+                    }
+                ]
+            }
+        },
+        "jbubuntuOSVersion": "18.04-LTS",
+        "jbvmName": "[concat(variables('dnsLabelPrefix'), '-linux-jump')]",
+        "jbvmSize": "Standard_A1",
+        "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+                "publicKeys": [
+                    {
+                        "keyData": "[variables('adminPasswordOrKey')]",
+                        "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]"
+                    }
+                ]
+            }
+        },
+        "location": "[resourceGroup().location]",
+
+        "networkApiVersion": "2017-11-01",
+        "newCustomImageName": "[concat(variables('dnsLabelPrefix'), 'image')]",
+        "newDataStorageAccountName": "[concat(uniqueString(variables('dnsLabelPrefix'), resourceGroup().id, deployment().name), 'data000')]",
+        "numberOfExternalIps": 1,
+
+        "osProfiles": {
+            "password": {
+                "adminPassword": "[variables('adminPasswordOrKey')]",
+                "adminUsername": "[parameters('adminUsername')]",
+                "computerName": "[variables('instanceName')]",
+                "linuxConfiguration": "[json('null')]"
+            },
+            "sshPublicKey": {
+                "adminUsername": "[parameters('adminUsername')]",
+                "computerName": "[variables('instanceName')]",
+                "linuxConfiguration": "[variables('linuxConfiguration')]"
+            }
+        },
+        "premiumInstanceArray": [
+            "Standard_DS2",
+            "Standard_DS3",
+            "Standard_DS4",
+            "Standard_DS11",
+            "Standard_DS12",
+            "Standard_DS13",
+            "Standard_DS14",
+            "Standard_DS2_v2",
+            "Standard_DS3_v2",
+            "Standard_DS4_v2",
+            "Standard_DS5_v2",
+            "Standard_DS11_v2",
+            "Standard_DS12_v2",
+            "Standard_DS13_v2",
+            "Standard_DS14_v2",
+            "Standard_DS15_v2",
+            "Standard_F2S",
+            "Standard_F4S",
+            "Standard_F8S",
+            "Standard_F16S",
+            "Standard_GS2",
+            "Standard_GS3",
+            "Standard_GS4",
+            "Standard_GS5"
+        ],
+        "publicIPAddressType": "Static",
+        "resourceGroupName": "[resourceGroup().name]",
+
+        "routeCmd": "route",
+        "singleQuote": "'",
+
+        "imageNameToLower": "[toLower(parameters('imageName'))]",
+        "skuToUse": "[concat('f5-', variables('imageNameSub'),'-byol')]",
+        "offerToUse": "[concat('f5-big-ip-', variables('imageNameArray').offerPostfix[variables('imageNameSub')])]",
         "imageNameSub": "[variables('imageNameArray')[parameters('bigIpVersion')][parameters('imageName')]]",
         "imageNameArray": {
             "15.0.100000": {
@@ -528,266 +736,6 @@
             "sku": "[variables('skuToUse')]",
             "version": "[parameters('bigIpVersion')]"
         },
-
-        "verifyHash64": "Y2xpIHNjcmlwdCAvQ29tbW9uL3ZlcmlmeUhhc2ggewpwcm9jIHNjcmlwdDo6cnVuIHt9IHsKICAgICAgICBpZiB7W2NhdGNoIHsKICAgICAgICAgICAgc2V0IGhhc2hlcyhhc20tcG9saWN5LWxpbnV4LnRhci5neikgNjNiNWMyYTUxY2EwOWM0M2JkODlhZjM3NzNiYmFiODdjNzFhNmU3ZjZhZDk0MTBiMjI5YjRlMGExYzQ4M2Q0NmYxYTlmZmYzOWQ5OTQ0MDQxYjAyZWU5MjYwNzI0MDI3NDE0ZGU1OTJlOTlmNGMyNDc1NDE1MzIzZTE4YTcyZTAKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5odHRwLnYxLjIuMHJjNC50bXBsKSA0N2MxOWE4M2ViZmM3YmQxZTllOWMzNWYzNDI0OTQ1ZWY4Njk0YWE0MzdlZWRkMTdiNmEzODc3ODhkNGRiMTM5NmZlZmU0NDUxOTliNDk3MDY0ZDc2OTY3YjBkNTAyMzgxNTQxOTBjYTBiZDczOTQxMjk4ZmMyNTdkZjRkYzAzNAogICAgICAgICAgICBzZXQgaGFzaGVzKGY1Lmh0dHAudjEuMi4wcmM2LnRtcGwpIDgxMWIxNGJmZmFhYjVlZDAzNjVmMDEwNmJiNWNlNWU0ZWMyMjM4NTY1NWVhM2FjMDRkZTJhMzliZDk5NDRmNTFlMzcxNDYxOWRhZTdjYTQzNjYyYzk1NmI1MjEyMjI4ODU4ZjA1OTI2NzJhMjU3OWQ0YTg3NzY5MTg2ZTJjYmZlCiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuaHR0cC52MS4yLjByYzcudG1wbCkgMjFmNDEzMzQyZTlhN2EyODFhMGYwZTEzMDFlNzQ1YWE4NmFmMjFhNjk3ZDJlNmZkYzIxZGQyNzk3MzQ5MzY2MzFlOTJmMzRiZjFjMmQyNTA0YzIwMWY1NmNjZDc1YzVjMTNiYWEyZmU3NjUzMjEzNjg5ZWMzYzllMjdkZmY3N2QKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5hd3NfYWR2YW5jZWRfaGEudjEuMy4wcmMxLnRtcGwpIDllNTUxNDljMDEwYzFkMzk1YWJkYWUzYzNkMmNiODNlYzEzZDMxZWQzOTQyNDY5NWU4ODY4MGNmM2VkNWEwMTNkNjI2YjMyNjcxMWQzZDQwZWYyZGY0NmI3MmQ0MTRiNGNiOGU0ZjQ0NWVhMDczOGRjYmQyNWM0Yzg0M2FjMzlkCiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuYXdzX2FkdmFuY2VkX2hhLnYxLjQuMHJjMS50bXBsKSBkZTA2ODQ1NTI1NzQxMmE5NDlmMWVhZGNjYWVlODUwNjM0N2UwNGZkNjliZmI2NDUwMDFiNzZmMjAwMTI3NjY4ZTRhMDZiZTJiYmI5NGUxMGZlZmMyMTVjZmMzNjY1YjA3OTQ1ZTZkNzMzY2JlMWE0ZmExYjg4ZTg4MTU5MDM5NgogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LmF3c19hZHZhbmNlZF9oYS52MS40LjByYzIudG1wbCkgNmFiMGJmZmM0MjZkZjdkMzE5MTNmOWE0NzRiMWEwNzg2MDQzNWUzNjZiMDdkNzdiMzIwNjRhY2ZiMjk1MmMxZjIwN2JlYWVkNzcwMTNhMTVlNDRkODBkNzRmMzI1M2U3Y2Y5ZmJiZTEyYTkwZWM3MTI4ZGU2ZmFjZDA5N2Q2OGYKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5hd3NfYWR2YW5jZWRfaGEudjEuNC4wcmMzLnRtcGwpIDJmMjMzOWI0YmMzYTIzYzljZmQ0MmFhZTJhNmRlMzliYTA2NTgzNjZmMjU5ODVkZTJlYTUzNDEwYTc0NWYwZjE4ZWVkYzQ5MWIyMGY0YThkYmE4ZGI0ODk3MDA5NmUyZWZkY2E3YjhlZmZmYTFhODNhNzhlNWFhZGYyMThiMTM0CiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuYXdzX2FkdmFuY2VkX2hhLnYxLjQuMHJjNC50bXBsKSAyNDE4YWM4YjFmMTg4NGM1YzA5NmNiYWM2YTk0ZDQwNTlhYWFmMDU5MjdhNmE0NTA4ZmQxZjI1YjhjYzYwNzc0OTg4MzlmYmRkYTgxNzZkMmNmMmQyNzRhMjdlNmExZGFlMmExZTNhMGE5OTkxYmM2NWZjNzRmYzBkMDJjZTk2MwogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LmF3c19hZHZhbmNlZF9oYS52MS40LjByYzUudG1wbCkgNWU1ODIxODdhZTFhNjMyM2UwOTVkNDFlZGRkNDExNTFkNmJkMzhlYjgzYzYzNDQxMGQ0NTI3YTNkMGUyNDZhOGZjNjI2ODVhYjA4NDlkZTJhZGU2MmIwMjc1ZjUxMjY0ZDJkZWFjY2JjMTZiNzczNDE3Zjg0N2E0YTFlYTliYzQKICAgICAgICAgICAgc2V0IGhhc2hlcyhhc20tcG9saWN5LnRhci5neikgMmQzOWVjNjBkMDA2ZDA1ZDhhMTU2N2ExZDhhYWU3MjI0MTllOGIwNjJhZDc3ZDZkOWEzMTY1Mjk3MWU1ZTY3YmM0MDQzZDgxNjcxYmEyYThiMTJkZDIyOWVhNDZkMjA1MTQ0Zjc1Mzc0ZWQ0Y2FlNThjZWZhOGY5YWI2NTMzZTYKICAgICAgICAgICAgc2V0IGhhc2hlcyhkZXBsb3lfd2FmLnNoKSAxYTNhM2M2Mjc0YWIwOGE3ZGMyY2I3M2FlZGM4ZDJiMmEyM2NkOWUwZWIwNmEyZTE1MzRiMzYzMmYyNTBmMWQ4OTcwNTZmMjE5ZDViMzVkM2VlZDEyMDcwMjZlODk5ODlmNzU0ODQwZmQ5Mjk2OWM1MTVhZTRkODI5MjE0ZmI3NAogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LnBvbGljeV9jcmVhdG9yLnRtcGwpIDA2NTM5ZTA4ZDExNWVmYWZlNTVhYTUwN2VjYjRlNDQzZTgzYmRiMWY1ODI1YTk1MTQ5NTRlZjZjYTU2ZDI0MGVkMDBjN2I1ZDY3YmQ4ZjY3YjgxNWVlOWRkNDY0NTE5ODQ3MDFkMDU4Yzg5ZGFlMjQzNGM4OTcxNWQzNzVhNjIwCgogICAgICAgICAgICBzZXQgZmlsZV9wYXRoIFtsaW5kZXggJHRtc2g6OmFyZ3YgMV0KICAgICAgICAgICAgc2V0IGZpbGVfbmFtZSBbZmlsZSB0YWlsICRmaWxlX3BhdGhdCgogICAgICAgICAgICBpZiB7IVtpbmZvIGV4aXN0cyBoYXNoZXMoJGZpbGVfbmFtZSldfSB7CiAgICAgICAgICAgICAgICB0bXNoOjpsb2cgZXJyICJObyBoYXNoIGZvdW5kIGZvciAkZmlsZV9uYW1lIgogICAgICAgICAgICAgICAgZXhpdCAxCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIHNldCBleHBlY3RlZF9oYXNoICRoYXNoZXMoJGZpbGVfbmFtZSkKICAgICAgICAgICAgc2V0IGNvbXB1dGVkX2hhc2ggW2xpbmRleCBbZXhlYyAvdXNyL2Jpbi9vcGVuc3NsIGRnc3QgLXIgLXNoYTUxMiAkZmlsZV9wYXRoXSAwXQogICAgICAgICAgICBpZiB7ICRleHBlY3RlZF9oYXNoIGVxICRjb21wdXRlZF9oYXNoIH0gewogICAgICAgICAgICAgICAgZXhpdCAwCiAgICAgICAgICAgIH0KICAgICAgICAgICAgdG1zaDo6bG9nIGVyciAiSGFzaCBkb2VzIG5vdCBtYXRjaCBmb3IgJGZpbGVfcGF0aCIKICAgICAgICAgICAgZXhpdCAxCiAgICAgICAgfV19IHsKICAgICAgICAgICAgdG1zaDo6bG9nIGVyciB7VW5leHBlY3RlZCBlcnJvciBpbiB2ZXJpZnlIYXNofQogICAgICAgICAgICBleGl0IDEKICAgICAgICB9CiAgICB9Cn0=",
-
-        "installCloudLibs64": "IyEvYmluL2Jhc2gKZWNobyAgYWJvdXQgdG8gZXhlY3V0ZQpjaGVja3M9MAp3aGlsZSBbICRjaGVja3MgLWx0IDEyMCBdOyBkbyBlY2hvIGNoZWNraW5nIG1jcGQKICAgIHRtc2ggLWEgc2hvdyBzeXMgbWNwLXN0YXRlIGZpZWxkLWZtdCB8IGdyZXAgLXEgcnVubmluZwogICBpZiBbICQ/ID09IDAgXTsgdGhlbgogICAgICAgZWNobyBtY3BkIHJlYWR5CiAgICAgICBicmVhawogICBmaQogICBlY2hvIG1jcGQgbm90IHJlYWR5IHlldAogICBsZXQgY2hlY2tzPWNoZWNrcysxCiAgIHNsZWVwIDEwCmRvbmUgCgplY2hvICBleHBhbmRpbmcgZjUtY2xvdWQtbGlicy50YXIuZ3oKdGFyIHh2ZnogL2NvbmZpZy9jbG91ZC9mNS1jbG91ZC1saWJzLnRhci5neiAtQyAvY29uZmlnL2Nsb3VkL2F6dXJlL25vZGVfbW9kdWxlcy9AZjVkZXZjZW50cmFsCmVjaG8gIGNsb3VkIGxpYnMgaW5zdGFsbCBjb21wbGV0ZQp0b3VjaCAvY29uZmlnL2Nsb3VkL2Nsb3VkTGlic1JlYWR5",
-
-        "installCustomConfig": "[concat(variables('singleQuote'), '#!/bin/bash\n', variables('customConfig'), variables('singleQuote'))]",
-
-        "instanceName": "[toLower(parameters('instanceName'))]",
-
-        "nbALBid": "[resourceId('Microsoft.Network/loadBalancers',variables('NorthboundLoadBalancerName'))]",
-        "extNicName": "[concat(variables('dnsLabelPrefix'), '-ext')]",
-        "extNsgID": "[resourceId('Microsoft.Network/networkSecurityGroups/',concat(variables('dnsLabelPrefix'),'-ext-nsg'))]",
-        "extPublicIPAddressIdPrefix": "[resourceId('Microsoft.Network/publicIPAddresses', variables('extPublicIPAddressNamePrefix'))]",
-        "extSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('extsubnetName'))]",
-        "extSubnetName": "external",
-        "extSubnetPrivateAddressPrefix": "[substring(parameters('NorthUntrustedAddressStartIP'), 0, lastindexOf(parameters('NorthUntrustedAddressStartIP'), '.'))]",
-        "extSubnetStartDirty": "[substring(parameters('NorthUntrustedAddressStartIP'), lastIndexOf(parameters('NorthUntrustedAddressStartIP'), '.'), sub(length(parameters('NorthUntrustedAddressStartIP')), lastIndexOf(parameters('NorthUntrustedAddressStartIP'), '.')))]",
-        "extSubnetStartInt": "[replace(variables('extSubnetStartDirty'), '.','')]",
-        "extSubnetPrivateAddress": "[parameters('NorthUntrustedAddressStartIP')]",
-        "extSubnetPrivateAddress1": "[concat(variables('extSubnetPrivateAddressPrefix'), '.',add(int(variables('extSubnetStartInt')), 1))]",
-        "NorthboundLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-nb-alb')]",
-        "mgmtLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-mgmt-alb')]",
-        "extpublicIPAddressNamePrefix": "[concat(variables('dnsLabelPrefix'), '-ext-pip')]",
-
-        "mgmtPublicIPAddressIdPrefix": "[resourceId('Microsoft.Network/publicIPAddresses', variables('mgmtPublicIPAddressName'))]",
-        "mgmtPublicIPAddressName": "[concat(variables('dnsLabelPrefix'), '-mgmt-pip')]",
-
-        "nbILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('NorthboundLoadBalancerNameb'))]",
-        "intNicName": "[concat(variables('dnsLabelPrefix'), '-int')]",
-        "intSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('intsubnetName'))]",
-        "intSubnetName": "internal",
-        "intSubnetPrivateAddressPrefix": "[substring(parameters('NorthTrustedAddressStartIP'), 0, lastindexOf(parameters('NorthTrustedAddressStartIP'), '.'))]",
-        "intSubnetStartDirty": "[substring(parameters('NorthTrustedAddressStartIP'), lastIndexOf(parameters('NorthTrustedAddressStartIP'), '.'), sub(length(parameters('NorthTrustedAddressStartIP')), lastIndexOf(parameters('NorthTrustedAddressStartIP'), '.') ))]",
-        "intSubnetStartInt": "[replace(variables('intSubnetStartDirty'), '.', '')]",
-        "intSubnetPrivateAddress": "[parameters('NorthTrustedAddressStartIP')]",
-        "intSubnetPrivateAddress1": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 1))]",
-        "intSubnetPrivateAddress2": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 10))]",
-        "intSubnetPrivateAddress3": "[concat(variables('intSubnetPrivateAddressPrefix'), '.', add(int(variables('IntSubnetStartInt')), 11))]",
-
-        "NorthboundLoadBalancerNameb": "[concat(variables('dnsLabelPrefix'),'-nb-ilb')]",
-
-        "tmmRouteGw": "[concat(variables('extSubnetPrivateAddressPrefix'), '.1')]",
-        "mgmtALBid": "[resourceId('Microsoft.Network/loadBalancers',variables('mgmtLoadBalancerName'))]",
-        "sbILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('SouthboundLoadBalancerName'))]",
-        "SouthboundLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-sb-ilb')]",
-        "ext2SubnetName": "external2",
-        "ext2SubnetPrivateAddressPrefix": "[substring(parameters('SouthUntrustedAddressStartIP'), 0, lastindexOf(parameters('SouthUntrustedAddressStartIP'), '.'))]",
-        "ext2SubnetStartDirty": "[substring(parameters('SouthUntrustedAddressStartIP'), lastIndexOf(parameters('SouthUntrustedAddressStartIP'), '.'), sub(length(parameters('SouthUntrustedAddressStartIP')), lastIndexOf(parameters('SouthUntrustedAddressStartIP'), '.')))]",
-        "ext2SubnetStartInt": "[replace(variables('ext2SubnetStartDirty'), '.','')]",
-        "ext2SubnetPrivateAddress": "[parameters('SouthUntrustedAddressStartIP')]",
-        "ext2SubnetPrivateAddress1": "[concat(variables('ext2SubnetPrivateAddressPrefix'), '.',add(int(variables('ext2SubnetStartInt')), 1))]",
-        "ext2SubnetId": "[concat(variables('vnetId'), '/subnets/', variables('ext2subnetName'))]",
-        "int2SubnetName": "internal2",
-        "int2SubnetId": "[concat(variables('vnetId'), '/subnets/', variables('int2subnetName'))]",
-        "int2SubnetPrivateAddressPrefix": "[substring(parameters('SouthTrustedAddressStartIP'), 0, lastindexOf(parameters('SouthTrustedAddressStartIP'), '.'))]",
-        "int2SubnetStartDirty": "[substring(parameters('SouthTrustedAddressStartIP'), lastIndexOf(parameters('SouthTrustedAddressStartIP'), '.'), sub(length(parameters('SouthTrustedAddressStartIP')), lastIndexOf(parameters('SouthTrustedAddressStartIP'), '.') ))]",
-        "int2SubnetStartInt": "[replace(variables('int2SubnetStartDirty'), '.', '')]",
-        "int2SubnetPrivateAddress": "[parameters('SouthTrustedAddressStartIP')]",
-        "int2SubnetPrivateAddress1": "[concat(variables('int2SubnetPrivateAddressPrefix'), '.', add(int(variables('Int2SubnetStartInt')), 1))]",
-        "int2SubnetPrivateAddress2": "[concat(variables('int2SubnetPrivateAddressPrefix'), '.', add(int(variables('Int2SubnetStartInt')), 10))]",
-        "int2SubnetPrivateAddress3": "[concat(variables('int2SubnetPrivateAddressPrefix'), '.', add(int(variables('Int2SubnetStartInt')), 11))]",
-        "tmmRoute2Gw": "[concat(variables('int2SubnetPrivateAddressPrefix'), '.1')]",
-        "IPSILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('IPSLoadBalancerName'))]",
-        "IPSLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-ips-ilb')]",
-        "IPSFirewallName": "[concat(variables('dnsLabelPrefix'),'-ips-fw')]",
-        "IPSExtNicName": "[concat(variables('dnsLabelPrefix'), '-IPSExt')]",
-        "IPSExtSubnetName": "ips-external",
-        "IPSExtSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('IPSExtSubnetName'))]",
-        "IPSExtSubnetPrivateAddressPrefix": "[substring(parameters('IPSUntrustedAddressStartIP'), 0, lastindexOf(parameters('IPSUntrustedAddressStartIP'), '.'))]",
-        "IPSExtSubnetStartDirty": "[substring(parameters('IPSUntrustedAddressStartIP'), lastIndexOf(parameters('IPSUntrustedAddressStartIP'), '.'), sub(length(parameters('IPSUntrustedAddressStartIP')), lastIndexOf(parameters('IPSUntrustedAddressStartIP'), '.')))]",
-        "IPSExtSubnetStartInt": "[replace(variables('IPSExtSubnetStartDirty'), '.','')]",
-        "IPSExtSubnetPrivateAddress": "[parameters('IPSUntrustedAddressStartIP')]",
-        "IPSExtSubnetPrivateAddress1": "[concat(variables('IPSExtSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSExtSubnetStartInt')), 1))]",
-        "IPSExtSubnetPrivateAddress2": "[concat(variables('IPSExtSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSExtSubnetStartInt')), 10))]",
-        "IPSExtSubnetPrivateAddress3": "[concat(variables('IPSExtSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSExtSubnetStartInt')), 11))]",
-        "IPSIntNicName": "[concat(variables('dnsLabelPrefix'), '-IPSInt')]",
-        "IPSIntSubnetName": "ips-internal",
-        "IPSIntSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('IPSIntSubnetName'))]",
-        "IPSIntSubnetPrivateAddressPrefix": "[substring(parameters('IPSTrustedAddressStartIP'), 0, lastindexOf(parameters('IPSTrustedAddressStartIP'), '.'))]",
-        "IPSIntSubnetStartDirty": "[substring(parameters('IPSTrustedAddressStartIP'), lastIndexOf(parameters('IPSTrustedAddressStartIP'), '.'), sub(length(parameters('IPSTrustedAddressStartIP')), lastIndexOf(parameters('IPSTrustedAddressStartIP'), '.')))]",
-        "IPSIntSubnetStartInt": "[replace(variables('IPSIntSubnetStartDirty'), '.','')]",
-        "IPSIntSubnetPrivateAddress": "[parameters('IPSTrustedAddressStartIP')]",
-        "IPSIntSubnetPrivateAddress1": "[concat(variables('IPSIntSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSIntSubnetStartInt')), 1))]",
-        "IPSIntSubnetPrivateAddress2": "[concat(variables('IPSIntSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSIntSubnetStartInt')), 10))]",
-        "IPSIntSubnetPrivateAddress3": "[concat(variables('IPSIntSubnetPrivateAddressPrefix'), '.', add(int(variables('IPSIntSubnetStartInt')), 11))]",
-
-        "isAcceleratedNetworkingSupported": "[if(not(contains(parameters('bigIpVersion'),  '14.1.200000')), bool('true'), bool('false'))]",
-
-        "mgmtNicName": "[concat(variables('dnsLabelPrefix'), '-mgmt')]",
-        "mgmtSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('mgmtSubnetName'))]",
-        "mgmtSubnetName": "management",
-        "ManagementAddressSubnet": "192.168.1.0/24",
-        "ManagementAddressStartIP": "192.168.1.4",
-        "mgmtSubnetPrivateAddress": "[variables('ManagementAddressStartIP')]",
-        "mgmtSubnetPrivateAddressPrefix": "[substring(variables('ManagementAddressStartIP'), 0, lastindexOf(variables('ManagementAddressStartIP'), '.'))]",
-        "mgmtSubnetStartDirty": "[substring(variables('ManagementAddressStartIP'), lastIndexOf(variables('ManagementAddressStartIP'), '.'), sub(length(variables('ManagementAddressStartIP')), lastIndexOf(variables('ManagementAddressStartIP'), '.') ))]",
-        "mgmtSubnetStartInt": "[replace(variables('mgmtSubnetStartDirty'), '.','')]",
-        "mgmtSubnetPrivateAddress1": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 5))]",
-        "mgmtSubnetPrivateAddress2": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 6))]",
-        "mgmtSubnetPrivateAddress3": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 7))]",
-        "mgmtSubnetPrivateAddress4": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 50))]",
-        "mgmtSubnetPrivateAddress5": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 51))]",
-        "mgmtSubnetPrivateAddress6": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 61))]",
-        "mgmtSubnetPrivateAddress7": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 62))]",
-
-        "stigCmdArray": {
-            "true": "bash ./bigipstig.sh;",
-            "false": ""
-        },
-        "cmdConfigStig": "[if(parameters('STIGDevice'), variables('stigCmdArray').true, variables('stigCmdArray').false)]",
-        "createFWLogArray": {
-            "true": "tmsh create security log profile local-afm-log { network replace-all-with { local-afm-log { publisher local-db-publisher filter { log-acl-match-accept enabled log-acl-match-drop enabled log-acl-match-reject enabled } } } };",
-            "false": ""
-        },
-        "cmdcreateFWLog": "[if(contains(parameters('Tier1bigIpModules'), 'afm'), variables('createFWLogArray').true, variables('createFWLogArray').false)]",
-        "cmdcreateFWLog2": "[if(contains(parameters('Tier3bigIpModules'), 'afm'), variables('createFWLogArray').true, variables('createFWLogArray').false)]",
-        "createFWPolicyArray": {
-            "true": "tmsh create security firewall policy log_all_afm rules add { allow_all { action accept log yes place-before first } deny_all { action reject log yes place-after allow_all } };",
-            "false": ""
-        },
-        "cmdcreateFWPolicy": "[if(contains(parameters('Tier1bigIpModules'), 'afm'), variables('createFWPolicyArray').true, variables('createFWPolicyArray').false)]",
-        "cmdcreateFWPolicy2": "[if(contains(parameters('Tier1bigIpModules'), 'afm'), variables('createFWPolicyArray').true, variables('createFWPolicyArray').false)]",
-        "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip; openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer; tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer;",
-        "firewallConfig": "[concat(variables('cmdcreateFWLog'), variables('cmdcreateFWPolicy'))]",
-        "firewallConfig2": "[concat(variables('cmdcreateFWLog2'), variables('cmdcreateFWPolicy2'))]",
-
-        "sacaConfig": "[variables('cmdConfigStig')]",
-
-        "vdmsSubnetName": "VDMS",
-        "windowsOSVersion": "2019-Datacenter",
-        "WinvmName": "[concat(variables('dnsLabelPrefix'), '-win-jb')]",
-        "jbimageOffer": "UbuntuServer",
-        "jbimagePublisher": "Canonical",
-        "jblinuxConfiguration": {
-            "disablePasswordAuthentication": true,
-            "ssh": {
-                "publicKeys": [
-                    {
-                        "keyData": "[parameters('adminPasswordOrKey')]",
-                        "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]"
-                    }
-                ]
-            }
-        },
-        "jbubuntuOSVersion": "18.04-LTS",
-        "jbvmName": "[concat(variables('dnsLabelPrefix'), '-linux-jump')]",
-        "jbvmSize": "Standard_A1",
-        "linuxConfiguration": {
-            "disablePasswordAuthentication": true,
-            "ssh": {
-                "publicKeys": [
-                    {
-                        "keyData": "[variables('adminPasswordOrKey')]",
-                        "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]"
-                    }
-                ]
-            }
-        },
-        "location": "[resourceGroup().location]",
-
-        "networkApiVersion": "2017-11-01",
-        "newCustomImageName": "[concat(variables('dnsLabelPrefix'), 'image')]",
-        "newDataStorageAccountName": "[concat(uniqueString(variables('dnsLabelPrefix'), resourceGroup().id, deployment().name), 'data000')]",
-        "numberOfExternalIps": 1,
-        "offerToUse": "[concat('f5-big-ip-', variables('imageNameArray').offerPostfix[variables('imageNameSub')])]",
-        "osProfiles": {
-            "password": {
-                "adminPassword": "[variables('adminPasswordOrKey')]",
-                "adminUsername": "[parameters('adminUsername')]",
-                "computerName": "[variables('instanceName')]",
-                "linuxConfiguration": "[json('null')]"
-            },
-            "sshPublicKey": {
-                "adminUsername": "[parameters('adminUsername')]",
-                "computerName": "[variables('instanceName')]",
-                "linuxConfiguration": "[variables('linuxConfiguration')]"
-            }
-        },
-        "osProfiles2": {
-            "password": {
-                "zero": {
-                    "adminPassword": "[variables('adminPasswordOrKey')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "[concat(variables('instanceName'), '0')]",
-                    "linuxConfiguration": "[json('null')]"
-                },
-                "one": {
-                    "adminPassword": "[variables('adminPasswordOrKey')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "[concat(variables('instanceName'), '1')]",
-                    "linuxConfiguration": "[json('null')]"
-                },
-                "two": {
-                    "adminPassword": "[variables('adminPasswordOrKey')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "[concat(variables('instanceName'), '2')]",
-                    "linuxConfiguration": "[json('null')]"
-                },
-                "three": {
-                    "adminPassword": "[variables('adminPasswordOrKey')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "[concat(variables('instanceName'), '3')]",
-                    "linuxConfiguration": "[json('null')]"
-                }
-            },
-            "sshPublicKey": {
-                "zero": {
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "[concat(variables('instanceName'), '0')]",
-                    "linuxConfiguration": "[variables('linuxConfiguration')]"
-                },
-                "one": {
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "[concat(variables('instanceName'), '1')]",
-                    "linuxConfiguration": "[variables('linuxConfiguration')]"
-                },
-                "two": {
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "[concat(variables('instanceName'), '2')]",
-                    "linuxConfiguration": "[variables('linuxConfiguration')]"
-                },
-                "three": {
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "[concat(variables('instanceName'), '3')]",
-                    "linuxConfiguration": "[variables('linuxConfiguration')]"
-                }
-            }
-        },
-        "premiumInstanceArray": [
-            "Standard_DS2",
-            "Standard_DS3",
-            "Standard_DS4",
-            "Standard_DS11",
-            "Standard_DS12",
-            "Standard_DS13",
-            "Standard_DS14",
-            "Standard_DS2_v2",
-            "Standard_DS3_v2",
-            "Standard_DS4_v2",
-            "Standard_DS5_v2",
-            "Standard_DS11_v2",
-            "Standard_DS12_v2",
-            "Standard_DS13_v2",
-            "Standard_DS14_v2",
-            "Standard_DS15_v2",
-            "Standard_F2S",
-            "Standard_F4S",
-            "Standard_F8S",
-            "Standard_F16S",
-            "Standard_GS2",
-            "Standard_GS3",
-            "Standard_GS4",
-            "Standard_GS5"
-        ],
-        "publicIPAddressType": "Static",
-        "resourceGroupName": "[resourceGroup().name]",
-
-        "routeCmd": "route",
-        "singleQuote": "'",
-        "skuToUse": "[concat('f5-', variables('imageNameSub'),'-byol')]",
         "storageApiVersion": "2017-10-01",
         "storageProfileArray": {
             "customImage": {
@@ -804,7 +752,8 @@
         },
         "subscriptionID": "[subscription().subscriptionId]",
         "useCustomImage": "[not(empty(variables('customImage')))]",
-
+        "verifyHash64": "Y2xpIHNjcmlwdCAvQ29tbW9uL3ZlcmlmeUhhc2ggewpwcm9jIHNjcmlwdDo6cnVuIHt9IHsKICAgICAgICBpZiB7W2NhdGNoIHsKICAgICAgICAgICAgc2V0IGhhc2hlcyhhc20tcG9saWN5LWxpbnV4LnRhci5neikgNjNiNWMyYTUxY2EwOWM0M2JkODlhZjM3NzNiYmFiODdjNzFhNmU3ZjZhZDk0MTBiMjI5YjRlMGExYzQ4M2Q0NmYxYTlmZmYzOWQ5OTQ0MDQxYjAyZWU5MjYwNzI0MDI3NDE0ZGU1OTJlOTlmNGMyNDc1NDE1MzIzZTE4YTcyZTAKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5odHRwLnYxLjIuMHJjNC50bXBsKSA0N2MxOWE4M2ViZmM3YmQxZTllOWMzNWYzNDI0OTQ1ZWY4Njk0YWE0MzdlZWRkMTdiNmEzODc3ODhkNGRiMTM5NmZlZmU0NDUxOTliNDk3MDY0ZDc2OTY3YjBkNTAyMzgxNTQxOTBjYTBiZDczOTQxMjk4ZmMyNTdkZjRkYzAzNAogICAgICAgICAgICBzZXQgaGFzaGVzKGY1Lmh0dHAudjEuMi4wcmM2LnRtcGwpIDgxMWIxNGJmZmFhYjVlZDAzNjVmMDEwNmJiNWNlNWU0ZWMyMjM4NTY1NWVhM2FjMDRkZTJhMzliZDk5NDRmNTFlMzcxNDYxOWRhZTdjYTQzNjYyYzk1NmI1MjEyMjI4ODU4ZjA1OTI2NzJhMjU3OWQ0YTg3NzY5MTg2ZTJjYmZlCiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuaHR0cC52MS4yLjByYzcudG1wbCkgMjFmNDEzMzQyZTlhN2EyODFhMGYwZTEzMDFlNzQ1YWE4NmFmMjFhNjk3ZDJlNmZkYzIxZGQyNzk3MzQ5MzY2MzFlOTJmMzRiZjFjMmQyNTA0YzIwMWY1NmNjZDc1YzVjMTNiYWEyZmU3NjUzMjEzNjg5ZWMzYzllMjdkZmY3N2QKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5hd3NfYWR2YW5jZWRfaGEudjEuMy4wcmMxLnRtcGwpIDllNTUxNDljMDEwYzFkMzk1YWJkYWUzYzNkMmNiODNlYzEzZDMxZWQzOTQyNDY5NWU4ODY4MGNmM2VkNWEwMTNkNjI2YjMyNjcxMWQzZDQwZWYyZGY0NmI3MmQ0MTRiNGNiOGU0ZjQ0NWVhMDczOGRjYmQyNWM0Yzg0M2FjMzlkCiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuYXdzX2FkdmFuY2VkX2hhLnYxLjQuMHJjMS50bXBsKSBkZTA2ODQ1NTI1NzQxMmE5NDlmMWVhZGNjYWVlODUwNjM0N2UwNGZkNjliZmI2NDUwMDFiNzZmMjAwMTI3NjY4ZTRhMDZiZTJiYmI5NGUxMGZlZmMyMTVjZmMzNjY1YjA3OTQ1ZTZkNzMzY2JlMWE0ZmExYjg4ZTg4MTU5MDM5NgogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LmF3c19hZHZhbmNlZF9oYS52MS40LjByYzIudG1wbCkgNmFiMGJmZmM0MjZkZjdkMzE5MTNmOWE0NzRiMWEwNzg2MDQzNWUzNjZiMDdkNzdiMzIwNjRhY2ZiMjk1MmMxZjIwN2JlYWVkNzcwMTNhMTVlNDRkODBkNzRmMzI1M2U3Y2Y5ZmJiZTEyYTkwZWM3MTI4ZGU2ZmFjZDA5N2Q2OGYKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5hd3NfYWR2YW5jZWRfaGEudjEuNC4wcmMzLnRtcGwpIDJmMjMzOWI0YmMzYTIzYzljZmQ0MmFhZTJhNmRlMzliYTA2NTgzNjZmMjU5ODVkZTJlYTUzNDEwYTc0NWYwZjE4ZWVkYzQ5MWIyMGY0YThkYmE4ZGI0ODk3MDA5NmUyZWZkY2E3YjhlZmZmYTFhODNhNzhlNWFhZGYyMThiMTM0CiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuYXdzX2FkdmFuY2VkX2hhLnYxLjQuMHJjNC50bXBsKSAyNDE4YWM4YjFmMTg4NGM1YzA5NmNiYWM2YTk0ZDQwNTlhYWFmMDU5MjdhNmE0NTA4ZmQxZjI1YjhjYzYwNzc0OTg4MzlmYmRkYTgxNzZkMmNmMmQyNzRhMjdlNmExZGFlMmExZTNhMGE5OTkxYmM2NWZjNzRmYzBkMDJjZTk2MwogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LmF3c19hZHZhbmNlZF9oYS52MS40LjByYzUudG1wbCkgNWU1ODIxODdhZTFhNjMyM2UwOTVkNDFlZGRkNDExNTFkNmJkMzhlYjgzYzYzNDQxMGQ0NTI3YTNkMGUyNDZhOGZjNjI2ODVhYjA4NDlkZTJhZGU2MmIwMjc1ZjUxMjY0ZDJkZWFjY2JjMTZiNzczNDE3Zjg0N2E0YTFlYTliYzQKICAgICAgICAgICAgc2V0IGhhc2hlcyhhc20tcG9saWN5LnRhci5neikgMmQzOWVjNjBkMDA2ZDA1ZDhhMTU2N2ExZDhhYWU3MjI0MTllOGIwNjJhZDc3ZDZkOWEzMTY1Mjk3MWU1ZTY3YmM0MDQzZDgxNjcxYmEyYThiMTJkZDIyOWVhNDZkMjA1MTQ0Zjc1Mzc0ZWQ0Y2FlNThjZWZhOGY5YWI2NTMzZTYKICAgICAgICAgICAgc2V0IGhhc2hlcyhkZXBsb3lfd2FmLnNoKSAxYTNhM2M2Mjc0YWIwOGE3ZGMyY2I3M2FlZGM4ZDJiMmEyM2NkOWUwZWIwNmEyZTE1MzRiMzYzMmYyNTBmMWQ4OTcwNTZmMjE5ZDViMzVkM2VlZDEyMDcwMjZlODk5ODlmNzU0ODQwZmQ5Mjk2OWM1MTVhZTRkODI5MjE0ZmI3NAogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LnBvbGljeV9jcmVhdG9yLnRtcGwpIDA2NTM5ZTA4ZDExNWVmYWZlNTVhYTUwN2VjYjRlNDQzZTgzYmRiMWY1ODI1YTk1MTQ5NTRlZjZjYTU2ZDI0MGVkMDBjN2I1ZDY3YmQ4ZjY3YjgxNWVlOWRkNDY0NTE5ODQ3MDFkMDU4Yzg5ZGFlMjQzNGM4OTcxNWQzNzVhNjIwCgogICAgICAgICAgICBzZXQgZmlsZV9wYXRoIFtsaW5kZXggJHRtc2g6OmFyZ3YgMV0KICAgICAgICAgICAgc2V0IGZpbGVfbmFtZSBbZmlsZSB0YWlsICRmaWxlX3BhdGhdCgogICAgICAgICAgICBpZiB7IVtpbmZvIGV4aXN0cyBoYXNoZXMoJGZpbGVfbmFtZSldfSB7CiAgICAgICAgICAgICAgICB0bXNoOjpsb2cgZXJyICJObyBoYXNoIGZvdW5kIGZvciAkZmlsZV9uYW1lIgogICAgICAgICAgICAgICAgZXhpdCAxCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIHNldCBleHBlY3RlZF9oYXNoICRoYXNoZXMoJGZpbGVfbmFtZSkKICAgICAgICAgICAgc2V0IGNvbXB1dGVkX2hhc2ggW2xpbmRleCBbZXhlYyAvdXNyL2Jpbi9vcGVuc3NsIGRnc3QgLXIgLXNoYTUxMiAkZmlsZV9wYXRoXSAwXQogICAgICAgICAgICBpZiB7ICRleHBlY3RlZF9oYXNoIGVxICRjb21wdXRlZF9oYXNoIH0gewogICAgICAgICAgICAgICAgZXhpdCAwCiAgICAgICAgICAgIH0KICAgICAgICAgICAgdG1zaDo6bG9nIGVyciAiSGFzaCBkb2VzIG5vdCBtYXRjaCBmb3IgJGZpbGVfcGF0aCIKICAgICAgICAgICAgZXhpdCAxCiAgICAgICAgfV19IHsKICAgICAgICAgICAgdG1zaDo6bG9nIGVyciB7VW5leHBlY3RlZCBlcnJvciBpbiB2ZXJpZnlIYXNofQogICAgICAgICAgICBleGl0IDEKICAgICAgICB9CiAgICB9Cn0=",
+        "installCloudLibs64": "IyEvYmluL2Jhc2gKZWNobyAgYWJvdXQgdG8gZXhlY3V0ZQpjaGVja3M9MAp3aGlsZSBbICRjaGVja3MgLWx0IDEyMCBdOyBkbyBlY2hvIGNoZWNraW5nIG1jcGQKICAgIHRtc2ggLWEgc2hvdyBzeXMgbWNwLXN0YXRlIGZpZWxkLWZtdCB8IGdyZXAgLXEgcnVubmluZwogICBpZiBbICQ/ID09IDAgXTsgdGhlbgogICAgICAgZWNobyBtY3BkIHJlYWR5CiAgICAgICBicmVhawogICBmaQogICBlY2hvIG1jcGQgbm90IHJlYWR5IHlldAogICBsZXQgY2hlY2tzPWNoZWNrcysxCiAgIHNsZWVwIDEwCmRvbmUgCgplY2hvICBleHBhbmRpbmcgZjUtY2xvdWQtbGlicy50YXIuZ3oKdGFyIHh2ZnogL2NvbmZpZy9jbG91ZC9mNS1jbG91ZC1saWJzLnRhci5neiAtQyAvY29uZmlnL2Nsb3VkL2F6dXJlL25vZGVfbW9kdWxlcy9AZjVkZXZjZW50cmFsCmVjaG8gIGNsb3VkIGxpYnMgaW5zdGFsbCBjb21wbGV0ZQp0b3VjaCAvY29uZmlnL2Nsb3VkL2Nsb3VkTGlic1JlYWR5",
         "virtualNetworkName": "SCCA_VNet",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
     },
@@ -852,24 +801,6 @@
         {
             "apiVersion": "[variables('networkApiVersion')]",
             "location": "[variables('location')]",
-            "name": "[variables('routeTableName')]",
-            "properties": {
-                "routes": [
-                    {
-                        "name": "Default",
-                        "properties": {
-                            "addressPrefix": "0.0.0.0/0",
-                            "nextHopIpAddress": "[parameters('SouthUntrustedLBPrivateAddress')]",
-                            "nextHopType": "VirtualAppliance"
-                        }
-                    }
-                ]
-            },
-            "type": "Microsoft.Network/routeTables"
-        },
-        {
-            "apiVersion": "[variables('networkApiVersion')]",
-            "location": "[variables('location')]",
             "name": "[variables('virtualNetworkName')]",
             "properties": {
                 "addressSpace": {
@@ -910,7 +841,7 @@
                         }
                     },
                     {
-                        "name": "[variables('int2SubnetName')]",
+                        "name": "[variables('intSubnet2Name')]",
                         "properties": {
                             "addressPrefix": "[parameters('SouthTrustedAddressSubnet')]"
                         }
@@ -1428,20 +1359,20 @@
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
                         "properties": {
                             "primary": true,
-                            "privateIPAddress": "[variables('int2SubnetPrivateAddress')]",
+                            "privateIPAddress": "[variables('intSubnet2PrivateAddress')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[variables('int2SubnetId')]"
+                                "id": "[variables('intSubnet2Id')]"
                             }
                         }
                     },
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig-secondary')]",
                         "properties": {
-                            "privateIPAddress": "[variables('int2SubnetPrivateAddress2')]",
+                            "privateIPAddress": "[variables('intSubnet2PrivateAddress2')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[variables('int2SubnetId')]"
+                                "id": "[variables('intSubnet2Id')]"
                             }
                         }
                     }
@@ -1467,20 +1398,20 @@
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig')]",
                         "properties": {
                             "primary": true,
-                            "privateIPAddress": "[variables('int2SubnetPrivateAddress1')]",
+                            "privateIPAddress": "[variables('intSubnet2PrivateAddress1')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[variables('int2SubnetId')]"
+                                "id": "[variables('intSubnet2Id')]"
                             }
                         }
                     },
                     {
                         "name": "[concat(variables('dnsLabelPrefix'), '-int-ipconfig-secondary')]",
                         "properties": {
-                            "privateIPAddress": "[variables('int2SubnetPrivateAddress3')]",
+                            "privateIPAddress": "[variables('intSubnet2PrivateAddress3')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[variables('int2SubnetId')]"
+                                "id": "[variables('intSubnet2Id')]"
                             }
                         }
                     }
@@ -2370,7 +2301,7 @@
                         }
                     ]
                 },
-                "osProfile": "[variables('osProfiles2')[parameters('authenticationType')].zero]",
+                "osProfile": "[variables('osProfiles')[parameters('authenticationType')]]",
                 "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2422,7 +2353,7 @@
                         }
                     ]
                 },
-                "osProfile": "[variables('osProfiles2')[parameters('authenticationType')].one]",
+                "osProfile": "[variables('osProfiles')[parameters('authenticationType')]]",
                 "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2476,7 +2407,7 @@
                         }
                     ]
                 },
-                "osProfile": "[variables('osProfiles2')[parameters('authenticationType')].two]",
+                "osProfile": "[variables('osProfiles')[parameters('authenticationType')]]",
                 "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2530,7 +2461,7 @@
                         }
                     ]
                 },
-                "osProfile": "[variables('osProfiles2')[parameters('authenticationType')].three]",
+                "osProfile": "[variables('osProfiles')[parameters('authenticationType')]]",
                 "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2794,7 +2725,7 @@
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
-                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey1'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ', parameters('Tier1bigIpModules'), ' /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRouteGw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('extSubnetPrivateAddress'),  ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnetPrivateAddress'),  ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].first, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnetPrivateAddress'), ' --create-group --device-group Sync --sync-type sync-failover --device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --network-failover --auto-sync --save-on-auto-sync;', variables('firewallConfig'), ' bash /config/cloud/deploy_app.sh ', variables('commandArgs'), '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('installDODRootCA'), variables('sacaConfig'))]"
+                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs*.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --no-reboot --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey1'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --modules ', parameters('Tier1bigIpModules'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].metricsCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRouteGw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('extSubnetPrivateAddress'), ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnetPrivateAddress'), ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].first, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnetPrivateAddress'), ' --create-group --device-group Sync --sync-type sync-failover --device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --network-failover --auto-sync --save-on-auto-sync;', variables('firewallConfig'), ' bash /config/cloud/deploy_app.sh ', variables('commandArgs'), '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; echo -e ', variables('routeCmd'), ' >> /config/startup; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('installDODRootCA'), variables('sacaConfig'))]"
                 },
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
@@ -2856,7 +2787,7 @@
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
-                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey3'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ', parameters('Tier3bigIpModules'), ' /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRoute2Gw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('ext2SubnetPrivateAddress'),  ',vlan:external --self-ip name:self_3nic,address:', variables('int2SubnetPrivateAddress'),  ',vlan:internal --log-level info; ', variables('failoverCmd2Array')[variables('enableNetworkFailover')].first, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('int2SubnetPrivateAddress'), ' --create-group --device-group Sync --sync-type sync-failover --device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --network-failover --auto-sync --save-on-auto-sync;', variables('firewallConfig2'), ' bash /config/cloud/deploy_app.sh ', variables('commandArgs2'), '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('installDODRootCA'), variables('sacaConfig'))]"
+                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey3'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ', parameters('Tier3bigIpModules'), ' /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRoute2Gw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('ext2SubnetPrivateAddress'),  ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnet2PrivateAddress'),  ',vlan:internal --log-level info; ', variables('failoverCmd2Array')[variables('enableNetworkFailover')].first, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnet2PrivateAddress'), ' --create-group --device-group Sync --sync-type sync-failover --device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --network-failover --auto-sync --save-on-auto-sync;', variables('firewallConfig2'), ' bash /config/cloud/deploy_app.sh ', variables('commandArgs2'), '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('installDODRootCA'), variables('sacaConfig'))]"
                 },
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
@@ -2889,7 +2820,7 @@
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
-                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted;', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey4'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ', parameters('Tier3bigIpModules'), ' /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRoute2Gw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('ext2SubnetPrivateAddress1'),  ',vlan:external --self-ip name:self_3nic,address:', variables('int2SubnetPrivateAddress1'),  ',vlan:internal --log-level info; ', variables('failoverCmd2Array')[variables('enableNetworkFailover')].second, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('int2SubnetPrivateAddress1'), ' --join-group --device-group Sync --sync --remote-host ', variables('mgmtSubnetPrivateAddress2'), ' --remote-user svc_user --remote-password-url file:///config/cloud/.passwd', '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('sacaConfig'))]"
+                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted;', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey4'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')['No'].metricsCmd, ' --modules ', parameters('Tier3bigIpModules'), ' /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRoute2Gw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('ext2SubnetPrivateAddress1'),  ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnet2PrivateAddress1'),  ',vlan:internal --log-level info; ', variables('failoverCmd2Array')[variables('enableNetworkFailover')].second, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnet2PrivateAddress1'), ' --join-group --device-group Sync --sync --remote-host ', variables('mgmtSubnetPrivateAddress2'), ' --remote-user svc_user --remote-password-url file:///config/cloud/.passwd', '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('sacaConfig'))]"
                 },
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
