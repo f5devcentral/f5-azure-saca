@@ -23,7 +23,7 @@
             "type": "string"
         },
         "instanceName": {
-            "defaultValue": "f5vm01",
+            "defaultValue": "bigip",
             "metadata": {
                 "description": "Name of the Virtual Machine."
             },

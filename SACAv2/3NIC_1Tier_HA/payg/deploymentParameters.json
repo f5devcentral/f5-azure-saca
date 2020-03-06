@@ -18,7 +18,7 @@
           "value": "f5dns014"
       },
       "instanceName": {
-          "value": "f5vm014"
+          "value": "bigip4"
       },
       "numberOfExternalIps": {
           "value": 1

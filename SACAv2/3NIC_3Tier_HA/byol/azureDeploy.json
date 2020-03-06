@@ -68,7 +68,7 @@
             "type": "string"
         },
         "instanceName": {
-            "defaultValue": "f5vm",
+            "defaultValue": "bigip",
             "metadata": {
                 "description": "Name of the Virtual Machine."
             },
@@ -335,10 +335,38 @@
                 "description": "If you would like to change the time zone the BIG-IP uses, enter the time zone you want to use. This is based on the tz database found in /usr/share/zoneinfo (see the full list [here](https://github.com/F5Networks/f5-azure-arm-templates/blob/master/azure-timezone-list.md)). Example values: UTC, US/Pacific, US/Eastern, Europe/London or Asia/Singapore."
             },
             "type": "string"
+        },
+        "allowUsageAnalytics": {
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes",
+            "metadata": {
+                "description": "This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **No** statistics are not sent."
+            },
+            "type": "string"
+        },
+        "tagValues": {
+            "defaultValue": {
+                "application": "APP",
+                "cost": "COST",
+                "environment": "ENV",
+                "group": "GROUP",
+                "owner": "OWNER"
+            },
+            "metadata": {
+                "description": "Default key/value resource tags will be added to the resources in this deployment, if you would like the values to be unique adjust them as needed for each key."
+            },
+            "type": "object"
         }
     },
     "variables": {
-        "tagValues": "",
+        "tagValues": "[parameters('tagValues')]",
+        "failovertagValues": {
+            "f5_cloud_failover_label": "scca",
+            "f5_cloud_failover_nic_map": "external"
+        },
         "adminPasswordOrKey": "[replace(parameters('adminPasswordOrKey'),'\\n', '\n')]",
         "allowUsageAnalytics": {
             "No": {
@@ -350,6 +378,7 @@
                 "metricsCmd": "[concat(' --metrics customerId:${custId},deploymentId:${deployId},templateName:failover-lb_3nic-new-stack-supported,templateVersion:6.0.2.0,region:', variables('location'), ',bigIpVersion:', parameters('bigIpVersion') ,',licenseType:byol,cloudLibsVersion:', variables('f5CloudLibsTag'), ',cloudName:azure')]"
             }
         },
+        "routeTableName": "BasicUDR",
         "appScript": "IyEvYmluL2Jhc2gKZnVuY3Rpb24gcGFzc3dkKCkgewogIGVjaG8gfCBmNS1yZXN0LW5vZGUgL2NvbmZpZy9jbG91ZC9henVyZS9ub2RlX21vZHVsZXMvQGY1ZGV2Y2VudHJhbC9mNS1jbG91ZC1saWJzL3NjcmlwdHMvZGVjcnlwdERhdGFGcm9tRmlsZS5qcyAtLWRhdGEtZmlsZSAvY29uZmlnL2Nsb3VkLy5wYXNzd2QgfCBhd2sgJ3twcmludCAkMX0nCn0KCndoaWxlIGdldG9wdHMgbzp1OiBvcHRpb24KZG8gY2FzZSAiJG9wdGlvbiIgIGluCiAgICAgICAgbykgZGVjbGFyYXRpb25Vcmw9JE9QVEFSRzs7CiAgICAgICAgdSkgdXNlcj0kT1BUQVJHOzsKICAgIGVzYWMKZG9uZQoKZGVwbG95ZWQ9Im5vIgpmaWxlX2xvYz0iL2NvbmZpZy9jbG91ZC9jdXN0b21fY29uZmlnIgpkZmxfbWdtdF9wb3J0PWB0bXNoIGxpc3Qgc3lzIGh0dHBkIHNzbC1wb3J0IHwgZ3JlcCBzc2wtcG9ydCB8IHNlZCAncy9zc2wtcG9ydCAvLztzLyAvL2cnYAp1cmxfcmVnZXg9IihodHRwOlwvXC98aHR0cHM6XC9cLyk/W2EtejAtOV0rKFtcLVwuXXsxfVthLXowLTldKykqXC5bYS16XXsyLDV9KDpbMC05XXsxLDV9KT8oXC8uKik/JCIKCmlmIFtbICRkZWNsYXJhdGlvblVybCA9fiAkdXJsX3JlZ2V4IF1dOyB0aGVuCiAgICByZXNwb25zZV9jb2RlPSQoL3Vzci9iaW4vY3VybCAtLWludGVyZmFjZSBtZ210IC1zayAtdyAiJXtodHRwX2NvZGV9IiAkZGVjbGFyYXRpb25VcmwgLW8gJGZpbGVfbG9jKQogICAgaWYgW1sgJHJlc3BvbnNlX2NvZGUgPT0gMjAwIF1dOyB0aGVuCiAgICAgICAgIGVjaG8gIkN1c3RvbSBjb25maWcgZG93bmxvYWQgY29tcGxldGU7IGNoZWNraW5nIGZvciB2YWxpZCBKU09OLiIKICAgICAgICAgY2F0ICRmaWxlX2xvYyB8IGpxIC5jbGFzcwogICAgICAgICBpZiBbWyAkPyA9PSAwIF1dOyB0aGVuCiAgICAgICAgICAgICByZXNwb25zZV9jb2RlPSQoL3Vzci9iaW4vY3VybCAtc2t2dnUgJHVzZXI6JChwYXNzd2QpIC13ICIle2h0dHBfY29kZX0iIC1YIFBPU1QgLUggIkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbiIgLUggJ0V4cGVjdDonIC1kICJAJGZpbGVfbG9jIiBodHRwczovL2xvY2FsaG9zdDokZGZsX21nbXRfcG9ydC9tZ210L3NoYXJlZC9hcHBzdmNzL2RlY2xhcmUgLW8gL2Rldi9udWxsKQoKICAgICAgICAgICAgIGlmIFtbICRyZXNwb25zZV9jb2RlID09IDIwMCB8fCAkcmVzcG9uc2VfY29kZSA9PSAyMDcgfHwgJHJlc3BvbnNlX2NvZGUgPT0gNTAyIF1dOyB0aGVuCiAgICAgICAgICAgICAgICAgIGVjaG8gIkRlcGxveW1lbnQgb2YgYXBwbGljYXRpb24gc3VjY2VlZGVkLiAkcmVzcG9uc2VfY29kZSIKICAgICAgICAgICAgICAgICAgZGVwbG95ZWQ9InllcyIKICAgICAgICAgICAgIGVsc2UKICAgICAgICAgICAgICAgICBlY2hvICJGYWlsZWQgdG8gZGVwbG95IGFwcGxpY2F0aW9uOyBjb250aW51aW5nIHdpdGggcmVzcG9uc2UgY29kZSAnIiRyZXNwb25zZV9jb2RlIiciCiAgICAgICAgICAgICBmaQogICAgICAgICBlbHNlCiAgICAgICAgICAgICBlY2hvICJDdXN0b20gY29uZmlnIHdhcyBub3QgdmFsaWQgSlNPTiwgY29udGludWluZyIKICAgICAgICAgZmkKICAgIGVsc2UKICAgICAgICBlY2hvICJGYWlsZWQgdG8gZG93bmxvYWQgY3VzdG9tIGNvbmZpZzsgY29udGludWluZyB3aXRoIHJlc3BvbnNlIGNvZGUgJyIkcmVzcG9uc2VfY29kZSInIgogICAgZmkKZWxzZQogICAgIGVjaG8gIkN1c3RvbSBjb25maWcgd2FzIG5vdCBhIFVSTCwgY29udGludWluZy4iCmZpCgppZiBbWyAkZGVwbG95ZWQgPT0gIm5vIiAmJiAkZGVjbGFyYXRpb25VcmwgPT0gIk5PVF9TUEVDSUZJRUQiIF1dOyB0aGVuCiAgICBlY2hvICJBcHBsaWNhdGlvbiBkZXBsb3ltZW50IGZhaWxlZCBvciBjdXN0b20gVVJMIHdhcyBub3Qgc3BlY2lmaWVkLiIKZmkKCmVjaG8gIkRlcGxveW1lbnQgY29tcGxldGUuIgpleGl0",
         "availabilitySetName0": "[concat(variables('dnsLabelPrefix'), '-avset0')]",
         "availabilitySetName1": "[concat(variables('dnsLabelPrefix'), '-avset1')]",
@@ -501,11 +530,13 @@
         },
 
         "verifyHash64": "Y2xpIHNjcmlwdCAvQ29tbW9uL3ZlcmlmeUhhc2ggewpwcm9jIHNjcmlwdDo6cnVuIHt9IHsKICAgICAgICBpZiB7W2NhdGNoIHsKICAgICAgICAgICAgc2V0IGhhc2hlcyhhc20tcG9saWN5LWxpbnV4LnRhci5neikgNjNiNWMyYTUxY2EwOWM0M2JkODlhZjM3NzNiYmFiODdjNzFhNmU3ZjZhZDk0MTBiMjI5YjRlMGExYzQ4M2Q0NmYxYTlmZmYzOWQ5OTQ0MDQxYjAyZWU5MjYwNzI0MDI3NDE0ZGU1OTJlOTlmNGMyNDc1NDE1MzIzZTE4YTcyZTAKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5odHRwLnYxLjIuMHJjNC50bXBsKSA0N2MxOWE4M2ViZmM3YmQxZTllOWMzNWYzNDI0OTQ1ZWY4Njk0YWE0MzdlZWRkMTdiNmEzODc3ODhkNGRiMTM5NmZlZmU0NDUxOTliNDk3MDY0ZDc2OTY3YjBkNTAyMzgxNTQxOTBjYTBiZDczOTQxMjk4ZmMyNTdkZjRkYzAzNAogICAgICAgICAgICBzZXQgaGFzaGVzKGY1Lmh0dHAudjEuMi4wcmM2LnRtcGwpIDgxMWIxNGJmZmFhYjVlZDAzNjVmMDEwNmJiNWNlNWU0ZWMyMjM4NTY1NWVhM2FjMDRkZTJhMzliZDk5NDRmNTFlMzcxNDYxOWRhZTdjYTQzNjYyYzk1NmI1MjEyMjI4ODU4ZjA1OTI2NzJhMjU3OWQ0YTg3NzY5MTg2ZTJjYmZlCiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuaHR0cC52MS4yLjByYzcudG1wbCkgMjFmNDEzMzQyZTlhN2EyODFhMGYwZTEzMDFlNzQ1YWE4NmFmMjFhNjk3ZDJlNmZkYzIxZGQyNzk3MzQ5MzY2MzFlOTJmMzRiZjFjMmQyNTA0YzIwMWY1NmNjZDc1YzVjMTNiYWEyZmU3NjUzMjEzNjg5ZWMzYzllMjdkZmY3N2QKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5hd3NfYWR2YW5jZWRfaGEudjEuMy4wcmMxLnRtcGwpIDllNTUxNDljMDEwYzFkMzk1YWJkYWUzYzNkMmNiODNlYzEzZDMxZWQzOTQyNDY5NWU4ODY4MGNmM2VkNWEwMTNkNjI2YjMyNjcxMWQzZDQwZWYyZGY0NmI3MmQ0MTRiNGNiOGU0ZjQ0NWVhMDczOGRjYmQyNWM0Yzg0M2FjMzlkCiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuYXdzX2FkdmFuY2VkX2hhLnYxLjQuMHJjMS50bXBsKSBkZTA2ODQ1NTI1NzQxMmE5NDlmMWVhZGNjYWVlODUwNjM0N2UwNGZkNjliZmI2NDUwMDFiNzZmMjAwMTI3NjY4ZTRhMDZiZTJiYmI5NGUxMGZlZmMyMTVjZmMzNjY1YjA3OTQ1ZTZkNzMzY2JlMWE0ZmExYjg4ZTg4MTU5MDM5NgogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LmF3c19hZHZhbmNlZF9oYS52MS40LjByYzIudG1wbCkgNmFiMGJmZmM0MjZkZjdkMzE5MTNmOWE0NzRiMWEwNzg2MDQzNWUzNjZiMDdkNzdiMzIwNjRhY2ZiMjk1MmMxZjIwN2JlYWVkNzcwMTNhMTVlNDRkODBkNzRmMzI1M2U3Y2Y5ZmJiZTEyYTkwZWM3MTI4ZGU2ZmFjZDA5N2Q2OGYKICAgICAgICAgICAgc2V0IGhhc2hlcyhmNS5hd3NfYWR2YW5jZWRfaGEudjEuNC4wcmMzLnRtcGwpIDJmMjMzOWI0YmMzYTIzYzljZmQ0MmFhZTJhNmRlMzliYTA2NTgzNjZmMjU5ODVkZTJlYTUzNDEwYTc0NWYwZjE4ZWVkYzQ5MWIyMGY0YThkYmE4ZGI0ODk3MDA5NmUyZWZkY2E3YjhlZmZmYTFhODNhNzhlNWFhZGYyMThiMTM0CiAgICAgICAgICAgIHNldCBoYXNoZXMoZjUuYXdzX2FkdmFuY2VkX2hhLnYxLjQuMHJjNC50bXBsKSAyNDE4YWM4YjFmMTg4NGM1YzA5NmNiYWM2YTk0ZDQwNTlhYWFmMDU5MjdhNmE0NTA4ZmQxZjI1YjhjYzYwNzc0OTg4MzlmYmRkYTgxNzZkMmNmMmQyNzRhMjdlNmExZGFlMmExZTNhMGE5OTkxYmM2NWZjNzRmYzBkMDJjZTk2MwogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LmF3c19hZHZhbmNlZF9oYS52MS40LjByYzUudG1wbCkgNWU1ODIxODdhZTFhNjMyM2UwOTVkNDFlZGRkNDExNTFkNmJkMzhlYjgzYzYzNDQxMGQ0NTI3YTNkMGUyNDZhOGZjNjI2ODVhYjA4NDlkZTJhZGU2MmIwMjc1ZjUxMjY0ZDJkZWFjY2JjMTZiNzczNDE3Zjg0N2E0YTFlYTliYzQKICAgICAgICAgICAgc2V0IGhhc2hlcyhhc20tcG9saWN5LnRhci5neikgMmQzOWVjNjBkMDA2ZDA1ZDhhMTU2N2ExZDhhYWU3MjI0MTllOGIwNjJhZDc3ZDZkOWEzMTY1Mjk3MWU1ZTY3YmM0MDQzZDgxNjcxYmEyYThiMTJkZDIyOWVhNDZkMjA1MTQ0Zjc1Mzc0ZWQ0Y2FlNThjZWZhOGY5YWI2NTMzZTYKICAgICAgICAgICAgc2V0IGhhc2hlcyhkZXBsb3lfd2FmLnNoKSAxYTNhM2M2Mjc0YWIwOGE3ZGMyY2I3M2FlZGM4ZDJiMmEyM2NkOWUwZWIwNmEyZTE1MzRiMzYzMmYyNTBmMWQ4OTcwNTZmMjE5ZDViMzVkM2VlZDEyMDcwMjZlODk5ODlmNzU0ODQwZmQ5Mjk2OWM1MTVhZTRkODI5MjE0ZmI3NAogICAgICAgICAgICBzZXQgaGFzaGVzKGY1LnBvbGljeV9jcmVhdG9yLnRtcGwpIDA2NTM5ZTA4ZDExNWVmYWZlNTVhYTUwN2VjYjRlNDQzZTgzYmRiMWY1ODI1YTk1MTQ5NTRlZjZjYTU2ZDI0MGVkMDBjN2I1ZDY3YmQ4ZjY3YjgxNWVlOWRkNDY0NTE5ODQ3MDFkMDU4Yzg5ZGFlMjQzNGM4OTcxNWQzNzVhNjIwCgogICAgICAgICAgICBzZXQgZmlsZV9wYXRoIFtsaW5kZXggJHRtc2g6OmFyZ3YgMV0KICAgICAgICAgICAgc2V0IGZpbGVfbmFtZSBbZmlsZSB0YWlsICRmaWxlX3BhdGhdCgogICAgICAgICAgICBpZiB7IVtpbmZvIGV4aXN0cyBoYXNoZXMoJGZpbGVfbmFtZSldfSB7CiAgICAgICAgICAgICAgICB0bXNoOjpsb2cgZXJyICJObyBoYXNoIGZvdW5kIGZvciAkZmlsZV9uYW1lIgogICAgICAgICAgICAgICAgZXhpdCAxCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIHNldCBleHBlY3RlZF9oYXNoICRoYXNoZXMoJGZpbGVfbmFtZSkKICAgICAgICAgICAgc2V0IGNvbXB1dGVkX2hhc2ggW2xpbmRleCBbZXhlYyAvdXNyL2Jpbi9vcGVuc3NsIGRnc3QgLXIgLXNoYTUxMiAkZmlsZV9wYXRoXSAwXQogICAgICAgICAgICBpZiB7ICRleHBlY3RlZF9oYXNoIGVxICRjb21wdXRlZF9oYXNoIH0gewogICAgICAgICAgICAgICAgZXhpdCAwCiAgICAgICAgICAgIH0KICAgICAgICAgICAgdG1zaDo6bG9nIGVyciAiSGFzaCBkb2VzIG5vdCBtYXRjaCBmb3IgJGZpbGVfcGF0aCIKICAgICAgICAgICAgZXhpdCAxCiAgICAgICAgfV19IHsKICAgICAgICAgICAgdG1zaDo6bG9nIGVyciB7VW5leHBlY3RlZCBlcnJvciBpbiB2ZXJpZnlIYXNofQogICAgICAgICAgICBleGl0IDEKICAgICAgICB9CiAgICB9Cn0=",
-   
+
         "installCloudLibs64": "IyEvYmluL2Jhc2gKZWNobyAgYWJvdXQgdG8gZXhlY3V0ZQpjaGVja3M9MAp3aGlsZSBbICRjaGVja3MgLWx0IDEyMCBdOyBkbyBlY2hvIGNoZWNraW5nIG1jcGQKICAgIHRtc2ggLWEgc2hvdyBzeXMgbWNwLXN0YXRlIGZpZWxkLWZtdCB8IGdyZXAgLXEgcnVubmluZwogICBpZiBbICQ/ID09IDAgXTsgdGhlbgogICAgICAgZWNobyBtY3BkIHJlYWR5CiAgICAgICBicmVhawogICBmaQogICBlY2hvIG1jcGQgbm90IHJlYWR5IHlldAogICBsZXQgY2hlY2tzPWNoZWNrcysxCiAgIHNsZWVwIDEwCmRvbmUgCgplY2hvICBleHBhbmRpbmcgZjUtY2xvdWQtbGlicy50YXIuZ3oKdGFyIHh2ZnogL2NvbmZpZy9jbG91ZC9mNS1jbG91ZC1saWJzLnRhci5neiAtQyAvY29uZmlnL2Nsb3VkL2F6dXJlL25vZGVfbW9kdWxlcy9AZjVkZXZjZW50cmFsCmVjaG8gIGNsb3VkIGxpYnMgaW5zdGFsbCBjb21wbGV0ZQp0b3VjaCAvY29uZmlnL2Nsb3VkL2Nsb3VkTGlic1JlYWR5",
 
         "installCustomConfig": "[concat(variables('singleQuote'), '#!/bin/bash\n', variables('customConfig'), variables('singleQuote'))]",
+
         "instanceName": "[toLower(parameters('instanceName'))]",
+
         "nbALBid": "[resourceId('Microsoft.Network/loadBalancers',variables('NorthboundLoadBalancerName'))]",
         "extNicName": "[concat(variables('dnsLabelPrefix'), '-ext')]",
         "extNsgID": "[resourceId('Microsoft.Network/networkSecurityGroups/',concat(variables('dnsLabelPrefix'),'-ext-nsg'))]",
@@ -602,7 +633,7 @@
         "mgmtSubnetPrivateAddress6": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 61))]",
         "mgmtSubnetPrivateAddress7": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 62))]",
 
-       "stigCmdArray": {
+        "stigCmdArray": {
             "true": "bash ./bigipstig.sh;",
             "false": ""
         },
@@ -622,12 +653,12 @@
         "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip; openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer; tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer;",
         "firewallConfig": "[concat(variables('cmdcreateFWLog'), variables('cmdcreateFWPolicy'))]",
         "firewallConfig2": "[concat(variables('cmdcreateFWLog2'), variables('cmdcreateFWPolicy2'))]",
-        
+
         "sacaConfig": "[variables('cmdConfigStig')]",
 
         "vdmsSubnetName": "VDMS",
         "windowsOSVersion": "2019-Datacenter",
-        "WinvmName": "[concat(parameters('instanceName'), 'win2k16')]",
+        "WinvmName": "[concat(variables('dnsLabelPrefix'), '-win-jb')]",
         "jbimageOffer": "UbuntuServer",
         "jbimagePublisher": "Canonical",
         "jblinuxConfiguration": {
@@ -642,7 +673,7 @@
             }
         },
         "jbubuntuOSVersion": "18.04-LTS",
-        "jbvmName": "[concat(parameters('instanceName'), '-linux-jumpbox')]",
+        "jbvmName": "[concat(variables('dnsLabelPrefix'), '-linux-jump')]",
         "jbvmSize": "Standard_A1",
         "linuxConfiguration": {
             "disablePasswordAuthentication": true,
@@ -673,6 +704,56 @@
                 "adminUsername": "[parameters('adminUsername')]",
                 "computerName": "[variables('instanceName')]",
                 "linuxConfiguration": "[variables('linuxConfiguration')]"
+            }
+        },
+        "osProfiles2": {
+            "password": {
+                "zero": {
+                    "adminPassword": "[variables('adminPasswordOrKey')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "computerName": "[concat(variables('instanceName'), '0')]",
+                    "linuxConfiguration": "[json('null')]"
+                },
+                "one": {
+                    "adminPassword": "[variables('adminPasswordOrKey')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "computerName": "[concat(variables('instanceName'), '1')]",
+                    "linuxConfiguration": "[json('null')]"
+                },
+                "two": {
+                    "adminPassword": "[variables('adminPasswordOrKey')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "computerName": "[concat(variables('instanceName'), '2')]",
+                    "linuxConfiguration": "[json('null')]"
+                },
+                "three": {
+                    "adminPassword": "[variables('adminPasswordOrKey')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "computerName": "[concat(variables('instanceName'), '3')]",
+                    "linuxConfiguration": "[json('null')]"
+                }
+            },
+            "sshPublicKey": {
+                "zero": {
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "computerName": "[concat(variables('instanceName'), '0')]",
+                    "linuxConfiguration": "[variables('linuxConfiguration')]"
+                },
+                "one": {
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "computerName": "[concat(variables('instanceName'), '1')]",
+                    "linuxConfiguration": "[variables('linuxConfiguration')]"
+                },
+                "two": {
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "computerName": "[concat(variables('instanceName'), '2')]",
+                    "linuxConfiguration": "[variables('linuxConfiguration')]"
+                },
+                "three": {
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "computerName": "[concat(variables('instanceName'), '3')]",
+                    "linuxConfiguration": "[variables('linuxConfiguration')]"
+                }
             }
         },
         "premiumInstanceArray": [
@@ -723,7 +804,7 @@
         },
         "subscriptionID": "[subscription().subscriptionId]",
         "useCustomImage": "[not(empty(variables('customImage')))]",
-        
+
         "virtualNetworkName": "SCCA_VNet",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
     },
@@ -767,6 +848,24 @@
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/publicIPAddresses"
+        },
+        {
+            "apiVersion": "[variables('networkApiVersion')]",
+            "location": "[variables('location')]",
+            "name": "[variables('routeTableName')]",
+            "properties": {
+                "routes": [
+                    {
+                        "name": "Default",
+                        "properties": {
+                            "addressPrefix": "0.0.0.0/0",
+                            "nextHopIpAddress": "[parameters('SouthUntrustedLBPrivateAddress')]",
+                            "nextHopType": "VirtualAppliance"
+                        }
+                    }
+                ]
+            },
+            "type": "Microsoft.Network/routeTables"
         },
         {
             "apiVersion": "[variables('networkApiVersion')]",
@@ -1103,7 +1202,7 @@
                     "id": "[concat(variables('extNsgId'))]"
                 }
             },
-            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
+            "tags": "[if(empty(variables('tagValues')), json('null'), union(variables('tagValues'),variables('failovertagValues')))]",
             "type": "Microsoft.Network/networkInterfaces"
         },
         {
@@ -1148,7 +1247,7 @@
                     "id": "[concat(variables('extNsgId'))]"
                 }
             },
-            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
+            "tags": "[if(empty(variables('tagValues')), json('null'), union(variables('tagValues'),variables('failovertagValues')))]",
             "type": "Microsoft.Network/networkInterfaces"
         },
         {
@@ -1189,7 +1288,7 @@
                     }
                 ]
             },
-            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
+            "tags": "[if(empty(variables('tagValues')), json('null'), union(variables('tagValues'),variables('failovertagValues')))]",
             "type": "Microsoft.Network/networkInterfaces"
         },
         {
@@ -1230,7 +1329,7 @@
                     }
                 ]
             },
-            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
+            "tags": "[if(empty(variables('tagValues')), json('null'), union(variables('tagValues'),variables('failovertagValues')))]",
             "type": "Microsoft.Network/networkInterfaces"
         },
         {
@@ -2271,7 +2370,7 @@
                         }
                     ]
                 },
-                "osProfile": "[variables('osProfiles')[parameters('authenticationType')]]",
+                "osProfile": "[variables('osProfiles2')[parameters('authenticationType')].zero]",
                 "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2323,7 +2422,7 @@
                         }
                     ]
                 },
-                "osProfile": "[variables('osProfiles')[parameters('authenticationType')]]",
+                "osProfile": "[variables('osProfiles2')[parameters('authenticationType')].one]",
                 "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2377,7 +2476,7 @@
                         }
                     ]
                 },
-                "osProfile": "[variables('osProfiles')[parameters('authenticationType')]]",
+                "osProfile": "[variables('osProfiles2')[parameters('authenticationType')].two]",
                 "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2431,7 +2530,7 @@
                         }
                     ]
                 },
-                "osProfile": "[variables('osProfiles')[parameters('authenticationType')]]",
+                "osProfile": "[variables('osProfiles2')[parameters('authenticationType')].three]",
                 "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2700,13 +2799,13 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/f5-cloud-libs.tar.gz",
                         "[concat('https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
+                        "https://raw.githubusercontent.com/F5Networks/f5-cloud-libs/master/dist/f5-cloud-libs.tar.gz",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh",
-                        "https://raw.githubusercontent.com/mikje81/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
+                        "https://raw.githubusercontent.com/mikej81/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
                     ]
                 },
                 "type": "CustomScript",
@@ -2731,8 +2830,8 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/f5-cloud-libs.tar.gz",
                         "[concat('https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
+                        "https://raw.githubusercontent.com/F5Networks/f5-cloud-libs/master/dist/f5-cloud-libs.tar.gz",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh"
@@ -2762,10 +2861,10 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/f5-cloud-libs.tar.gz",
                         "[concat('https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
+                        "https://raw.githubusercontent.com/F5Networks/f5-cloud-libs/master/dist/f5-cloud-libs.tar.gz",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh",
                         "https://raw.githubusercontent.com/mikej81/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
@@ -2795,8 +2894,8 @@
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/f5-cloud-libs.tar.gz",
                         "[concat('https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/', variables('f5AS3Build'))]",
+                        "https://raw.githubusercontent.com/F5Networks/f5-cloud-libs/master/dist/f5-cloud-libs.tar.gz",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-service-discovery/', variables('f5CloudIappsSdTag'), '/f5.service_discovery.tmpl')]",
                         "[concat('https://cdn.f5.com/product/cloudsolutions/iapps/common/f5-cloud-logger/', variables('f5CloudIappsLoggerTag'), '/f5.cloud_logger.v1.0.0.tmpl')]",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh"

@@ -40,7 +40,7 @@
             "type": "string"
         },
         "instanceName": {
-            "defaultValue": "f5vm01",
+            "defaultValue": "bigip",
             "metadata": {
                 "description": "Name of the Virtual Machine."
             },
@@ -479,12 +479,12 @@
             }
         },
         "jbubuntuOSVersion": "18.04-LTS",
-        "jbvmName": "[concat(parameters('instanceName'), '-linux-jumpbox')]",
+        "jbvmName": "[concat(variables('dnsLabelPrefix'), '-linux-jump')]",
         "jbvmSize": "Standard_A1",
-        "WinvmName": "[concat(parameters('instanceName'), 'win2k16')]",
+        "WinvmName": "[concat(variables('dnsLabelPrefix'), '-win-jb')]",
         "windowsOSVersion": "2019-Datacenter",
 
-        "availabilitySetName": "[concat(variables('dnsLabel'), '-avset')]",
+        "availabilitySetName": "[concat(variables('dnsLabelPrefix'), '-avset')]",
         "availabilitySet2Name": "[concat(variables('dnsLabelPrefix'), '-avset2')]",
         "availabilitySet3Name": "[concat(variables('dnsLabelPrefix'), '-avset3')]",
         "imagePlan": {
