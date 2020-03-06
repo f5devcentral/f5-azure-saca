@@ -341,13 +341,13 @@
                 "Port": 443
             },
             "15.0.100000": {
-                "Port": 8443
+                "Port": 443
             },
             "14.1.200000": {
-                "Port": 8443
+                "Port": 443
             },
             "latest": {
-                "Port": 8443
+                "Port": 443
             }
         },
         "computeApiVersion": "2017-12-01",
@@ -474,6 +474,7 @@
         "instanceName": "[toLower(parameters('instanceName'))]",
         "internalLoadBalancerName": "[concat(variables('dnsLabel'),'-int-ilb')]",
         "intLbId": "[resourceId('Microsoft.Network/loadBalancers',variables('internalLoadBalancerName'))]",
+        
         "failoverCmdArray": {
             "No": {
                 "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address none')]",

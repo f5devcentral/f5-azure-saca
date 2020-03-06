@@ -438,13 +438,13 @@
                 "Port": 443
             },
             "15.0.100000": {
-                "Port": 8443
+                "Port": 443
             },
             "14.1.200000": {
-                "Port": 8443
+                "Port": 443
             },
             "latest": {
-                "Port": 8443
+                "Port": 443
             }
         },
         "bigIpMgmtPort": "[variables('bigIpVersionPortMap')[variables('bigIpNicPortValue')].Port]",
@@ -457,6 +457,8 @@
         "dataStorageAccountType": "Standard_LRS",
         "deploymentId": "[concat(variables('subscriptionId'), resourceGroup().id, deployment().name, variables('dnsLabelPrefix'))]",
         "dnsLabelPrefix": "[toLower(parameters('dnsLabelPrefix'))]",
+        "dnsLabel": "[toLower(variables('dnsLabelPrefix'))]",
+
         "enableNetworkFailover": "Yes",
 
         "f5AS3Build": "f5-appsvcs-3.16.0-6.noarch.rpm",
@@ -557,7 +559,7 @@
 
         "NorthboundLoadBalancerNameb": "[concat(variables('dnsLabelPrefix'),'-nb-ilb')]",
 
-        "tmmRouteGw": "[concat(variables('extSubnetPrivateAddressPrefix'), '.1')]",
+        "tmmRouteGw": "[concat(variables('intSubnetPrivateAddressPrefix'), '.1')]",
 
         "mgmtALBid": "[resourceId('Microsoft.Network/loadBalancers',variables('mgmtLoadBalancerName'))]",
         "sbILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('SouthboundLoadBalancerName'))]",
@@ -607,6 +609,8 @@
 
         "isAcceleratedNetworkingSupported": "[if(not(contains(parameters('bigIpVersion'),  '14.1.200000')), bool('true'), bool('false'))]",
 
+        "mgmtNsgID": "[resourceId('Microsoft.Network/networkSecurityGroups/',concat(variables('dnsLabel'),'-mgmt-nsg'))]",
+
         "mgmtNicName": "[concat(variables('dnsLabelPrefix'), '-mgmt')]",
         "mgmtSubnetId": "[concat(variables('vnetId'), '/subnets/', variables('mgmtSubnetName'))]",
         "mgmtSubnetName": "management",
@@ -620,6 +624,7 @@
         "mgmtSubnetPrivateAddressPrefix": "[substring(variables('ManagementAddressStartIP'), 0, lastindexOf(variables('ManagementAddressStartIP'), '.'))]",
         "mgmtSubnetStartDirty": "[substring(variables('ManagementAddressStartIP'), lastIndexOf(variables('ManagementAddressStartIP'), '.'), sub(length(variables('ManagementAddressStartIP')), lastIndexOf(variables('ManagementAddressStartIP'), '.') ))]",
         "mgmtSubnetStartInt": "[replace(variables('mgmtSubnetStartDirty'), '.','')]",
+
         "mgmtSubnetPrivateAddress1": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 5))]",
         "mgmtSubnetPrivateAddress2": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 6))]",
         "mgmtSubnetPrivateAddress3": "[concat(variables('mgmtSubnetPrivateAddressPrefix'), '.',add(int(variables('mgmtSubnetStartInt')), 7))]",
@@ -889,7 +894,7 @@
                     }
                 ],
                 "networkSecurityGroup": {
-                    "id": "[concat(variables('extNsgId'))]"
+                    "id": "[variables('mgmtNsgID')]"
                 }
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -920,7 +925,7 @@
                     }
                 ],
                 "networkSecurityGroup": {
-                    "id": "[concat(variables('extNsgId'))]"
+                    "id": "[variables('mgmtNsgID')]"
                 }
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -951,7 +956,7 @@
                     }
                 ],
                 "networkSecurityGroup": {
-                    "id": "[concat(variables('extNsgId'))]"
+                    "id": "[variables('mgmtNsgID')]"
                 }
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -1007,7 +1012,10 @@
                             }
                         }
                     }
-                ]
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('mgmtNsgID')]"
+                }
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -1031,7 +1039,10 @@
                             }
                         }
                     }
-                ]
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('mgmtNsgID')]"
+                }
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -1081,7 +1092,10 @@
                             }
                         }
                     }
-                ]
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('mgmtNsgID')]"
+                }
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
@@ -1579,6 +1593,30 @@
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
+        },{
+            "apiVersion": "[variables('networkApiVersion')]",
+            "location": "[variables('location')]",
+            "name": "[concat(variables('dnsLabelPrefix'), '-mgmt-nsg')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "https_allow_443",
+                        "properties": {
+                            "access": "Allow",
+                            "description": "",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "[variables('bigIpMgmtPort')]",
+                            "direction": "Outbound",
+                            "priority": 101,
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "[parameters('restrictedSrcAddress')]",
+                            "sourcePortRange": "*"
+                        }
+                    }
+                ]
+            },
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
+            "type": "Microsoft.Network/networkSecurityGroups"
         },
         {
             "apiVersion": "[variables('networkApiVersion')]",
@@ -1586,21 +1624,7 @@
             "name": "[concat(variables('dnsLabelPrefix'), '-ext-nsg')]",
             "properties": {
                 "securityRules": [
-                    {
-                        "name": "ext_allow_https",
-                        "properties": {
-                            "access": "Allow",
-                            "description": "",
-                            "destinationAddressPrefix": "*",
-                            "destinationPortRange": "443",
-                            "direction": "Inbound",
-                            "priority": 101,
-                            "protocol": "Tcp",
-                            "sourceAddressPrefix": "[parameters('restrictedSrcAddress')]",
-                            "sourcePortRange": "*"
-                        }
-                    },
-                    {
+                     {
                         "name": "ssh_allow_22",
                         "properties": {
                             "access": "Allow",

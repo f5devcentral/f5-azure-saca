@@ -460,6 +460,7 @@
         "instanceName": "[toLower(parameters('instanceName'))]",
         "internalLoadBalancerName": "[concat(variables('dnsLabel'),'-int-ilb')]",
         "intLbId": "[resourceId('Microsoft.Network/loadBalancers',variables('internalLoadBalancerName'))]",
+        
         "failoverCmdArray": {
             "No": {
                 "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address none')]",
