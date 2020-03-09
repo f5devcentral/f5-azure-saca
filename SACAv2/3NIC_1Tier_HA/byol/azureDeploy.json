@@ -186,7 +186,7 @@
                 "14.1.200000",
                 "latest"
             ],
-            "defaultValue": "15.0.100000",
+            "defaultValue": "14.1.200000",
             "metadata": {
                 "description": "F5 BIG-IP version you want to use."
             },
@@ -621,7 +621,7 @@
             },
             "Yes": {
                 "hashCmd": "[concat('custId=`echo \"', variables('subscriptionId'), '\"|sha512sum|cut -d \" \" -f 1`; deployId=`echo \"', variables('deploymentId'), '\"|sha512sum|cut -d \" \" -f 1`')]",
-                "metricsCmd": "[concat(' --metrics customerId:${custId},deploymentId:${deployId},templateName:failover_3nic-new-stack-supported-byol,templateVersion:7.2.0.0,region:', variables('location'), ',bigIpVersion:', parameters('bigIpVersion') ,',licenseType:byol,cloudLibsVersion:', variables('f5CloudLibsTag'), ',cloudName:azure')]"
+                "metricsCmd": "[concat(' --metrics customerId:${custId},deploymentId:${deployId},templateName:failover_3nic-new-stack-saca-byol,templateVersion:7.2.0.0,region:', variables('location'), ',bigIpVersion:', parameters('bigIpVersion') ,',licenseType:byol,cloudLibsVersion:', variables('f5CloudLibsTag'), ',cloudName:azure')]"
             }
         },
         "osProfiles": {
