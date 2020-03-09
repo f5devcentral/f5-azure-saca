@@ -163,7 +163,7 @@
                 "Standard_GS4",
                 "Standard_GS5"
             ],
-            "defaultValue": "Standard_DS3_v2",
+            "defaultValue": "Standard_DS4_v2",
             "metadata": {
                 "description": "Instance size of the Virtual Machine."
             },
