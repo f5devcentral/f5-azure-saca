@@ -15,7 +15,6 @@
                 "template": "generic",
                 "mgmt_rdp": {
                     "class": "Service_TCP",
-                    "iRules": ["/Common/Shared/ip_reputation_drop"],
                     "virtualAddresses": [
                         "0.0.0.0"
                     ],
@@ -50,7 +49,6 @@
                 "template": "generic",
                 "mgmt_ssh": {
                     "class": "Service_TCP",
-                    "iRules": ["/Common/Shared/ip_reputation_drop"],
                     "virtualAddresses": [
                         "0.0.0.0"
                     ],

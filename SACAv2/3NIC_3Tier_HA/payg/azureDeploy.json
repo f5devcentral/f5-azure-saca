@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "6.0.2.0",
     "parameters": {
         "adminUsername": {
@@ -54,7 +54,7 @@
             "type": "string"
         },
         "Tier3DeclarationUrl": {
-            "defaultValue": "NOT_SPECIFIED",
+            "defaultValue": "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/AS3/paygsccaBaseline.json",
             "metadata": {
                 "description": "URL for the AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration."
             },
@@ -68,7 +68,7 @@
             "type": "string"
         },
         "instanceName": {
-            "defaultValue": "bigip",
+            "defaultValue": "bigiq",
             "metadata": {
                 "description": "Name of the Virtual Machine."
             },
@@ -117,7 +117,7 @@
                 "Standard_GS4",
                 "Standard_GS5"
             ],
-            "defaultValue": "Standard_DS4_v2",
+            "defaultValue": "Standard_DS3_v2",
             "metadata": {
                 "description": "Instance size of the Virtual Machine."
             },
@@ -137,40 +137,25 @@
         },
         "imageName": {
             "allowedValues": [
-                "LTMTwoBootLocations",
-                "AllTwoBootLocations"
+                "Best25Mbps",
+                "Best200Mbps",
+                "Best1Gbps",
+                "Best10Gbps",
+                "Better25Mbps",
+                "Better200Mbps",
+                "Better1Gbps",
+                "Better10Gbps",
+                "Good25Mbps",
+                "Good200Mbps",
+                "Good1Gbps",
+                "Good10Gbps",
+                "AdvancedWaf25Mbps",
+                "AdvancedWaf200Mbps",
+                "AdvancedWaf1Gbps"
             ],
-            "defaultValue": "AllTwoBootLocations",
+            "defaultValue": "Best1Gbps",
             "metadata": {
-                "description": "F5 SKU (image) you want to deploy. Note: The disk size of the VM will be determined based on the option you select.  **Important**: If intending to provision multiple modules, ensure the appropriate value is selected, such as ****AllTwoBootLocations or AllOneBootLocation****."
-            },
-            "type": "string"
-        },
-        "licenseKey1": {
-            "defaultValue": "",
-            "metadata": {
-                "description": "The license token for the F5 BIG-IP VE (BYOL)."
-            },
-            "type": "string"
-        },
-        "licenseKey2": {
-            "defaultValue": "",
-            "metadata": {
-                "description": "The license token for the F5 BIG-IP VE (BYOL). This field is required when deploying two or more devices."
-            },
-            "type": "string"
-        },
-        "licenseKey3": {
-            "defaultValue": "",
-            "metadata": {
-                "description": "The license token for the F5 BIG-IP VE (BYOL)."
-            },
-            "type": "string"
-        },
-        "licenseKey4": {
-            "defaultValue": "",
-            "metadata": {
-                "description": "The license token for the F5 BIG-IP VE (BYOL)."
+                "description": "F5 SKU (image) you want to deploy. Note: The disk size of the VM will be determined based on the option you select.  **Important**: 10Gbps SKUs are supported only with BIGIP VE v15 or later. If intending to provision multiple modules, ensure the appropriate value is selected, such as **Best** instead of **Good**."
             },
             "type": "string"
         },
@@ -347,7 +332,7 @@
             },
             "type": "string"
         },
-        "tagValues": {
+                "tagValues": {
             "defaultValue": {
                 "application": "APP",
                 "cost": "COST",
@@ -371,7 +356,7 @@
             },
             "Yes": {
                 "hashCmd": "[concat('custId=`echo \"', variables('subscriptionId'), '\"|sha512sum|cut -d \" \" -f 1`; deployId=`echo \"', variables('deploymentId'), '\"|sha512sum|cut -d \" \" -f 1`')]",
-                "metricsCmd": "[concat(' --metrics customerId:${custId},deploymentId:${deployId},templateName:failover_3nic-new-stack-saca-byol,templateVersion:7.2.0.0,region:', variables('location'), ',bigIpVersion:', parameters('bigIpVersion') ,',licenseType:byol,cloudLibsVersion:', variables('f5CloudLibsTag'), ',cloudName:azure')]"
+                "metricsCmd": "[concat(' --metrics customerId:${custId},deploymentId:${deployId},templateName:failover_3nic-new-stack-saca-payg,templateVersion:7.2.0.0,region:', variables('location'), ',bigIpVersion:', parameters('bigIpVersion') ,',licenseType:payg,cloudLibsVersion:', variables('f5CloudLibsTag'), ',cloudName:azure')]"
             }
         },
         "failovertagValues": {
@@ -435,7 +420,6 @@
             }
         },
         "bigIpNicPortValue": "[variables('bigIpNicPortMap')['3'].Port]",
-
         "bigIpVersionPortMap": {
             "443": {
                 "Port": 443
@@ -450,9 +434,7 @@
                 "Port": 8443
             }
         },
-
         "bigIpMgmtPort": "[variables('bigIpVersionPortMap')[variables('bigIpNicPortValue')].Port]",
-
         "commandArgs": "[concat('-o ', parameters('Tier1DeclarationUrl'), ' -u svc_user')]",
         "commandArgs2": "[concat('-o ', parameters('Tier3DeclarationUrl'), ' -u svc_user')]",
         "computeApiVersion": "2017-12-01",
@@ -478,7 +460,86 @@
                 "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnetPrivateAddress'), ' port 1026 } } mirror-ip ', variables('intSubnetPrivateAddress'))]",
                 "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '1.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnetPrivateAddress1'), ' port 1026 } } mirror-ip ', variables('intSubnetPrivateAddress1'))]",
                 "third": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnet2PrivateAddress'), ' port 1026 } } mirror-ip ', variables('intSubnet2PrivateAddress'))]",
-                "fourth": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnet2PrivateAddress1'), ' port 1026 } } mirror-ip ', variables('intSubnet2PrivateAddress1'))]"
+                "fourth":"[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnet2PrivateAddress1'), ' port 1026 } } mirror-ip ', variables('intSubnet2PrivateAddress1'))]"
+            }
+        },
+
+        "paygImageMap": {
+            "advancedwaf1gbps": {
+                "offer": "f5-big-ip-advanced-waf",
+                "sku": "f5-bigip-virtual-edition-1g-waf-hourly"
+            },
+            "advancedwaf200mbps": {
+                "offer": "f5-big-ip-advanced-waf",
+                "sku": "f5-bigip-virtual-edition-200m-waf-hourly"
+            },
+            "advancedwaf25mbps": {
+                "offer": "f5-big-ip-advanced-waf",
+                "sku": "f5-bigip-virtual-edition-25m-waf-hourly"
+            },
+            "best1gbps": {
+                "offer": "f5-big-ip-best",
+                "sku": "f5-bigip-virtual-edition-1g-best-hourly"
+            },
+            "best10gbps": {
+                "offer": "f5-big-ip-best",
+                "sku": "f5-bigip-virtual-edition-10g-best-hourly"
+            },
+            "best200mbps": {
+                "offer": "f5-big-ip-best",
+                "sku": "f5-bigip-virtual-edition-200m-best-hourly"
+            },
+            "best25mbps": {
+                "offer": "f5-big-ip-best",
+                "sku": "f5-bigip-virtual-edition-25m-best-hourly"
+            },
+            "better1gbps": {
+                "offer": "f5-big-ip-better",
+                "sku": "f5-bigip-virtual-edition-1g-better-hourly"
+            },
+            "better10gbps": {
+                "offer": "f5-big-ip-better",
+                "sku": "f5-bigip-virtual-edition-10g-better-hourly"
+            },
+            "better200mbps": {
+                "offer": "f5-big-ip-better",
+                "sku": "f5-bigip-virtual-edition-200m-better-hourly"
+            },
+            "better25mbps": {
+                "offer": "f5-big-ip-better",
+                "sku": "f5-bigip-virtual-edition-25m-better-hourly"
+            },
+            "good1gbps": {
+                "offer": "f5-big-ip-good",
+                "sku": "f5-bigip-virtual-edition-1g-good-hourly"
+            },
+            "good10gbps": {
+                "offer": "f5-big-ip-good",
+                "sku": "f5-bigip-virtual-edition-10g-good-hourly"
+            },
+            "good200mbps": {
+                "offer": "f5-big-ip-good",
+                "sku": "f5-bigip-virtual-edition-200m-good-hourly"
+            },
+            "good25mbps": {
+                "offer": "f5-big-ip-good",
+                "sku": "f5-bigip-virtual-edition-25m-good-hourly"
+            },
+            "perappveadvancedwaf200mbps": {
+                "offer": "f5-big-ip-per-app-ve",
+                "sku": "f5-big-ip-per-app-ve-awf-200m-hourly"
+            },
+            "perappveadvancedwaf25mbps": {
+                "offer": "f5-big-ip-per-app-ve",
+                "sku": "f5-big-ip-per-app-ve-awf-25m-hourly"
+            },
+            "perappveltm200mbps": {
+                "offer": "f5-big-ip-per-app-ve",
+                "sku": "f5-big-ip-per-app-ve-ltm-200m-hourly"
+            },
+            "perappveltm25mbps": {
+                "offer": "f5-big-ip-per-app-ve",
+                "sku": "f5-big-ip-per-app-ve-ltm-25m-hourly"
             }
         },
 
@@ -501,7 +562,7 @@
 
         "mgmtPublicIPAddressName": "[concat(variables('dnsLabelPrefix'), '-mgmt-pip')]",
         "mgmtPublicIPAddressIdPrefix": "[resourceId('Microsoft.Network/publicIPAddresses', variables('mgmtPublicIPAddressName'))]",
-
+        
         "nbILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('NorthboundLoadBalancerNameb'))]",
 
         "intNicName": "[concat(variables('dnsLabelPrefix'), '-int')]",
@@ -526,19 +587,19 @@
         "intSubnet2PrivateAddress3": "[concat(variables('intSubnet2PrivateAddressPrefix'), '.', add(int(variables('intSubnet2StartInt')), 11))]",
 
         "NorthboundLoadBalancerNameb": "[concat(variables('dnsLabelPrefix'),'-nb-ilb')]",
-
+        
         "tmmRouteGw": "[concat(variables('extSubnetPrivateAddressPrefix'), '.1')]",
 
         "mgmtALBid": "[resourceId('Microsoft.Network/loadBalancers',variables('mgmtLoadBalancerName'))]",
         "sbILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('SouthboundLoadBalancerName'))]",
         "SouthboundLoadBalancerName": "[concat(variables('dnsLabelPrefix'),'-sb-ilb')]",
-        "extSubnet2Name": "external2",
-        "extSubnet2PrivateAddressPrefix": "[substring(parameters('SouthUntrustedAddressStartIP'), 0, lastindexOf(parameters('SouthUntrustedAddressStartIP'), '.'))]",
-        "extSubnet2StartDirty": "[substring(parameters('SouthUntrustedAddressStartIP'), lastIndexOf(parameters('SouthUntrustedAddressStartIP'), '.'), sub(length(parameters('SouthUntrustedAddressStartIP')), lastIndexOf(parameters('SouthUntrustedAddressStartIP'), '.')))]",
-        "extSubnet2StartInt": "[replace(variables('extSubnet2StartDirty'), '.','')]",
-        "extSubnet2PrivateAddress": "[parameters('SouthUntrustedAddressStartIP')]",
-        "extSubnet2PrivateAddress1": "[concat(variables('extSubnet2PrivateAddressPrefix'), '.',add(int(variables('extSubnet2StartInt')), 1))]",
-        "extSubnet2Id": "[concat(variables('vnetId'), '/subnets/', variables('extSubnet2Name'))]",
+        "ext2SubnetName": "external2",
+        "ext2SubnetPrivateAddressPrefix": "[substring(parameters('SouthUntrustedAddressStartIP'), 0, lastindexOf(parameters('SouthUntrustedAddressStartIP'), '.'))]",
+        "ext2SubnetStartDirty": "[substring(parameters('SouthUntrustedAddressStartIP'), lastIndexOf(parameters('SouthUntrustedAddressStartIP'), '.'), sub(length(parameters('SouthUntrustedAddressStartIP')), lastIndexOf(parameters('SouthUntrustedAddressStartIP'), '.')))]",
+        "ext2SubnetStartInt": "[replace(variables('ext2SubnetStartDirty'), '.','')]",
+        "ext2SubnetPrivateAddress": "[parameters('SouthUntrustedAddressStartIP')]",
+        "ext2SubnetPrivateAddress1": "[concat(variables('ext2SubnetPrivateAddressPrefix'), '.',add(int(variables('ext2SubnetStartInt')), 1))]",
+        "ext2SubnetId": "[concat(variables('vnetId'), '/subnets/', variables('ext2subnetName'))]",
 
         "tmmRoute2Gw": "[concat(variables('intSubnet2PrivateAddressPrefix'), '.1')]",
         "IPSILBid": "[resourceId('Microsoft.Network/loadBalancers',variables('IPSLoadBalancerName'))]",
@@ -605,7 +666,7 @@
         "installDODRootCA": "unzip Certificates_PKCS7_v5.5_DoD.zip; openssl pkcs7 -print_certs -in ./Certificates_PKCS7_v5.5_DoD/Certificates_PKCS7_v5.5_DoD.pem.p7b -out DoD_Root_CA.cer; tmsh install sys crypto cert DODRoots from-local-file DoD_Root_CA.cer;",
         "firewallConfig": "[concat(variables('cmdcreateFWLog'), variables('cmdcreateFWPolicy'))]",
         "firewallConfig2": "[concat(variables('cmdcreateFWLog2'), variables('cmdcreateFWPolicy2'))]",
-
+        
         "sacaConfig": "[variables('cmdConfigStig')]",
 
         "vdmsSubnetName": "VDMS",
@@ -647,31 +708,10 @@
 
         "osProfiles": {
             "password": {
-                "one": {
-                    "adminPassword": "[variables('adminPasswordOrKey')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "[concat(variables('instanceName'), '0')]",
-                    "linuxConfiguration": "[json('null')]"
-                },
-                "two": {
-                    "adminPassword": "[variables('adminPasswordOrKey')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "[concat(variables('instanceName'), '1')]",
-                    "linuxConfiguration": "[json('null')]"
-                },
-                "three": {
-                    "adminPassword": "[variables('adminPasswordOrKey')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "[concat(variables('instanceName'), '2')]",
-                    "linuxConfiguration": "[json('null')]"
-                },
-                "four": {
-                    "adminPassword": "[variables('adminPasswordOrKey')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "[concat(variables('instanceName'), '3')]",
-                    "linuxConfiguration": "[json('null')]"
-                }
-
+                "adminPassword": "[variables('adminPasswordOrKey')]",
+                "adminUsername": "[parameters('adminUsername')]",
+                "computerName": "[variables('instanceName')]",
+                "linuxConfiguration": "[json('null')]"
             },
             "sshPublicKey": {
                 "adminUsername": "[parameters('adminUsername')]",
@@ -712,38 +752,8 @@
         "singleQuote": "'",
 
         "imageNameToLower": "[toLower(parameters('imageName'))]",
-
-        "skuToUse": "[concat('f5-', variables('imageNameSub'),'-byol')]",
-        "offerToUse": "[concat('f5-big-ip-', variables('imageNameArray').offerPostfix[variables('imageNameSub')])]",
-        "imageNameSub": "[variables('imageNameArray')[parameters('bigIpVersion')][parameters('imageName')]]",
-        "imageNameArray": {
-            "15.0.100000": {
-                "AllOneBootLocation": "big-all-1slot",
-                "AllTwoBootLocations": "big-all-2slot",
-                "LTMOneBootLocation": "big-ltm-1slot",
-                "LTMTwoBootLocations": "big-ltm-2slot"
-            },
-            "14.1.200000": {
-                "AllOneBootLocation": "big-all-1slot",
-                "AllTwoBootLocations": "big-all-2slot",
-                "LTMOneBootLocation": "big-ltm-1slot",
-                "LTMTwoBootLocations": "big-ltm-2slot"
-            },
-            "latest": {
-                "AllOneBootLocation": "big-all-2slot",
-                "AllTwoBootLocations": "big-all-2slot",
-                "LTMOneBootLocation": "big-ltm-2slot",
-                "LTMTwoBootLocations": "big-ltm-2slot"
-            },
-            "offerPostfix": {
-                "big-all-1slot": "byol",
-                "big-all-2slot": "byol",
-                "big-ltm-1slot": "byol",
-                "big-ltm-2slot": "byol",
-                "bigip-virtual-edition-best": "best",
-                "bigip-virtual-edition-good": "good"
-            }
-        },
+        "skuToUse": "[variables('paygImageMap')[variables('imageNameToLower')]['sku']]",
+        "offerToUse": "[variables('paygImageMap')[variables('imageNameToLower')]['offer']]",
         "imagePlan": {
             "name": "[variables('skuToUse')]",
             "product": "[variables('offerToUse')]",
@@ -848,7 +858,7 @@
                         }
                     },
                     {
-                        "name": "[variables('extSubnet2Name')]",
+                        "name": "[variables('ext2SubnetName')]",
                         "properties": {
                             "addressPrefix": "[parameters('SouthUntrustedAddressSubnet')]"
                         }
@@ -1152,7 +1162,7 @@
                     "id": "[concat(variables('extNsgId'))]"
                 }
             },
-            "tags": "[if(empty(variables('tagValues')), json('null'), union(variables('tagValues'),variables('failovertagValues')))]",
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
         },
         {
@@ -1197,7 +1207,7 @@
                     "id": "[concat(variables('extNsgId'))]"
                 }
             },
-            "tags": "[if(empty(variables('tagValues')), json('null'), union(variables('tagValues'),variables('failovertagValues')))]",
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
         },
         {
@@ -1215,10 +1225,10 @@
                         "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
                         "properties": {
                             "primary": true,
-                            "privateIPAddress": "[variables('extSubnet2PrivateAddress')]",
+                            "privateIPAddress": "[variables('ext2SubnetPrivateAddress')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[variables('extSubnet2Id')]"
+                                "id": "[variables('ext2SubnetId')]"
                             }
                         }
                     },
@@ -1229,16 +1239,16 @@
                                 "[variables('SBBackEndAddressPool')]"
                             ],
                             "primary": false,
-                            "privateIPAddress": "[concat(variables('extSubnet2PrivateAddressPrefix'), '.',10)]",
+                            "privateIPAddress": "[concat(variables('ext2SubnetPrivateAddressPrefix'), '.',10)]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[variables('extSubnet2Id')]"
+                                "id": "[variables('ext2SubnetId')]"
                             }
                         }
                     }
                 ]
             },
-            "tags": "[if(empty(variables('tagValues')), json('null'), union(variables('tagValues'),variables('failovertagValues')))]",
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
         },
         {
@@ -1256,10 +1266,10 @@
                         "name": "[concat(variables('instanceName'), '-self-ipconfig')]",
                         "properties": {
                             "primary": true,
-                            "privateIPAddress": "[variables('extSubnet2PrivateAddress1')]",
+                            "privateIPAddress": "[variables('ext2SubnetPrivateAddress1')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[variables('extSubnet2Id')]"
+                                "id": "[variables('ext2SubnetId')]"
                             }
                         }
                     },
@@ -1270,16 +1280,16 @@
                                 "[variables('SBBackEndAddressPool')]"
                             ],
                             "primary": false,
-                            "privateIPAddress": "[concat(variables('extSubnet2PrivateAddressPrefix'), '.',11)]",
+                            "privateIPAddress": "[concat(variables('ext2SubnetPrivateAddressPrefix'), '.',11)]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[variables('extSubnet2Id')]"
+                                "id": "[variables('ext2SubnetId')]"
                             }
                         }
                     }
                 ]
             },
-            "tags": "[if(empty(variables('tagValues')), json('null'), union(variables('tagValues'),variables('failovertagValues')))]",
+            "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
             "type": "Microsoft.Network/networkInterfaces"
         },
         {
@@ -1922,7 +1932,7 @@
                             "privateIPAddress": "[parameters('SouthUntrustedLBPrivateAddress')]",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[variables('extSubnet2Id')]"
+                                "id": "[variables('ext2SubnetId')]"
                             }
                         }
                     }
@@ -2320,7 +2330,7 @@
                         }
                     ]
                 },
-                "osProfile": "[variables('osProfiles')[parameters('authenticationType')].one]",
+                "osProfile": "[variables('osProfiles')[parameters('authenticationType')]]",
                 "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2372,7 +2382,7 @@
                         }
                     ]
                 },
-                "osProfile": "[variables('osProfiles')[parameters('authenticationType')].two]",
+                "osProfile": "[variables('osProfiles')[parameters('authenticationType')]]",
                 "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2426,7 +2436,7 @@
                         }
                     ]
                 },
-                "osProfile": "[variables('osProfiles')[parameters('authenticationType')].three]",
+                "osProfile": "[variables('osProfiles')[parameters('authenticationType')]]",
                 "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2480,7 +2490,7 @@
                         }
                     ]
                 },
-                "osProfile": "[variables('osProfiles')[parameters('authenticationType')].four]",
+                "osProfile": "[variables('osProfiles')[parameters('authenticationType')]]",
                 "storageProfile": "[if(variables('useCustomImage'), variables('storageProfileArray').customImage, variables('storageProfileArray').platformImage)]"
             },
             "tags": "[if(empty(variables('tagValues')), json('null'), variables('tagValues'))]",
@@ -2744,7 +2754,7 @@
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
-                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs*.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --no-reboot --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey1'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --modules ', parameters('Tier1bigIpModules'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].metricsCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRouteGw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('extSubnetPrivateAddress'), ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnetPrivateAddress'), ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].first, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnetPrivateAddress'), ' --create-group --device-group Sync --sync-type sync-failover --device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --network-failover --auto-sync --save-on-auto-sync;', variables('firewallConfig'), ' bash /config/cloud/deploy_app.sh ', variables('commandArgs'), '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; echo -e ', variables('routeCmd'), ' >> /config/startup; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('installDODRootCA'), variables('sacaConfig'))]"
+                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs*.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --no-reboot --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'),  ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --modules ', parameters('Tier1bigIpModules'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].metricsCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRouteGw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('extSubnetPrivateAddress'), ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnetPrivateAddress'), ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].first, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnetPrivateAddress'), ' --create-group --device-group Sync --sync-type sync-failover --device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --network-failover --auto-sync --save-on-auto-sync;', variables('firewallConfig'), ' bash /config/cloud/deploy_app.sh ', variables('commandArgs'), '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; echo -e ', variables('routeCmd'), ' >> /config/startup; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('installDODRootCA'), variables('sacaConfig'))]"
                 },
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
@@ -2775,7 +2785,7 @@
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
-                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs*.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --no-reboot --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress1'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '1.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey2'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --modules ', parameters('Tier1bigIpModules'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].metricsCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress1'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRouteGw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('extSubnetPrivateAddress1'), ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnetPrivateAddress1'), ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].second, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress1'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnetPrivateAddress1'), ' --join-group --device-group Sync --sync --remote-host ', variables('mgmtSubnetPrivateAddress'), ' --remote-user svc_user --remote-password-url file:///config/cloud/.passwd', '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; echo -e ', variables('routeCmd'), ' >> /config/startup; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('sacaConfig'))]"
+                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs*.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --no-reboot --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress1'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '1.', variables('location'), '.cloudapp.usgovcloudapi.net'),  ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --modules ', parameters('Tier1bigIpModules'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].metricsCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress1'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRouteGw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('extSubnetPrivateAddress1'), ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnetPrivateAddress1'), ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].second, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress1'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnetPrivateAddress1'), ' --join-group --device-group Sync --sync --remote-host ', variables('mgmtSubnetPrivateAddress'), ' --remote-user svc_user --remote-password-url file:///config/cloud/.passwd', '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; echo -e ', variables('routeCmd'), ' >> /config/startup; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('sacaConfig'))]"
                 },
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
@@ -2806,7 +2816,7 @@
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
-                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs*.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --no-reboot --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey3'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --modules ', parameters('Tier3bigIpModules'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].metricsCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRoute2Gw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('extSubnet2PrivateAddress'), ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnet2PrivateAddress'), ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].third, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnet2PrivateAddress'), ' --create-group --device-group Sync --sync-type sync-failover --device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --network-failover --auto-sync --save-on-auto-sync;', variables('firewallConfig2'), ' bash /config/cloud/deploy_app.sh ', variables('commandArgs2'), '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; echo -e ', variables('routeCmd'), ' >> /config/startup; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('installDODRootCA'), variables('sacaConfig'))]"
+                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs*.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --no-reboot --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'),  ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --modules ', parameters('Tier3bigIpModules'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].metricsCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRoute2Gw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('ext2SubnetPrivateAddress'), ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnet2PrivateAddress'), ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].third, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress2'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnet2PrivateAddress'), ' --create-group --device-group Sync --sync-type sync-failover --device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --network-failover --auto-sync --save-on-auto-sync;', variables('firewallConfig2'), ' bash /config/cloud/deploy_app.sh ', variables('commandArgs2'), '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; echo -e ', variables('routeCmd'), ' >> /config/startup; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('installDODRootCA'), variables('sacaConfig'))]"
                 },
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
@@ -2839,7 +2849,7 @@
             "properties": {
                 "autoUpgradeMinorVersion": "true",
                 "protectedSettings": {
-                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted;', variables('allowUsageAnalytics')['No'].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' --license ', parameters('licenseKey4'), ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].metricsCmd, ' --modules ', parameters('Tier3bigIpModules'), '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRoute2Gw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('extSubnet2PrivateAddress1'),  ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnet2PrivateAddress1'),  ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].fourth, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnet2PrivateAddress1'), ' --join-group --device-group Sync --sync --remote-host ', variables('mgmtSubnetPrivateAddress2'), ' --remote-user svc_user --remote-password-url file:///config/cloud/.passwd', '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('sacaConfig'))]"
+                    "commandToExecute": "[concat('function cp_logs() { cd /var/lib/waagent/custom-script/download && cp `ls -r | head -1`/std* /var/log/cloud/azure; cd /var/log/cloud/azure && cat stdout stderr > install.log; }; CLOUD_LIB_DIR=/config/cloud/azure/node_modules/@f5devcentral; mkdir -p $CLOUD_LIB_DIR && cp f5-cloud-libs*.tar.gz* /config/cloud; mkdir -p /var/config/rest/downloads && cp ', variables('f5AS3Build'), ' /var/config/rest/downloads; mkdir -p /var/log/cloud/azure; /usr/bin/install -m 400 /dev/null /config/cloud/.passwd; /usr/bin/install -b -m 755 /dev/null /config/verifyHash; /usr/bin/install -b -m 755 /dev/null /config/installCloudLibs.sh; IFS=', variables('singleQuote'), '%', variables('singleQuote'), '; echo -e ', variables('verifyHash64'), ' | base64 -d > /config/verifyHash; echo -e ', variables('installCloudLibs64'), ' | base64 -d > /config/installCloudLibs.sh; echo -e ', variables('appScript'), ' | /usr/bin/base64 -d > /config/cloud/deploy_app.sh; chmod +x /config/cloud/deploy_app.sh; echo -e ', variables('installCustomConfig'), ' >> /config/customConfig.sh; unset IFS; bash /config/installCloudLibs.sh; source $CLOUD_LIB_DIR/f5-cloud-libs/scripts/util.sh; encrypt_secret ', variables('singleQuote'), variables('adminPasswordOrKey'), variables('singleQuote'), ' \"/config/cloud/.passwd\" true; $CLOUD_LIB_DIR/f5-cloud-libs/scripts/createUser.sh --user svc_user --password-file /config/cloud/.passwd --password-encrypted; ', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].hashCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/onboard.js --no-reboot --output /var/log/cloud/azure/onboard.log --signal ONBOARD_DONE --log-level info --cloud azure --install-ilx-package file:///var/config/rest/downloads/', variables('f5AS3Build'), ' --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' --ssl-port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --hostname ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'),  ' --ntp ', parameters('ntpServer'), ' --tz ', parameters('timeZone'), ' --modules ', parameters('Tier3bigIpModules'), ' --db tmm.maxremoteloglength:2048', variables('allowUsageAnalytics')[parameters('allowUsageAnalytics')].metricsCmd, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/network.js --output /var/log/cloud/azure/network.log --wait-for ONBOARD_DONE --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --default-gw ', variables('tmmRoute2Gw'), ' --vlan name:external,nic:1.1 --vlan name:internal,nic:1.2 --self-ip name:self_2nic,address:', variables('ext2SubnetPrivateAddress1'), ',vlan:external --self-ip name:self_3nic,address:', variables('intSubnet2PrivateAddress1'), ',vlan:internal --log-level info; ', variables('failoverCmdArray')[variables('enableNetworkFailover')].fourth, '; /usr/bin/f5-rest-node $CLOUD_LIB_DIR/f5-cloud-libs/scripts/cluster.js --output /var/log/cloud/azure/cluster.log --log-level info --host ', variables('mgmtSubnetPrivateAddress3'), ' --port ', variables('bigIpMgmtPort'), ' -u svc_user --password-url file:///config/cloud/.passwd --password-encrypted --config-sync-ip ', variables('intSubnet2PrivateAddress1'), ' --join-group --device-group Sync --sync --remote-host ', variables('mgmtSubnetPrivateAddress2'), ' --remote-user svc_user --remote-password-url file:///config/cloud/.passwd', '; if [[ $? == 0 ]]; then tmsh load sys application template f5.service_discovery.tmpl; tmsh load sys application template f5.cloud_logger.v1.0.0.tmpl; ', variables('routeCmd'), '; echo -e ', variables('routeCmd'), ' >> /config/startup; bash /config/customConfig.sh; $(cp_logs); else $(cp_logs); exit 1; fi', '; if grep -i \"PUT failed\" /var/log/waagent.log -q; then echo \"Killing waagent exthandler, daemon should restart it\"; pkill -f \"python -u /usr/sbin/waagent -run-exthandlers\"; fi', ';', variables('sacaConfig'))]"
                 },
                 "publisher": "Microsoft.Azure.Extensions",
                 "settings": {
