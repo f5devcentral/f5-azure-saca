@@ -435,6 +435,7 @@
             }
         },
         "bigIpNicPortValue": "[variables('bigIpNicPortMap')['3'].Port]",
+        
         "bigIpVersionPortMap": {
             "443": {
                 "Port": 443
@@ -449,7 +450,9 @@
                 "Port": 8443
             }
         },
+        
         "bigIpMgmtPort": "[variables('bigIpVersionPortMap')[variables('bigIpNicPortValue')].Port]",
+
         "commandArgs": "[concat('-o ', parameters('Tier1DeclarationUrl'), ' -u svc_user')]",
         "commandArgs2": "[concat('-o ', parameters('Tier3DeclarationUrl'), ' -u svc_user')]",
         "computeApiVersion": "2017-12-01",
