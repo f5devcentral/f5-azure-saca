@@ -151,8 +151,8 @@ Use the appropriate button below to deploy:
     [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fpayg%2FazureDeploy.json)
 
   - **BIG-IQ** (BIG-IQ Licensed): This allows you to use BIG-IQ licensing.
-  
-   [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fbigiq%2FazureDeploy.json)
+
+    [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fbigiq%2FazureDeploy.json)
 
 ### SACAv1 [UNMAINTAINED, USE AT OWN RISK] Azure Government deploy buttons
 
