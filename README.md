@@ -76,7 +76,8 @@ Additionally, F5 provides checksums for all of our supported templates. For inst
 
 The following is a map that shows the available options for the template parameter **bigIpVersion** as it corresponds to the BIG-IP version itself. Only the latest version of BIG-IP VE is posted in the Azure Marketplace. For older versions, see downloads.f5.com.
 
-14.1.003000 is currently the only version in this release.
+14.1.20000 is currently the default version.
+15.0.10000 is available as an option for customers that need HPVE or Accelerated Networking.
 
 ## Supported instance types and hypervisors
 
