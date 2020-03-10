@@ -3,6 +3,7 @@
 [![Slack Status](https://f5cloudsolutions.herokuapp.com/badge.svg)](https://f5cloudsolutions.herokuapp.com)
 
 ## Contents
+
 - [CHANGELOG](CHANGELOG.md)
 - [Introduction](#introduction)
 - [What is SCCA](#what-is-secure-cloud-computing-architecture)
@@ -19,17 +20,17 @@
 
 This README will provide a baseline introduction into the Secure Cloud Computing Architecture (SCCA), Infrastructure as Code (IaC), and summarize a portion of the guidance to comply with the guidance provided. Links will be provided for more in-depth explanations.
 
-## What is Secure Cloud Computing Architecture (SCCA)?
+## What is Secure Cloud Computing Architecture (SCCA)
 
-Moving to the Cloud can be tough. The Department of Defense (DoD) still has requirements to protect the Defense Information System Networks (DISN) and DoD Information Networks (DoDIN), even when living in a Cloud Service Provider (CSP). Per the SCCA Functional Requirements Document, the purpose of SCCA is to provide a barrier of protection between the DISN and commercial cloud services used by the DoD. 
+Moving to the Cloud can be tough. The Department of Defense (DoD) still has requirements to protect the Defense Information System Networks (DISN) and DoD Information Networks (DoDIN), even when living in a Cloud Service Provider (CSP). Per the SCCA Functional Requirements Document, the purpose of SCCA is to provide a barrier of protection between the DISN and commercial cloud services used by the DoD.
 
 “It specifically addresses attacks originating from mission applications that reside within the Cloud Service Environment (CSE) upon both the DISN infrastructure and neighboring tenants in a multi-tenant environment. It provides a consistent CSP independent level of security that enables the use of commercially available Cloud Service Offerings (CSO) for hosting DoD mission applications operating at all DoD Information System Impact Levels (i.e. 2, 4, 5, & 6).” [https://iasecontent.disa.mil/stigs/pdf/SCCA_FRD_v2-9.pdf](https://iasecontent.disa.mil/stigs/pdf/SCCA_FRD_v2-9.pdf)
 
-## What is included in this template?
+## What is included in this template
 
-The BIG-IP VE cluster is deployed with Local Traffic Manager (LTM), Application Security Manager (ASM), Advanced Firewall Manager (AFM), and IP Intelligence (IPI) features enabled by default. 
+The BIG-IP VE cluster is deployed with Local Traffic Manager (LTM), Application Security Manager (ASM), Advanced Firewall Manager (AFM), and IP Intelligence (IPI) features enabled by default.
 
-**Networking Stack Type:** This solution deploys into a new networking stack, which is created along with the solution. 
+**Networking Stack Type:** This solution deploys into a new networking stack, which is created along with the solution.
 
 The BIG-IP VEs have the [Local Traffic Manager (LTM)](https://f5.com/products/big-ip/local-traffic-manager-ltm) module enabled to provide advanced traffic management functionality. This means you can also configure the BIG-IP VE to enable F5's L4/L7 security features, access control, and intelligent traffic management.
 
@@ -97,34 +98,61 @@ You have three options for deploying this solution:
 
 Use the appropriate button below to deploy:
 
-- **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
 - **1 Tier** This deploys the 3-NIC 1 Tier use-case.
+  - **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
 
-  [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fbyol%2FazureDeploy.json)
+    [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fbyol%2FazureDeploy.json)
+
+  - **PAYG** (Pay as you Go): This allows you to use marketplace licensing.
+
+    [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fpayg%2FazureDeploy.json)
+  
+  - **BIG-IQ** (BIG-IQ Licensed): This allows you to use BIG-IQ licensing.
+
+    [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fbigiq%2FazureDeploy.json)
 
 - **3 Tier** This deploys the standard F5 "Firewall Sandwich" use-case, with an IPS tier.
+  - **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
 
-  [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fbyol%2FazureDeploy.json)
+     [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fbyol%2FazureDeploy.json)
+
+  - **PAYG** (Pay as you Go): This allows you to use marketplace licensing.
+
+    [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fpayg%2FazureDeploy.json)
+  
+  - **BIG-IQ** (BIG-IQ Licensed): This allows you to use BIG-IQ licensing.
+
+    [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fbigiq%2FazureDeploy.json)
 
 ### SACAv2 Azure Commercial deploy buttons
 
 Use the appropriate button below to deploy:
 
-- **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
 - **1 Tier** This deploys the 3-NIC 1 Tier use-case.
+  - **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
 
-  [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fbyol%2FazureDeploy.json)
+    [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fbyol%2FazureDeploy.json)
+
+  - **PAYG** (Pay as you Go): This allows you to use marketplace licensing.
+
+    [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fpayg%2FazureDeploy.json)
+
+  - **BIG-IQ** (BIG-IQ Licensed): This allows you to use BIG-IQ licensing.
+
+    [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fbigiq%2FazureDeploy.json)
 
 - **3 Tier** This deploys the standard F5 "Firewall Sandwich" use-case, with an IPS tier.
+  - **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
 
-  [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fbyol%2FazureDeploy.json)
+    [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fbyol%2FazureDeploy.json)
 
-### SACAv1 [UNMAINTAINED, USE AT OWN RISK] Azure Government deploy buttons
+  - **PAYG** (Pay as you Go): This allows you to use marketplace licensing.
 
-- **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
+    [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fpayg%2FazureDeploy.json)
 
-  [![Deploy to Azure Gov](http://azuredeploy.net/deploybutton.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv1%2Froles%2Ff5-azure-scca%2Ffiles%2Fazuredeploy.json)
+  - **BIG-IQ** (BIG-IQ Licensed): This allows you to use BIG-IQ licensing.
 
+    [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fbigiq%2FazureDeploy.json)
 
 ### Template parameters
 
@@ -134,7 +162,7 @@ Use the appropriate button below to deploy:
 | authenticationType | Yes | Type of authentication to use on the Virtual Machine, password based authentication or key based authentication. |
 | adminPasswordOrKey | Yes | Password or SSH public key to login to the Virtual Machine. Note: There are a number of special characters that you should avoid using for F5 product user accounts.  See [K2873](https://support.f5.com/csp/article/K2873) for details. Note: If using key-based authentication, this should be the public key as a string, typically starting with **---- BEGIN SSH2 PUBLIC KEY ----** and ending with **---- END SSH2 PUBLIC KEY ----**. |
 | WindowsAdminPassword | Yes | Password to login to the Windows Virtual Machine. |
-| declarationUrl | Yes | URL for the AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration. |
+| declarationUrl | Yes | URL for the AS3 [https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/](https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration. |
 | dnsLabel | Yes | Unique DNS Name for the Public IP address used to access the Virtual Machine. |
 | instanceName | Yes | Name of the Virtual Machine. |
 | instanceType | Yes | Instance size of the Virtual Machine. |
@@ -145,7 +173,6 @@ Use the appropriate button below to deploy:
 | restrictedSrcAddress | Yes | This field restricts management access to a specific network or address. Enter an IP address or address range in CIDR notation, or asterisk for all sources |
 | timeZone | Yes | If you would like to change the time zone the BIG-IP uses, enter the time zone you want to use. This is based on the tz database found in /usr/share/zoneinfo (see the full list [here](https://github.com/F5Networks/f5-azure-arm-templates/blob/master/azure-timezone-list.md)). Example values: UTC, US/Pacific, US/Eastern, Europe/London or Asia/Singapore. |
 | vnetAddressPrefix | Yes | The start of the CIDR block the BIG-IP VEs use when creating the Vnet and subnets.  You MUST type just the first two octets of the /16 virtual network that will be created, for example '10.0', '10.100', 192.168'. |
-
 
 ### Programmatic deployments
 
@@ -214,7 +241,7 @@ In this template, the Azure public IP address is associated with an Azure Load B
 1. Once your BIG-IP VE has launched, open the BIG-IP VE Configuration utility.
 2. On the Main tab, click **Local Traffic > Virtual Servers** and then click the **Create** button.
 3. In the **Name** field, give the Virtual Server a unique name.
-4. In the **Destination/Mask** field, type the destination address (for example: 10.0.1.32/27) or select the shared object address list. 
+4. In the **Destination/Mask** field, type the destination address (for example: 10.0.1.32/27) or select the shared object address list.
 5. In the **Service Port** field, type the appropriate port.
 6. Configure the rest of the virtual server as appropriate.
 7. If you used the Service Discovery iApp template: In the Resources section, from the **Default Pool** list, select the name of the pool created by the iApp.
@@ -300,13 +327,14 @@ Individuals or business entities who contribute to this project must have comple
 
 ## Authors
 
-* **Michael Coleman** - *v2* - [Mikej81](https://github.com/Mikej81)
-* **Eric Chen** - *v1* - [Chen23](https://github.com/chen23)
-* **Vinnie Mazza** - *DevOps* - [vinnie357](https://github.com/vinnie357)
-* **Michael O'Leary** - *Validation* - [mikeoleary](https://github.com/mikeoleary)
-* **Rob Eastman** - *v2 Active/Standby* - [F5Rob](https://github.com/F5Rob)
+- **Michael Coleman** - *v2* - [Mikej81](https://github.com/Mikej81)
+- **Eric Chen** - *v1* - [Chen23](https://github.com/chen23)
+- **Vinnie Mazza** - *DevOps* - [vinnie357](https://github.com/vinnie357)
+- **Michael O'Leary** - *Validation* - [mikeoleary](https://github.com/mikeoleary)
+- **Rob Eastman** - *v2 Active/Standby* - [F5Rob](https://github.com/F5Rob)
 
 See also the list of [contributors](https://github.com/f5devcentral/f5-azure-saca/graphs/contributors) who participated in this project.
 
 ## Acknowledgments
-* **Gary Lu** - *Contributions* - [garyluf5](https://github.com/garyluf5)
+
+- **Gary Lu** - *Contributions* - [garyluf5](https://github.com/garyluf5)
