@@ -100,22 +100,28 @@ Use the appropriate button below to deploy:
 
 - **1 Tier** This deploys the 3-NIC 1 Tier use-case.
   - **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
+
     [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fbyol%2FazureDeploy.json)
 
   - **PAYG** (Pay as you Go): This allows you to use marketplace licensing.
+
     [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fpayg%2FazureDeploy.json)
   
   - **BIG-IQ** (BIG-IQ Licensed): This allows you to use BIG-IQ licensing.
+
     [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fbigiq%2FazureDeploy.json)
 
 - **3 Tier** This deploys the standard F5 "Firewall Sandwich" use-case, with an IPS tier.
   - **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
+
      [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fbyol%2FazureDeploy.json)
 
   - **PAYG** (Pay as you Go): This allows you to use marketplace licensing.
+
     [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fpayg%2FazureDeploy.json)
   
   - **BIG-IQ** (BIG-IQ Licensed): This allows you to use BIG-IQ licensing.
+
     [![Deploy to Azure Gov](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazuregov.png)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fbigiq%2FazureDeploy.json)
 
 ### SACAv2 Azure Commercial deploy buttons
@@ -124,22 +130,28 @@ Use the appropriate button below to deploy:
 
 - **1 Tier** This deploys the 3-NIC 1 Tier use-case.
   - **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
+
     [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fbyol%2FazureDeploy.json)
 
   - **PAYG** (Pay as you Go): This allows you to use marketplace licensing.
+
     [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fpayg%2FazureDeploy.json)
 
   - **BIG-IQ** (BIG-IQ Licensed): This allows you to use BIG-IQ licensing.
+
     [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_1Tier_HA%2Fbigiq%2FazureDeploy.json)
 
 - **3 Tier** This deploys the standard F5 "Firewall Sandwich" use-case, with an IPS tier.
   - **BYOL** (bring your own license): This allows you to use an existing BIG-IP license.
+
     [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fbyol%2FazureDeploy.json)
 
   - **PAYG** (Pay as you Go): This allows you to use marketplace licensing.
+
     [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fpayg%2FazureDeploy.json)
 
   - **BIG-IQ** (BIG-IQ Licensed): This allows you to use BIG-IQ licensing.
+  
    [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ff5devcentral%2Ff5-azure-saca%2Fmaster%2FSACAv2%2F3NIC_3Tier_HA%2Fbigiq%2FazureDeploy.json)
 
 ### SACAv1 [UNMAINTAINED, USE AT OWN RISK] Azure Government deploy buttons
