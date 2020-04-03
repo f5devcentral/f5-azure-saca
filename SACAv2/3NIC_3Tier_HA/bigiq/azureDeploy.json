@@ -47,7 +47,7 @@
             "type": "string"
         },
         "Tier3bigIpModules": {
-            "defaultValue": "ltm:nominal,asm:nominal,afm:nominal",
+            "defaultValue": "ltm:nominal,afm:nominal",
             "metadata": {
                 "description": "Comma separated list of modules and levels to provision, for example, ltm:nominal,asm:nominal"
             },
@@ -2297,6 +2297,8 @@
                 "[concat('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]",
                 "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName0'))]",
                 "[variables('newCustomImageName')]",
+                "[variables('WinvmName')]",
+                "[variables('jbvmName')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'), '0')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('extNicName'), '0')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('intNicName'), '0')]"
@@ -2349,6 +2351,8 @@
                 "[concat('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]",
                 "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName0'))]",
                 "[variables('newCustomImageName')]",
+                "[variables('WinvmName')]",
+                "[variables('jbvmName')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'), '1')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('extNicName'), '1')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('intNicName'), '1')]"
@@ -2401,6 +2405,8 @@
                 "[concat('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]",
                 "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName1'))]",
                 "[variables('newCustomImageName')]",
+                "[variables('WinvmName')]",
+                "[variables('jbvmName')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'), '2')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('extNicName'), '2')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('intNicName'), '2')]"
@@ -2453,6 +2459,8 @@
                 "[concat('Microsoft.Storage/storageAccounts/', variables('newDataStorageAccountName'))]",
                 "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName1'))]",
                 "[variables('newCustomImageName')]",
+                "[variables('WinvmName')]",
+                "[variables('jbvmName')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'), '3')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('extNicName'), '3')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('intNicName'), '3')]"
@@ -2750,7 +2758,9 @@
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '0')]",
-                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '1')]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '1')]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '2')]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '3')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '0/start')]",
@@ -2781,7 +2791,9 @@
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '0')]",
-                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '1')]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '1')]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '2')]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabelPrefix'), '-', variables('instanceName'), '3')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('dnsLabelPrefix'), '-', variables('instanceName'), '1/start')]",
