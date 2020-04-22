@@ -1384,7 +1384,9 @@
                 "[variables('newCustomImageName')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'), '0')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('extNicName'), '0')]",
-                "[concat('Microsoft.Network/networkInterfaces/', variables('intNicName'), '0')]"
+                "[concat('Microsoft.Network/networkInterfaces/', variables('intNicName'), '0')]",
+                "[variables('WinvmName')]",
+                "[variables('jbvmName')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('dnsLabel'), '-', variables('instanceName'), '0')]",
@@ -1436,7 +1438,9 @@
                 "[variables('newCustomImageName')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('mgmtNicName'), '1')]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('extNicName'), '1')]",
-                "[concat('Microsoft.Network/networkInterfaces/', variables('intNicName'), '1')]"
+                "[concat('Microsoft.Network/networkInterfaces/', variables('intNicName'), '1')]",
+                "[variables('WinvmName')]",
+                "[variables('jbvmName')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('dnsLabel'), '-', variables('instanceName'), '1')]",
@@ -1592,7 +1596,8 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabel'), '-', variables('instanceName'), '0')]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabel'), '-', variables('instanceName'), '0')]",
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabel'), '-', variables('instanceName'), '1')]"
             ],
             "location": "[variables('location')]",
             "name": "[concat(variables('dnsLabel'), '-', variables('instanceName'), '0/start')]",
@@ -1622,6 +1627,7 @@
         {
             "apiVersion": "[variables('computeApiVersion')]",
             "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabel'), '-', variables('instanceName'), '0')]",
                 "[concat('Microsoft.Compute/virtualMachines/', variables('dnsLabel'), '-', variables('instanceName'), '1')]"
             ],
             "location": "[variables('location')]",
