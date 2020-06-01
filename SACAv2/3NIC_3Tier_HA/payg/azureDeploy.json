@@ -2,6 +2,17 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "6.0.2.0",
     "parameters": {
+                    "governmentCloudRegion": {
+            "allowedValues": [
+                "true",
+                "false"
+            ],
+            "defaultValue": "government",
+            "metadata": {
+                "description": "Type of authentication to use on the Virtual Machine, password based authentication or key based authentication."
+            },
+            "type": "string"
+        },
         "adminUsername": {
             "defaultValue": "xadmin",
             "metadata": {
@@ -347,6 +358,11 @@
         }
     },
     "variables": {
+                        "cloudRegion": {
+            "false": ".cloudapp.azure.com",
+            "true": ".cloudapp.usgovcloudapi.net"
+        },
+        "cloudPath": "[if(parameters('governmentCloudRegion'), variables('cloudRegion').true, variables('stigCmdArray').false)]",
         "tagValues": "[parameters('tagValues')]",
         "adminPasswordOrKey": "[replace(parameters('adminPasswordOrKey'),'\\n', '\n')]",
         "allowUsageAnalytics": {
@@ -451,16 +467,16 @@
         "f5CloudLibsTag": "v4.9.1",
         "failoverCmdArray": {
             "No": {
-                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address none')]",
-                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '1.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address none')]",
-                "third": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address none')]",
-                "fourth": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address none')]"
+                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), variables('cloudPath')), ' unicast-address none')]",
+                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '1.', variables('location'), variables('cloudPath')), ' unicast-address none')]",
+                "third": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '2.', variables('location'), variables('cloudPath')), ' unicast-address none')]",
+                "fourth": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), variables('cloudPath')), ' unicast-address none')]"
             },
             "Yes": {
-                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnetPrivateAddress'), ' port 1026 } } mirror-ip ', variables('intSubnetPrivateAddress'))]",
-                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '1.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnetPrivateAddress1'), ' port 1026 } } mirror-ip ', variables('intSubnetPrivateAddress1'))]",
-                "third": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '2.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnet2PrivateAddress'), ' port 1026 } } mirror-ip ', variables('intSubnet2PrivateAddress'))]",
-                "fourth":"[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), '.cloudapp.usgovcloudapi.net'), ' unicast-address { { ip ', variables('intSubnet2PrivateAddress1'), ' port 1026 } } mirror-ip ', variables('intSubnet2PrivateAddress1'))]"
+                "first": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '0.', variables('location'), variables('cloudPath')), ' unicast-address { { ip ', variables('intSubnetPrivateAddress'), ' port 1026 } } mirror-ip ', variables('intSubnetPrivateAddress'))]",
+                "second": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '1.', variables('location'), variables('cloudPath')), ' unicast-address { { ip ', variables('intSubnetPrivateAddress1'), ' port 1026 } } mirror-ip ', variables('intSubnetPrivateAddress1'))]",
+                "third": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '2.', variables('location'), variables('cloudPath')), ' unicast-address { { ip ', variables('intSubnet2PrivateAddress'), ' port 1026 } } mirror-ip ', variables('intSubnet2PrivateAddress'))]",
+                "fourth": "[concat('tmsh modify cm device ', concat(variables('instanceName'), '3.', variables('location'), variables('cloudPath')), ' unicast-address { { ip ', variables('intSubnet2PrivateAddress1'), ' port 1026 } } mirror-ip ', variables('intSubnet2PrivateAddress1'))]"
             }
         },
 
@@ -671,7 +687,7 @@
 
         "vdmsSubnetName": "VDMS",
         "windowsOSVersion": "2019-Datacenter",
-        "WinvmName": "[concat(variables('dnsLabelPrefix'), '-win-jb')]",
+        "WinvmName": "[concat(substring(variables('dnsLabelPrefix'), 0, 8), '-win-jb')]",
         "jbimageOffer": "UbuntuServer",
         "jbimagePublisher": "Canonical",
         "jblinuxConfiguration": {
