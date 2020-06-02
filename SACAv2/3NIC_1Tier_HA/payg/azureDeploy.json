@@ -3,15 +3,11 @@
     "contentVersion": "7.2.0.0",
     "parameters": {
         "governmentCloudRegion": {
-            "allowedValues": [
-                "true",
-                "false"
-            ],
-            "defaultValue": "government",
+            "defaultValue": true,
             "metadata": {
                 "description": "Type of authentication to use on the Virtual Machine, password based authentication or key based authentication."
             },
-            "type": "string"
+            "type": "bool"
         },
         "adminUsername": {
             "defaultValue": "xadmin",
@@ -316,11 +312,11 @@
         }
     },
     "variables": {
-                "cloudRegion": {
+        "cloudRegion": {
             "false": ".cloudapp.azure.com",
             "true": ".cloudapp.usgovcloudapi.net"
         },
-        "cloudPath": "[if(parameters('governmentCloudRegion'), variables('cloudRegion').true, variables('stigCmdArray').false)]",
+        "cloudPath": "[if(parameters('governmentCloudRegion'), variables('cloudRegion').true, variables('cloudRegion').false)]",
         "bigIpNicPortMap": {
             "1": {
                 "Port": "[parameters('bigIpVersion')]"
@@ -552,7 +548,7 @@
         "jbubuntuOSVersion": "18.04-LTS",
         "jbvmName": "[concat(parameters('instanceName'), '-linux-jump')]",
         "jbvmSize": "Standard_A1",
-        "WinvmName": "[concat(substring(variables('dnsLabelPrefix'), 0, 8), '-win-jb')]",
+        "WinvmName": "Bastion-Win-JB",
         "windowsOSVersion": "2019-Datacenter",
 
         "availabilitySetName": "[concat(variables('dnsLabel'), '-avset')]",
