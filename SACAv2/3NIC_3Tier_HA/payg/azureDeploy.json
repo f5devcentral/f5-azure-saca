@@ -3,15 +3,11 @@
     "contentVersion": "6.0.2.0",
     "parameters": {
                     "governmentCloudRegion": {
-            "allowedValues": [
-                "true",
-                "false"
-            ],
-            "defaultValue": "government",
+            "defaultValue": true,
             "metadata": {
                 "description": "Type of authentication to use on the Virtual Machine, password based authentication or key based authentication."
             },
-            "type": "string"
+            "type": "bool"
         },
         "adminUsername": {
             "defaultValue": "xadmin",
@@ -687,7 +683,7 @@
 
         "vdmsSubnetName": "VDMS",
         "windowsOSVersion": "2019-Datacenter",
-        "WinvmName": "[concat(substring(variables('dnsLabelPrefix'), 0, 8), '-win-jb')]",
+        "WinvmName": "Bastion-Win-JB",
         "jbimageOffer": "UbuntuServer",
         "jbimagePublisher": "Canonical",
         "jblinuxConfiguration": {
