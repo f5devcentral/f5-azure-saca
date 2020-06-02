@@ -377,7 +377,7 @@
             "false": ".cloudapp.azure.com",
             "true": ".cloudapp.usgovcloudapi.net"
         },
-        "cloudPath": "[if(parameters('governmentCloudRegion'), variables('cloudRegion').true, variables('stigCmdArray').false)]",
+        "cloudPath": "[if(parameters('governmentCloudRegion'), variables('cloudRegion').true, variables('cloudRegion').false)]",
         "tagValues": "[parameters('tagValues')]",
         "adminPasswordOrKey": "[replace(parameters('adminPasswordOrKey'),'\\n', '\n')]",
         "allowUsageAnalytics": {
