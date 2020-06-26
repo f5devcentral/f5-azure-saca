@@ -5,7 +5,7 @@
                     "governmentCloudRegion": {
             "defaultValue": true,
             "metadata": {
-                "description": "Type of authentication to use on the Virtual Machine, password based authentication or key based authentication."
+                "description": "Type of cloud this template will deploy into, ensure to select false for commercial."
             },
             "type": "bool"
         },
