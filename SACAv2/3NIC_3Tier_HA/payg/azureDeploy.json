@@ -47,9 +47,9 @@
             "type": "string"
         },
         "Tier1DeclarationUrl": {
-            "defaultValue": "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/AS3/paygsccaBaseline.json",
+            "defaultValue": "https://raw.githubusercontent.com/Mikej81/f5-securecloud-AS3/master/dist/arm/3.16.0/paygsccaBaseline.json",
             "metadata": {
-                "description": "URL for the AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.5.1/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration."
+                "description": "URL for the AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.16.0/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration."
             },
             "type": "string"
         },
