@@ -65,6 +65,8 @@ FileETag MTime Size
 <LocationMatch "\"".*\.\.;.*"\"">
 	Redirect 404 /
 </LocationMatch>"'
+tmsh save sys config
+bigstart restart httpd
 #tmsh modify sys dns name-servers add { x.x.x.x x.x.x.x }
 #tmsh modify sys ntp servers add { x.x.x.x x.x.x.x }
 #tmsh modify sys dns search add { demo.local demo.f5demo.local }
