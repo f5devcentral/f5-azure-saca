@@ -10,7 +10,7 @@
 echo
 echo "###############################################"
 echo " BASHSRG - Bash STIG/SRG Configuration Script"
-echo " Michael Coleman.  M.Coleman@F5.com. Modified by r.eastman@f5.com on March 5, 2019"
+echo " Michael Coleman.  M.Coleman@F5.com. Modified by r.eastman@f5.com"
 
 echo "###############################################"
 tmsh modify sys sshd inactivity-timeout 900
@@ -62,7 +62,10 @@ tmsh modify sys httpd include '"
 FileETag MTime Size
 
 # CVE-2020-5902
-<LocationMatch "\"".*\.\.;.*"\"">
+<LocationMatch ";">
+	Redirect 404 /
+</LocationMatch>
+<LocationMatch "hsqldb">
 	Redirect 404 /
 </LocationMatch>"'
 tmsh save sys config
