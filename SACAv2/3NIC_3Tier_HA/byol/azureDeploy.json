@@ -47,7 +47,7 @@
             "type": "string"
         },
         "Tier1DeclarationUrl": {
-            "defaultValue": "https://raw.githubusercontent.com/Mikej81/f5-securecloud-AS3/master/dist/arm/3.16.0/byolsccaBaseline.json",
+            "defaultValue": "https://raw.githubusercontent.com/Mikej81/f5-bigip-hardening-AS3/master/dist/arm/3.16.0/byolsccaBaseline.json",
             "metadata": {
                 "description": "URL for the AS3 (https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/3.16.0/) declaration JSON file to be deployed. Leave as **NOT_SPECIFIED** to deploy without a service configuration."
             },
@@ -2777,7 +2777,7 @@
                         "https://raw.githubusercontent.com/F5Networks/f5-cloud-libs/master/dist/f5-cloud-libs.tar.gz",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh",
-                        "https://raw.githubusercontent.com/mikej81/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
+                        "https://raw.githubusercontent.com/Mikej81/f5-bigip-hardening-AS3/master/working/asm/15.1/sccaBaselineASMPolicy.xml"
                     ]
                 },
                 "type": "CustomScript",
@@ -2841,7 +2841,7 @@
                         "https://raw.githubusercontent.com/F5Networks/f5-cloud-libs/master/dist/f5-cloud-libs.tar.gz",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/resources/Certificates_PKCS7_v5.5_DoD.zip",
                         "https://raw.githubusercontent.com/f5devcentral/f5-azure-saca/master/SACAv2/STIG/bigipstig.sh",
-                        "https://raw.githubusercontent.com/mikej81/f5-securecloud-AS3/master/asm/13.1/sccaBaselineASMPolicy.xml"
+                        "https://raw.githubusercontent.com/Mikej81/f5-bigip-hardening-AS3/master/working/asm/15.1/sccaBaselineASMPolicy.xml"
                     ]
                 },
                 "type": "CustomScript",
