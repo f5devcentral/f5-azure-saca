@@ -2,12 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## TODO
+## 3.0.0
 
-- remove unused variables
-- reorder all parameters to be uniform
-- 3rd Tier AS3
-- Demo App
+- converted everything to terraform, added all outstanding features.
 
 ## [2.6.1] - 2020-03-10
 
