@@ -1,0 +1,65 @@
+# azure
+# gov
+location = "usgovvirginia"
+region = "USGov Virginia"
+# commercial
+#location = "eastus2"
+#region   = "East US 2"
+# project
+projectPrefix = "scca"
+# deployment
+#deploymentType = "three_tier"
+deploymentType = "one_tier"
+# admin
+adminUserName = "xadmin"
+adminPassword = "pleaseUseVault123!!"
+# networks
+subnets = {
+  "management"  = "10.90.0.0/24" #f5 management mgmtip
+  "external"    = "10.90.1.0/24" #untrusted-virutal-network selip
+  "internal"    = "10.90.2.0/24" #trusted-egress-virtual-network
+  "vdms"        = "10.90.3.0/24" #management interfaces? or management devices that can access management interfaces?
+  "inspect_ext" = "10.90.4.0/24"
+  "inspect_int" = "10.90.5.0/24"
+  "waf_ext"     = "10.90.6.0/24"
+  "waf_int"     = "10.90.7.0/24"
+}
+## bigips
+instanceType = "Standard_DS5_v2"
+# big-ip BYOL licenses
+licenses = {
+  "license1" = ""
+  "license2" = ""
+  "license3" = ""
+  "license4" = ""
+}
+# single tier
+# 01
+f5vm01mgmt    = "10.90.0.4"
+f5vm01ext     = "10.90.1.4"
+f5vm01ext_sec = "10.90.1.11"
+f5vm01int     = "10.90.2.4"
+# 02
+f5vm02mgmt    = "10.90.0.5"
+f5vm02ext     = "10.90.1.5"
+f5vm02ext_sec = "10.90.1.12"
+f5vm02int     = "10.90.2.5"
+## three tier
+# 03
+f5vm03mgmt    = "10.90.0.6"
+f5vm03ext     = "10.90.6.4"
+f5vm03ext_sec = "10.90.6.11"
+f5vm03int     = "10.90.7.4"
+# 04
+f5vm04mgmt    = "10.90.0.7"
+f5vm04ext     = "10.90.6.5"
+f5vm04ext_sec = "10.90.6.12"
+f5vm04int     = "10.90.7.5"
+## app
+app01ip = "10.90.2.101"
+## jump boxes
+jumpinstanceType = "Standard_B2s"
+# win jump
+winjumpip = "10.90.3.98"
+# linux jump
+linuxjumpip = "10.90.3.99"

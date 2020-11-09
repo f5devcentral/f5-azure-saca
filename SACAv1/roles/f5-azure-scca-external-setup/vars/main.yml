@@ -1,6 +1,0 @@
----
-# vars file for f5-azure-scca-external-setup
-resource_group: "{{ansible_env.AZURE_RESOURCE_GROUP}}_F5_External"
-location:  "{{ansible_env.location}}"
-f5_username: "{{ansible_env.f5_username}}"
-f5_password: "{{ansible_env.f5_password}}"
