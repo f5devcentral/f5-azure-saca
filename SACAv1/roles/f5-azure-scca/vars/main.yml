@@ -1,7 +1,0 @@
----
-# vars file for f5-azure-scca
-resource_group: "{{ansible_env.AZURE_RESOURCE_GROUP}}"
-location:  "{{ansible_env.location}}"
-jump_username: "{{ansible_env.f5_username}}"
-jump_password: "{{ansible_env.f5_password}}"
-use_oms: "{{ansible_env.use_oms}}"

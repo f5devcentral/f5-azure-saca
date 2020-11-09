@@ -1,2 +1,0 @@
-az group create --name arm_deployment_test --location usgovvirginia
-az group deployment validate --resource-group arm_deployment_test --template-file azureDeploy.json --parameters @deploymentParameters.json
