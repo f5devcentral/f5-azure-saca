@@ -2,7 +2,7 @@
 variable projectPrefix {
   type        = string
   description = "REQUIRED: Prefix to prepend to all objects created, minus Windows Jumpbox"
-  default     = "bedfe9b4"
+  default     = "nnc-saca-e"
 }
 variable adminUserName {
   type        = string
@@ -32,7 +32,7 @@ variable deploymentType {
 variable deployDemoApp {
   type        = string
   description = "OPTIONAL: Deploy Demo Application with Stack. Recommended to show functionality.  Options: deploy, anything else."
-  default     = "deploy"
+  default     = "no-deploy"
 }
 variable sshPublicKey {
   type        = string
@@ -48,17 +48,17 @@ variable sshPublicKeyPath {
 # NETWORK
 variable cidr {
   description = "REQUIRED: VNET Network CIDR"
-  default     = "10.90.0.0/16"
+  default     = "140.17.248.0/23"
 }
 
 variable subnets {
   type        = map(string)
   description = "REQUIRED: Subnet CIDRs"
   default = {
-    "management"  = "10.90.0.0/24"
-    "external"    = "10.90.1.0/24"
-    "internal"    = "10.90.2.0/24"
-    "vdms"        = "10.90.3.0/24"
+    "management"  = "140.17.249.32/28"
+    "external"    = "140.17.249.0/28"
+    "internal"    = "140.17.249.16/28"
+    "vdms"        = "140.17.248.0/24"
     "inspect_ext" = "10.90.4.0/24"
     "inspect_int" = "10.90.5.0/24"
     "waf_ext"     = "10.90.6.0/24"
@@ -71,8 +71,8 @@ variable f5_mgmt {
   description = "F5 BIG-IP Management IPs.  These must be in the management subnet."
   type        = map(string)
   default = {
-    f5vm01mgmt = "10.90.0.4"
-    f5vm02mgmt = "10.90.0.5"
+    f5vm01mgmt = "140.17.249.36"
+    f5vm02mgmt = "140.17.249.37"
     f5vm03mgmt = "10.90.0.6"
     f5vm04mgmt = "10.90.0.7"
   }
@@ -83,10 +83,10 @@ variable f5_t1_ext {
   description = "Tier 1 BIG-IP External IPs.  These must be in the external subnet."
   type        = map(string)
   default = {
-    f5vm01ext     = "10.90.1.4"
-    f5vm01ext_sec = "10.90.1.11"
-    f5vm02ext     = "10.90.1.5"
-    f5vm02ext_sec = "10.90.1.12"
+    f5vm01ext     = "140.17.249.4"
+    f5vm01ext_sec = "140.17.249.5"
+    f5vm02ext     = "140.17.249.6"
+    f5vm02ext_sec = "140.17.249.7"
   }
 }
 
@@ -94,10 +94,10 @@ variable f5_t1_int {
   description = "Tier 1 BIG-IP Internal IPs.  These must be in the internal subnet."
   type        = map(string)
   default = {
-    f5vm01int     = "10.90.2.4"
-    f5vm01int_sec = "10.90.2.11"
-    f5vm02int     = "10.90.2.5"
-    f5vm02int_sec = "10.90.2.12"
+    f5vm01int     = "140.17.249.21"
+    f5vm01int_sec = "140.17.249.22"
+    f5vm02int     = "140.17.249.23"
+    f5vm02int_sec = "140.17.249.24"
   }
 }
 
@@ -132,7 +132,7 @@ variable internalILBIPs {
 variable ilb01ip {
   type        = string
   description = "REQUIRED: Used by One and Three Tier.  Azure internal load balancer ip, this is used as egress, must be in internal subnet."
-  default     = "10.90.2.10"
+  default     = "140.17.249.20"
 }
 
 variable ilb02ip {
@@ -167,13 +167,13 @@ variable ips01mgmt { default = "10.90.0.8" }
 variable winjumpip {
   type        = string
   description = "REQUIRED: Used by all use-cases for RDP/Windows Jumpbox, must reside in VDMS subnet."
-  default     = "10.90.3.98"
+  default     = "140.17.248.4"
 }
 
 variable linuxjumpip {
   type        = string
   description = "REQUIRED: Used by all use-cases for SSH/Linux Jumpbox, must reside in VDMS subnet."
-  default     = "10.90.3.99"
+  default     = "140.17.248.5"
 }
 
 # BIGIP Instance Type, DS5_v2 is a solid baseline for BEST
@@ -189,7 +189,7 @@ variable appInstanceType { default = "Standard_DS3_v2" }
 variable image_name {
   type        = string
   description = "REQUIRED: BIG-IP Image Name.  'az vm image list --output table --publisher f5-networks --location [region] --offer f5-big-ip --all'  Default f5-bigip-virtual-edition-1g-best-hourly is PAYG Image.  For BYOL use f5-big-all-2slot-byol"
-  default     = "f5-bigip-virtual-edition-1g-best-hourly"
+  default     = "f5-big-all-2slot-byol"
 }
 variable product {
   type        = string
@@ -207,8 +207,8 @@ variable bigip_version {
 variable licenses {
   type = map(string)
   default = {
-    "license1" = ""
-    "license2" = ""
+    "license1" = "GVOVE-MLRZH-UPMSV-DXXHT-IJNSQZE"
+    "license2" = "XKLUA-BMDVK-RMQUX-IPNRH-QXBZYKO"
     "license3" = ""
     "license4" = ""
   }
