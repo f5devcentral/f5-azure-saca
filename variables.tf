@@ -194,7 +194,7 @@ variable image_name {
 variable product {
   type        = string
   description = "REQUIRED: BYOL = f5-big-ip-byol, PAYG = f5-big-ip-best"
-  default     = "f5-big-ip-best"
+  default     = "f5-big-ip-byol"
 }
 variable bigip_version {
   type        = string
