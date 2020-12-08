@@ -2,7 +2,7 @@
 variable projectPrefix {
   type        = string
   description = "REQUIRED: Prefix to prepend to all objects created, minus Windows Jumpbox"
-  default     = "bedfe9b4"
+  default     = "bedfe9c5"
 }
 variable adminUserName {
   type        = string

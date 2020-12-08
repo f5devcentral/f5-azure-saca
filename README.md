@@ -76,7 +76,7 @@ The BIG-IP VEs have the following features / modules enabled:
 
 | Name | Description | Type | Default |
 |------|-------------|------|---------|
-| projectPrefix | REQUIRED: Prefix to prepend to all objects created, minus Windows Jumpbox | `string` | `"bedfe9b4"` |
+| projectPrefix | REQUIRED: Prefix to prepend to all objects created, minus Windows Jumpbox | `string` | `"bedfe9c5"` |
 | adminUserName | REQUIRED: Admin Username for All systems | `string` | `"xadmin"` |
 | adminPassword | REQUIRED: Admin Password for all systems | `string` | `"pleaseUseVault123!!"` |
 | location | REQUIRED: Azure Region: usgovvirginia, usgovarizona, etc | `string` | `"usgovvirginia"` |
