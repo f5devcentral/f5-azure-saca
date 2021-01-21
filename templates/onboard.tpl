@@ -45,12 +45,10 @@ EOF
 DO_BODY_01="/config/do1.json"
 DO_BODY_02="/config/do2.json"
 AS3_BODY="/config/as3.json"
-
 DO_URL_POST="/mgmt/shared/declarative-onboarding"
 AS3_URL_POST="/mgmt/shared/appsvcs/declare"
+
 # BIG-IPS ONBOARD SCRIPT
-
-
 if [ ! -e $LOG_FILE ]
 then
      touch $LOG_FILE
