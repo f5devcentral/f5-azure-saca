@@ -1,5 +1,5 @@
 # Setup build arguments with default versions
-ARG TERRAFORM_VERSION=0.13.4
+ARG TERRAFORM_VERSION=0.14.5
 ARG AZURE_CLI_VERSION=latest
 
 # Download Terraform binary

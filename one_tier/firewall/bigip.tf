@@ -1,3 +1,21 @@
+resource random_id randomId {
+  keepers = {
+    # Generate a new ID only when a new resource group is defined
+    resource_group = var.resourceGroup.name
+  }
+  byte_length = 8
+}
+
+resource azurerm_storage_account bigip_storageaccount {
+  name                     = "diag${random_id.randomId.hex}"
+  resource_group_name      = var.resourceGroup.name
+  location                 = var.resourceGroup.location
+  account_replication_type = "LRS"
+  account_tier             = "Standard"
+
+  tags = var.tags
+}
+
 # # Create a Public IP for the Virtual Machines
 # resource azurerm_public_ip f5vmpip01 {
 #   name                = "${var.prefix}-vm01-mgmt-pip01-delete-me"
@@ -291,6 +309,11 @@ resource azurerm_virtual_machine f5vm01 {
     disable_password_authentication = false
   }
 
+  boot_diagnostics {
+    enabled     = true
+    storage_uri = azurerm_storage_account.bigip_storageaccount.primary_blob_endpoint
+  }
+
   plan {
     name      = var.image_name
     publisher = "f5-networks"
@@ -456,16 +479,18 @@ data template_file as3_json {
 
 # Run Startup Script
 resource azurerm_virtual_machine_extension f5vm01-run-startup-cmd {
-  name                 = "${var.prefix}-f5vm01-run-startup-cmd"
-  depends_on           = [azurerm_virtual_machine.f5vm01, azurerm_network_interface_backend_address_pool_association.mpool_assc_vm01, azurerm_network_interface_backend_address_pool_association.mpool_assc_vm02]
-  virtual_machine_id   = azurerm_virtual_machine.f5vm01.id
-  publisher            = "Microsoft.Azure.Extensions"
-  type                 = "CustomScript"
-  type_handler_version = "2.0"
+  name                       = "${var.prefix}-f5vm01-run-startup-cmd"
+  depends_on                 = [azurerm_virtual_machine.f5vm01, azurerm_network_interface_backend_address_pool_association.mpool_assc_vm01, azurerm_network_interface_backend_address_pool_association.mpool_assc_vm02]
+  virtual_machine_id         = azurerm_virtual_machine.f5vm01.id
+  publisher                  = "Microsoft.Azure.Extensions"
+  type                       = "CustomScript"
+  type_handler_version       = "2.0"
+  auto_upgrade_minor_version = true
 
   settings = <<SETTINGS
     {
-        "commandToExecute": "echo '${base64encode(data.template_file.vm_onboard.rendered)}' >> ./startup.sh && cat ./startup.sh | base64 -d >> ./startup-script.sh && chmod +x ./startup-script.sh && rm ./startup.sh && bash ./startup-script.sh 1"
+        "skipDos2Unix": false,
+        "commandToExecute": "echo '${base64encode(data.template_file.vm_onboard.rendered)}' >> ./startup.b64 && cat ./startup.b64 | base64 -d >> ./startup-temp.sh && sed -e 's/\r$//' ./startup-temp.sh > ./startup-script.sh && chmod +x ./startup-script.sh && rm ./startup.b64 && bash ./startup-script.sh 1"
     }
   SETTINGS
 
@@ -473,16 +498,18 @@ resource azurerm_virtual_machine_extension f5vm01-run-startup-cmd {
 }
 
 resource azurerm_virtual_machine_extension f5vm02-run-startup-cmd {
-  name                 = "${var.prefix}-f5vm02-run-startup-cmd"
-  depends_on           = [azurerm_virtual_machine.f5vm01, azurerm_virtual_machine.f5vm02, azurerm_network_interface_backend_address_pool_association.mpool_assc_vm01, azurerm_network_interface_backend_address_pool_association.mpool_assc_vm02]
-  virtual_machine_id   = azurerm_virtual_machine.f5vm02.id
-  publisher            = "Microsoft.Azure.Extensions"
-  type                 = "CustomScript"
-  type_handler_version = "2.0"
+  name                       = "${var.prefix}-f5vm02-run-startup-cmd"
+  depends_on                 = [azurerm_virtual_machine.f5vm01, azurerm_virtual_machine.f5vm02, azurerm_network_interface_backend_address_pool_association.mpool_assc_vm01, azurerm_network_interface_backend_address_pool_association.mpool_assc_vm02]
+  virtual_machine_id         = azurerm_virtual_machine.f5vm02.id
+  publisher                  = "Microsoft.Azure.Extensions"
+  type                       = "CustomScript"
+  type_handler_version       = "2.0"
+  auto_upgrade_minor_version = true
 
   settings = <<SETTINGS
     {
-        "commandToExecute": "echo '${base64encode(data.template_file.vm_onboard.rendered)}' >> ./startup.sh && cat ./startup.sh | base64 -d >> ./startup-script.sh && chmod +x ./startup-script.sh && rm ./startup.sh && bash ./startup-script.sh 2"
+        "skipDos2Unix": false,
+        "commandToExecute": "echo '${base64encode(data.template_file.vm_onboard.rendered)}' >> ./startup.b64 && cat ./startup.b64 | base64 -d >> ./startup-temp.sh && sed -e 's/\r$//g' ./startup-temp.sh > ./startup-script.sh && chmod +x ./startup-script.sh && rm ./startup.b64 && bash ./startup-script.sh 2"
     }
   SETTINGS
 

@@ -436,7 +436,7 @@ resource azurerm_virtual_machine_extension f5vm03-run-startup-cmd {
 
   settings = <<SETTINGS
     {
-        "commandToExecute": "echo '${base64encode(data.template_file.vm_onboard.rendered)}' >> ./startup.sh && cat ./startup.sh | base64 -d >> ./startup-script.sh && chmod +x ./startup-script.sh && rm ./startup.sh && bash ./startup-script.sh 1"
+        "commandToExecute": "echo '${base64encode(data.template_file.vm_onboard.rendered)}' >> ./startup.b64 && cat ./startup.b64 | base64 -d >> ./startup-temp.sh && sed -e 's/\r$//' ./startup-temp.sh > ./startup-script.sh && chmod +x ./startup-script.sh && rm ./startup.b64 && bash ./startup-script.sh 1"
     }
   SETTINGS
 
@@ -453,7 +453,7 @@ resource azurerm_virtual_machine_extension f5vm04-run-startup-cmd {
 
   settings = <<SETTINGS
     {
-        "commandToExecute": "echo '${base64encode(data.template_file.vm_onboard.rendered)}' >> ./startup.sh && cat ./startup.sh | base64 -d >> ./startup-script.sh && chmod +x ./startup-script.sh && rm ./startup.sh && bash ./startup-script.sh 2"
+        "commandToExecute": "echo '${base64encode(data.template_file.vm_onboard.rendered)}' >> ./startup.b64 && cat ./startup.b64 | base64 -d >> ./startup-temp.sh && sed -e 's/\r$//g' ./startup-temp.sh > ./startup-script.sh && chmod +x ./startup-script.sh && rm ./startup.b64 && bash ./startup-script.sh 2"
     }
   SETTINGS
 

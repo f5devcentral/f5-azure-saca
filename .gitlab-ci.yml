@@ -2,12 +2,12 @@ default:
   image:
     name: hashicorp/terraform
     entrypoint: [""]
-    
+
 before_script:
   - rm -rf .terraform
   - terraform --version
   - terraform init
- 
+
 stages:
   - validate
   - plan
