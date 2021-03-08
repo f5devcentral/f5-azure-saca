@@ -2,7 +2,7 @@
 variable projectPrefix {
   type        = string
   description = "REQUIRED: Prefix to prepend to all objects created, minus Windows Jumpbox"
-  default     = "cfbcd9e7"
+  default     = "ccbad9e7"
 }
 variable adminUserName {
   type        = string
@@ -16,7 +16,7 @@ variable adminPassword {
 }
 variable location {
   type        = string
-  description = "REQUIRED: Azure Region: usgovvirginia, usgovarizona, etc"
+  description = "REQUIRED: Azure Region: usgovvirginia, usgovarizona, etc. For a list of available locations for your subscription use `az account list-locations -o table`"
   default     = "usgovvirginia"
 }
 variable region {
@@ -27,7 +27,7 @@ variable region {
 variable deploymentType {
   type        = string
   description = "REQUIRED: This determines the type of deployment; one tier versus three tier: one_tier, three_tier"
-  default     = "three_tier"
+  default     = "one_tier"
 }
 variable deployDemoApp {
   type        = string
