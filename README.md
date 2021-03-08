@@ -6,6 +6,7 @@
   - [Introduction](#introduction)
   - [Prerequisites](#prerequisites)
   - [Important configuration notes](#important-configuration-notes)
+  - [PAYG versus BYOL Settings](#payg-versus-byol-settings)
   - [Variables](#variables)
   - [Requirements](#requirements)
   - [Providers](#providers)
@@ -56,6 +57,13 @@ The BIG-IP VEs have the following features / modules enabled:
   - **Note** Juiceshop and PimpMyLogs URLS are part of the terraform output when deployed.
 - All Configuration should happen at the root level; auto.tfvars or variables.tf.
 
+## PAYG versus BYOL Settings
+
+- For PAYG deployments the variables image_name and product need to be configured accordingly, default values are set for PAYG.  
+ - Example:  image_name = f5-bigip-virtual-edition-1g-best-hourly and product = f5-big-ip-best
+
+- For BYOL deployments the variables image_name, product, and licenses need to be configured accordingly.
+ - Example:  image_name = f5-big-all-2slot-byol,  product = f5-big-ip-byol, and licenses = appropriate licenses.
 ## Variables
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
