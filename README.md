@@ -7,6 +7,7 @@
   - [Prerequisites](#prerequisites)
   - [Important configuration notes](#important-configuration-notes)
   - [PAYG versus BYOL Settings](#payg-versus-byol-settings)
+  - [Troubleshooting](./TROUBLE.md)
   - [Variables](#variables)
   - [Requirements](#requirements)
   - [Providers](#providers)
