@@ -27,7 +27,7 @@ variable region {
 variable deploymentType {
   type        = string
   description = "REQUIRED: This determines the type of deployment; one tier versus three tier: one_tier, three_tier"
-  default     = "one_tier"
+  default     = "three_tier"
 }
 variable deployDemoApp {
   type        = string

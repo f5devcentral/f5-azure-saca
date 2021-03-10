@@ -52,3 +52,7 @@ az account show | jq -r '.tenantId'
 # Not needed for public, required for usgovernment, german, china
 #export ARM_ENVIRONMENT=`az account show | jq -r '.environmentName'`
 export ARM_ENVIRONMENT="usgovernment"
+
+# Accept terms for programatic deployment of images
+az vm image terms accept --offer f5-big-ip-byol --publisher f5-networks --plan f5-big-ip-byol
+az vm image terms accept --offer f5-big-ip-best --publisher f5-networks --plan f5-big-ip-best
