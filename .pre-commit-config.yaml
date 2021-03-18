@@ -3,7 +3,7 @@ default_language_version:
   python: python3.8
 repos:
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.45.0
+    rev: v1.48.0
     hooks:
       - id: terraform_fmt
       #- id: terraform_validate
@@ -26,7 +26,7 @@ repos:
       #- id: check-json
       - id: trailing-whitespace
   - repo: https://github.com/frnmst/md-toc
-    rev: 7.0.5
+    rev: 7.1.0
     hooks:
       - id: md-toc
   - repo: https://github.com/thoughtworks/talisman
