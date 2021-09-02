@@ -85,8 +85,24 @@ module "firewall_one" {
 }
 
 module "sslo" {
-  count = var.deploySSLO == "deploy" ? 1 : 0
-
+  count         = var.deploySSLO == "deploy" ? 1 : 0
+  source        = "./sslo"
+  resourceGroup = azurerm_resource_group.main
+  location      = var.location
+  region        = var.region
+  subnetMgmt    = azurerm_subnet.mgmt
+  # Add SSLO Subnet w/North&South?
+  subnetExternal = azurerm_subnet.external
+  subnetInternal = azurerm_subnet.internal
+  image_name     = var.image_name
+  product        = var.product
+  bigip_version  = var.bigip_version
+  adminUserName  = var.adminUserName
+  adminPassword  = var.adminPassword
+  prefix         = var.projectPrefix
+  subnets        = var.subnets
+  cidr           = var.cidr
+  licenses       = var.licenses
 }
 
 # #
