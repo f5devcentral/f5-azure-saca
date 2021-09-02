@@ -73,3 +73,5 @@ fileignoreconfig:
   checksum: f7a9b764605c4280db5fa1daa4271ec4c64a9d250a61fe866aeacc8349deac2b
 - filename: sslo/sslo.tf
   checksum: 4c68df54ec3372353a897426ade1aee92ad544b7090bddb6750deae6df095c9d
+- filename: README.md
+  checksum: 8d5f9ec5a9264bfa2b4c935235b019213468b1f2888a0a0f715df11fae9b1ba1
