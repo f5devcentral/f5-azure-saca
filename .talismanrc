@@ -71,3 +71,5 @@ fileignoreconfig:
   checksum: ea9da279f79b6082f77c00819a8781233cc91d450a440f44a5c00fad48c78fa3
 - filename: releases/v1.0.0/roles/f5-azure-scca-internal-setup/files/f5.http.v1.2.0rc7.tmpl
   checksum: f7a9b764605c4280db5fa1daa4271ec4c64a9d250a61fe866aeacc8349deac2b
+- filename: sslo/sslo.tf
+  checksum: 4c68df54ec3372353a897426ade1aee92ad544b7090bddb6750deae6df095c9d

@@ -7,9 +7,9 @@ repos:
     hooks:
       - id: terraform_fmt
       #- id: terraform_validate
-      - id: terraform_tflint
+      #- id: terraform_tflint
       - id: terraform_docs
-        args: ['--args=--required=false', '--args=--sort=false']
+        args: ["--args=--required=false", "--args=--sort=false"]
       #- id: terraform_tfsec
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
@@ -18,11 +18,11 @@ repos:
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: detect-private-key
-      - id: detect-aws-credentials
+      #- id: detect-aws-credentials
       - id: end-of-file-fixer
       #- id: sort-simple-yaml
       - id: check-yaml
-        args: ['./templates/ips-cloud-init.yaml']
+        args: ["./templates/ips-cloud-init.yaml"]
       #- id: check-json
       - id: trailing-whitespace
   - repo: https://github.com/frnmst/md-toc

@@ -1,61 +1,61 @@
-variable resourceGroup {}
+variable "resourceGroup" {}
 # admin credentials
-variable adminUserName {}
-variable adminPassword {}
-variable sshPublicKey {}
+variable "adminUserName" {}
+variable "adminPassword" {}
+variable "sshPublicKey" {}
 # cloud info
-variable location {}
-variable region {}
-variable securityGroup {
+variable "location" {}
+variable "region" {}
+variable "securityGroup" {
   default = "none"
 }
-variable availabilitySet {}
-variable availabilitySet2 {}
+variable "availabilitySet" {}
+variable "availabilitySet2" {}
 
-variable prefix {}
+variable "prefix" {}
 # bigip network
-variable subnets {}
-variable subnetMgmt {}
-variable subnetExternal {}
-variable subnetInternal {}
-variable subnetWafExt {}
-variable subnetWafInt {}
-variable app01ip {}
+variable "subnets" {}
+variable "subnetMgmt" {}
+variable "subnetExternal" {}
+variable "subnetInternal" {}
+variable "subnetWafExt" {}
+variable "subnetWafInt" {}
+variable "app01ip" {}
 
-variable backendPool {}
-variable managementPool {}
-variable primaryPool {}
-variable internalBackPool {}
+variable "backendPool" {}
+variable "managementPool" {}
+variable "primaryPool" {}
+variable "internalBackPool" {}
 
-variable f5_mgmt {}
-variable f5_t1_ext {}
-variable f5_t1_int {}
-variable f5_t3_ext {}
-variable f5_t3_int {}
+variable "f5_mgmt" {}
+variable "f5_t1_ext" {}
+variable "f5_t1_int" {}
+variable "f5_t3_ext" {}
+variable "f5_t3_int" {}
 
 # winjump
-variable winjumpip {}
+variable "winjumpip" {}
 
 # linuxjump
-variable linuxjumpip {}
+variable "linuxjumpip" {}
 
 # device
-variable instanceType {}
+variable "instanceType" {}
 
 
 # BIGIP Image
-variable image_name {}
-variable product {}
-variable bigip_version {}
+variable "image_name" {}
+variable "product" {}
+variable "bigip_version" {}
 
-variable cidr {}
+variable "cidr" {}
 
-variable ilb01ip {}
-variable ilb02ip {}
-variable ilb03ip {}
+variable "ilb01ip" {}
+variable "ilb02ip" {}
+variable "ilb03ip" {}
 
 # BIGIP Setup
-variable licenses {
+variable "licenses" {
   type = map(string)
   default = {
     "license1" = ""
@@ -65,12 +65,12 @@ variable licenses {
   }
 }
 
-variable hosts {}
-variable dns_server {}
-variable ntp_server {}
-variable timezone {}
-variable onboard_log { default = "/var/log/startup-script.log" }
-variable asm_policy {}
+variable "hosts" {}
+variable "dns_server" {}
+variable "ntp_server" {}
+variable "timezone" {}
+variable "onboard_log" { default = "/var/log/startup-script.log" }
+variable "asm_policy" {}
 
 # TAGS
-variable tags {}
+variable "tags" {}

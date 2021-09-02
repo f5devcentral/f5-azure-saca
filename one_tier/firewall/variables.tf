@@ -1,55 +1,55 @@
-variable resourceGroup {}
+variable "resourceGroup" {}
 # admin credentials
-variable adminUserName {}
-variable adminPassword {}
-variable sshPublicKey {}
+variable "adminUserName" {}
+variable "adminPassword" {}
+variable "sshPublicKey" {}
 # cloud info
-variable location {}
-variable region {}
-variable securityGroup {
+variable "location" {}
+variable "region" {}
+variable "securityGroup" {
   default = "none"
 }
-variable availabilitySet {}
-variable availabilitySet2 {}
+variable "availabilitySet" {}
+variable "availabilitySet2" {}
 
-variable subnets {}
+variable "subnets" {}
 
-variable prefix {}
+variable "prefix" {}
 # bigip network
-variable subnetMgmt {}
-variable subnetExternal {}
-variable subnetInternal {}
-variable backendPool {}
-variable managementPool {}
-variable primaryPool {}
+variable "subnetMgmt" {}
+variable "subnetExternal" {}
+variable "subnetInternal" {}
+variable "backendPool" {}
+variable "managementPool" {}
+variable "primaryPool" {}
 
-variable app01ip {}
+variable "app01ip" {}
 
-variable ilb01ip {}
+variable "ilb01ip" {}
 
-variable f5_mgmt {}
-variable f5_t1_ext {}
-variable f5_t1_int {}
+variable "f5_mgmt" {}
+variable "f5_t1_ext" {}
+variable "f5_t1_int" {}
 
 # winjump
-variable winjumpip {}
+variable "winjumpip" {}
 
 # linuxjump
-variable linuxjumpip {}
+variable "linuxjumpip" {}
 
 # device
-variable instanceType {}
+variable "instanceType" {}
 
 
 # BIGIP Image
-variable image_name {}
-variable product {}
-variable bigip_version {}
+variable "image_name" {}
+variable "product" {}
+variable "bigip_version" {}
 
-variable cidr {}
+variable "cidr" {}
 
 # BIGIP Setup
-variable licenses {
+variable "licenses" {
   type = map(string)
   default = {
     "license1" = ""
@@ -58,12 +58,12 @@ variable licenses {
     "license4" = ""
   }
 }
-variable hosts {}
-variable dns_server {}
-variable ntp_server {}
-variable timezone {}
-variable onboard_log { default = "/var/log/startup-script.log" }
-variable asm_policy {}
+variable "hosts" {}
+variable "dns_server" {}
+variable "ntp_server" {}
+variable "timezone" {}
+variable "onboard_log" { default = "/var/log/startup-script.log" }
+variable "asm_policy" {}
 
 # TAGS
-variable tags {}
+variable "tags" {}

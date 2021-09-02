@@ -1,4 +1,4 @@
-resource random_id randomId {
+resource "random_id" "randomId" {
   keepers = {
     # Generate a new ID only when a new resource group is defined
     resource_group = var.resourceGroup.name
@@ -6,7 +6,7 @@ resource random_id randomId {
   byte_length = 8
 }
 
-resource azurerm_storage_account bigip_storageaccount {
+resource "azurerm_storage_account" "bigip_storageaccount" {
   name                     = "diag${random_id.randomId.hex}"
   resource_group_name      = var.resourceGroup.name
   location                 = var.resourceGroup.location
@@ -42,7 +42,7 @@ resource azurerm_storage_account bigip_storageaccount {
 # }
 
 # Create the first network interface card for Management
-resource azurerm_network_interface vm01-mgmt-nic {
+resource "azurerm_network_interface" "vm01-mgmt-nic" {
   name                = "${var.prefix}-vm01-mgmt-nic"
   location            = var.resourceGroup.location
   resource_group_name = var.resourceGroup.name
@@ -59,26 +59,26 @@ resource azurerm_network_interface vm01-mgmt-nic {
 }
 
 # Associate the Network Interface to the ManagementPool
-resource azurerm_network_interface_backend_address_pool_association mpool_assc_vm01 {
+resource "azurerm_network_interface_backend_address_pool_association" "mpool_assc_vm01" {
   network_interface_id  = azurerm_network_interface.vm01-mgmt-nic.id
   ip_configuration_name = "primary"
   #backend_address_pool_id = var.managementPool.id
   backend_address_pool_id = var.primaryPool.id
 }
 # Associate the Network Interface to the ManagementPool
-resource azurerm_network_interface_backend_address_pool_association mpool_assc_vm02 {
+resource "azurerm_network_interface_backend_address_pool_association" "mpool_assc_vm02" {
   network_interface_id  = azurerm_network_interface.vm02-mgmt-nic.id
   ip_configuration_name = "primary"
   #backend_address_pool_id = var.managementPool.id
   backend_address_pool_id = var.primaryPool.id
 }
 
-resource azurerm_network_interface_security_group_association bigip01-mgmt-nsg {
+resource "azurerm_network_interface_security_group_association" "bigip01-mgmt-nsg" {
   network_interface_id      = azurerm_network_interface.vm01-mgmt-nic.id
   network_security_group_id = var.securityGroup.id
 }
 
-resource azurerm_network_interface vm02-mgmt-nic {
+resource "azurerm_network_interface" "vm02-mgmt-nic" {
   name                = "${var.prefix}-vm02-mgmt-nic"
   location            = var.resourceGroup.location
   resource_group_name = var.resourceGroup.name
@@ -94,13 +94,13 @@ resource azurerm_network_interface vm02-mgmt-nic {
   tags = var.tags
 }
 
-resource azurerm_network_interface_security_group_association bigip02-mgmt-nsg {
+resource "azurerm_network_interface_security_group_association" "bigip02-mgmt-nsg" {
   network_interface_id      = azurerm_network_interface.vm02-mgmt-nic.id
   network_security_group_id = var.securityGroup.id
 }
 
 # Create the second network interface card for External
-resource azurerm_network_interface vm01-ext-nic {
+resource "azurerm_network_interface" "vm01-ext-nic" {
   name                          = "${var.prefix}-vm01-ext-nic"
   location                      = var.resourceGroup.location
   resource_group_name           = var.resourceGroup.name
@@ -134,12 +134,12 @@ resource azurerm_network_interface vm01-ext-nic {
   }
 }
 
-resource azurerm_network_interface_security_group_association bigip01-ext-nsg {
+resource "azurerm_network_interface_security_group_association" "bigip01-ext-nsg" {
   network_interface_id      = azurerm_network_interface.vm01-ext-nic.id
   network_security_group_id = var.securityGroup.id
 }
 
-resource azurerm_network_interface vm02-ext-nic {
+resource "azurerm_network_interface" "vm02-ext-nic" {
   name                          = "${var.prefix}-vm02-ext-nic"
   location                      = var.resourceGroup.location
   resource_group_name           = var.resourceGroup.name
@@ -173,13 +173,13 @@ resource azurerm_network_interface vm02-ext-nic {
   }
 }
 
-resource azurerm_network_interface_security_group_association bigip02-ext-nsg {
+resource "azurerm_network_interface_security_group_association" "bigip02-ext-nsg" {
   network_interface_id      = azurerm_network_interface.vm02-ext-nic.id
   network_security_group_id = var.securityGroup.id
 }
 
 # Create the third network interface card for Internal
-resource azurerm_network_interface vm01-int-nic {
+resource "azurerm_network_interface" "vm01-int-nic" {
   name                          = "${var.prefix}-vm01-int-nic"
   location                      = var.resourceGroup.location
   resource_group_name           = var.resourceGroup.name
@@ -204,12 +204,12 @@ resource azurerm_network_interface vm01-int-nic {
   tags = var.tags
 }
 
-resource azurerm_network_interface_security_group_association bigip01-int-nsg {
+resource "azurerm_network_interface_security_group_association" "bigip01-int-nsg" {
   network_interface_id      = azurerm_network_interface.vm01-int-nic.id
   network_security_group_id = var.securityGroup.id
 }
 
-resource azurerm_network_interface vm02-int-nic {
+resource "azurerm_network_interface" "vm02-int-nic" {
   name                          = "${var.prefix}-vm02-int-nic"
   location                      = var.resourceGroup.location
   resource_group_name           = var.resourceGroup.name
@@ -234,31 +234,31 @@ resource azurerm_network_interface vm02-int-nic {
   tags = var.tags
 }
 
-resource azurerm_network_interface_security_group_association bigip02-int-nsg {
+resource "azurerm_network_interface_security_group_association" "bigip02-int-nsg" {
   network_interface_id      = azurerm_network_interface.vm02-int-nic.id
   network_security_group_id = var.securityGroup.id
 }
 
 # Associate the External Network Interface to the BackendPool
-resource azurerm_network_interface_backend_address_pool_association bpool_assc_vm01 {
+resource "azurerm_network_interface_backend_address_pool_association" "bpool_assc_vm01" {
   network_interface_id    = azurerm_network_interface.vm01-ext-nic.id
   ip_configuration_name   = "secondary"
   backend_address_pool_id = var.backendPool.id
 }
 
-resource azurerm_network_interface_backend_address_pool_association bpool_assc_vm02 {
+resource "azurerm_network_interface_backend_address_pool_association" "bpool_assc_vm02" {
   network_interface_id    = azurerm_network_interface.vm02-ext-nic.id
   ip_configuration_name   = "secondary"
   backend_address_pool_id = var.backendPool.id
 }
 
-resource azurerm_network_interface_backend_address_pool_association primary_pool_assc_vm01 {
+resource "azurerm_network_interface_backend_address_pool_association" "primary_pool_assc_vm01" {
   network_interface_id    = azurerm_network_interface.vm01-ext-nic.id
   ip_configuration_name   = "primary"
   backend_address_pool_id = var.primaryPool.id
 }
 
-resource azurerm_network_interface_backend_address_pool_association primary_pool_assc_vm02 {
+resource "azurerm_network_interface_backend_address_pool_association" "primary_pool_assc_vm02" {
   network_interface_id    = azurerm_network_interface.vm02-ext-nic.id
   ip_configuration_name   = "primary"
   backend_address_pool_id = var.primaryPool.id
@@ -273,7 +273,7 @@ locals {
 }
 
 # Create F5 BIGIP VMs
-resource azurerm_virtual_machine f5vm01 {
+resource "azurerm_virtual_machine" "f5vm01" {
   name                         = "${var.prefix}-f5vm01"
   location                     = var.resourceGroup.location
   resource_group_name          = var.resourceGroup.name
@@ -323,7 +323,7 @@ resource azurerm_virtual_machine f5vm01 {
   tags = var.tags
 }
 
-resource azurerm_virtual_machine f5vm02 {
+resource "azurerm_virtual_machine" "f5vm02" {
   name                         = "${var.prefix}-f5vm02"
   location                     = var.resourceGroup.location
   resource_group_name          = var.resourceGroup.name
@@ -369,7 +369,7 @@ resource azurerm_virtual_machine f5vm02 {
 }
 
 # Setup Onboarding scripts
-data template_file vm_onboard {
+data "template_file" "vm_onboard" {
   template = file("./templates/onboard.tpl")
   vars = {
     uname                     = var.adminUserName
@@ -394,13 +394,13 @@ data template_file vm_onboard {
 # template ATC json
 
 # as3 uuid generation
-resource random_uuid as3_uuid {}
+resource "random_uuid" "as3_uuid" {}
 
-data http onboard {
+data "http" "onboard" {
   url = "https://raw.githubusercontent.com/Mikej81/f5-bigip-hardening-DO/master/dist/terraform/latest/${var.licenses["license1"] != "" ? "byol" : "payg"}_cluster.json"
 }
 
-data template_file vm01_do_json {
+data "template_file" "vm01_do_json" {
   template = data.http.onboard.body
   vars = {
     host1           = var.hosts["host1"]
@@ -426,7 +426,7 @@ data template_file vm01_do_json {
     license         = var.licenses["license1"] != "" ? var.licenses["license1"] : ""
   }
 }
-data template_file vm02_do_json {
+data "template_file" "vm02_do_json" {
   template = data.http.onboard.body
   vars = {
     host1           = var.hosts["host1"]
@@ -453,11 +453,11 @@ data template_file vm02_do_json {
   }
 }
 
-data http appservice {
+data "http" "appservice" {
   url = "https://raw.githubusercontent.com/Mikej81/f5-bigip-hardening-AS3/master/dist/terraform/latest/sccaSingleTier.json"
 }
 
-data template_file as3_json {
+data "template_file" "as3_json" {
   template = data.http.appservice.body
   vars = {
     uuid                = random_uuid.as3_uuid.result
@@ -478,7 +478,7 @@ data template_file as3_json {
 }
 
 # Run Startup Script
-resource azurerm_virtual_machine_extension f5vm01-run-startup-cmd {
+resource "azurerm_virtual_machine_extension" "f5vm01-run-startup-cmd" {
   name                       = "${var.prefix}-f5vm01-run-startup-cmd"
   depends_on                 = [azurerm_virtual_machine.f5vm01, azurerm_network_interface_backend_address_pool_association.mpool_assc_vm01, azurerm_network_interface_backend_address_pool_association.mpool_assc_vm02]
   virtual_machine_id         = azurerm_virtual_machine.f5vm01.id
@@ -497,7 +497,7 @@ resource azurerm_virtual_machine_extension f5vm01-run-startup-cmd {
   tags = var.tags
 }
 
-resource azurerm_virtual_machine_extension f5vm02-run-startup-cmd {
+resource "azurerm_virtual_machine_extension" "f5vm02-run-startup-cmd" {
   name                       = "${var.prefix}-f5vm02-run-startup-cmd"
   depends_on                 = [azurerm_virtual_machine.f5vm01, azurerm_virtual_machine.f5vm02, azurerm_network_interface_backend_address_pool_association.mpool_assc_vm01, azurerm_network_interface_backend_address_pool_association.mpool_assc_vm02]
   virtual_machine_id         = azurerm_virtual_machine.f5vm02.id
@@ -518,22 +518,22 @@ resource azurerm_virtual_machine_extension f5vm02-run-startup-cmd {
 
 
 # Debug Template Outputs
-resource local_file vm01_do_file {
+resource "local_file" "vm01_do_file" {
   content  = data.template_file.vm01_do_json.rendered
   filename = "${path.module}/vm01_do_data.json"
 }
 
-resource local_file vm02_do_file {
+resource "local_file" "vm02_do_file" {
   content  = data.template_file.vm02_do_json.rendered
   filename = "${path.module}/vm02_do_data.json"
 }
 
-resource local_file vm_as3_file {
+resource "local_file" "vm_as3_file" {
   content  = data.template_file.as3_json.rendered
   filename = "${path.module}/vm_as3_data.json"
 }
 
-resource local_file onboard_file {
+resource "local_file" "onboard_file" {
   content  = data.template_file.vm_onboard.rendered
   filename = "${path.module}/onboard.sh"
 }

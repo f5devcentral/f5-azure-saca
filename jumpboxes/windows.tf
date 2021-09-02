@@ -1,4 +1,4 @@
-resource azurerm_network_interface winjump-ext-nic {
+resource "azurerm_network_interface" "winjump-ext-nic" {
   name                = "${var.prefix}-winjump-ext-nic"
   location            = var.resourceGroup.location
   resource_group_name = var.resourceGroup.name
@@ -19,7 +19,7 @@ resource "azurerm_network_interface_security_group_association" "winjump-ext-nsg
   network_security_group_id = var.securityGroup.id
 }
 
-resource azurerm_virtual_machine winJump {
+resource "azurerm_virtual_machine" "winJump" {
   name                  = "${var.prefix}-winJump"
   resource_group_name   = var.resourceGroup.name
   location              = var.resourceGroup.location
@@ -55,7 +55,7 @@ resource azurerm_virtual_machine winJump {
   tags = var.tags
 }
 
-resource azurerm_virtual_machine_extension winJump-run-startup-cmd {
+resource "azurerm_virtual_machine_extension" "winJump-run-startup-cmd" {
   name                       = "${var.prefix}-winJump-run-startup-cmd"
   depends_on                 = [azurerm_virtual_machine.winJump]
   virtual_machine_id         = azurerm_virtual_machine.winJump.id

@@ -1,4 +1,4 @@
-resource random_id randomId {
+resource "random_id" "randomId" {
   keepers = {
     # Generate a new ID only when a new resource group is defined
     resource_group = var.resourceGroup.name
@@ -19,7 +19,7 @@ resource random_id randomId {
 #   }
 # }
 
-resource azurerm_storage_account ips_storageaccount {
+resource "azurerm_storage_account" "ips_storageaccount" {
   name                     = "diag${random_id.randomId.hex}"
   resource_group_name      = var.resourceGroup.name
   location                 = var.resourceGroup.location
@@ -29,7 +29,7 @@ resource azurerm_storage_account ips_storageaccount {
   tags = var.tags
 }
 
-resource azurerm_network_interface ips01-mgmt-nic {
+resource "azurerm_network_interface" "ips01-mgmt-nic" {
   name                = "${var.prefix}-ips01-mgmt-nic"
   location            = var.resourceGroup.location
   resource_group_name = var.resourceGroup.name
@@ -49,13 +49,13 @@ resource azurerm_network_interface ips01-mgmt-nic {
   tags = var.tags
 }
 
-resource azurerm_network_interface_backend_address_pool_association mpool_assc_ips01 {
+resource "azurerm_network_interface_backend_address_pool_association" "mpool_assc_ips01" {
   network_interface_id    = azurerm_network_interface.ips01-mgmt-nic.id
   ip_configuration_name   = "primary"
   backend_address_pool_id = var.primaryPool.id
 }
 
-resource azurerm_network_interface ips01-ext-nic {
+resource "azurerm_network_interface" "ips01-ext-nic" {
   name                = "${var.prefix}-ips01-ext-nic"
   location            = var.resourceGroup.location
   resource_group_name = var.resourceGroup.name
@@ -75,7 +75,7 @@ resource azurerm_network_interface ips01-ext-nic {
 }
 
 # internal network interface for ips vm
-resource azurerm_network_interface ips01-int-nic {
+resource "azurerm_network_interface" "ips01-int-nic" {
   name                = "${var.prefix}-ips01-int-nic"
   location            = var.resourceGroup.location
   resource_group_name = var.resourceGroup.name
@@ -95,30 +95,30 @@ resource azurerm_network_interface ips01-int-nic {
 }
 
 # Associate the External Network Interface to the BackendPool
-resource azurerm_network_interface_backend_address_pool_association ips_pool_assc_ingress {
+resource "azurerm_network_interface_backend_address_pool_association" "ips_pool_assc_ingress" {
   network_interface_id    = azurerm_network_interface.ips01-ext-nic.id
   ip_configuration_name   = "primary"
   backend_address_pool_id = var.ipsIngressPool.id
 }
 
-resource azurerm_network_interface_backend_address_pool_association ips_pool_assc_egress {
+resource "azurerm_network_interface_backend_address_pool_association" "ips_pool_assc_egress" {
   network_interface_id    = azurerm_network_interface.ips01-int-nic.id
   ip_configuration_name   = "primary"
   backend_address_pool_id = var.ipsEgressPool.id
 }
 
 # network interface for ips vm
-resource azurerm_network_interface_security_group_association ips-ext-nsg {
+resource "azurerm_network_interface_security_group_association" "ips-ext-nsg" {
   network_interface_id      = azurerm_network_interface.ips01-ext-nic.id
   network_security_group_id = var.securityGroup.id
 }
 # network interface for ips vm
-resource azurerm_network_interface_security_group_association ips-int-nsg {
+resource "azurerm_network_interface_security_group_association" "ips-int-nsg" {
   network_interface_id      = azurerm_network_interface.ips01-int-nic.id
   network_security_group_id = var.securityGroup.id
 }
 # network interface for ips vm
-resource azurerm_network_interface_security_group_association ips-mgmt-nsg {
+resource "azurerm_network_interface_security_group_association" "ips-mgmt-nsg" {
   network_interface_id      = azurerm_network_interface.ips01-mgmt-nic.id
   network_security_group_id = var.securityGroup.id
 }
@@ -137,7 +137,7 @@ locals {
   waf_ext_mask = cidrnetmask(var.wafSubnet.address_prefix)
 }
 
-data template_file vm_onboard {
+data "template_file" "vm_onboard" {
   template = file("./templates/ips-cloud-init.yaml")
   vars = {
     #gateway = gateway
@@ -151,7 +151,7 @@ data template_file vm_onboard {
   }
 }
 
-data template_cloudinit_config config {
+data "template_cloudinit_config" "config" {
   gzip          = true
   base64_encode = true
 
@@ -164,7 +164,7 @@ data template_cloudinit_config config {
 }
 
 # ips01-VM
-resource azurerm_linux_virtual_machine ips01-vm {
+resource "azurerm_linux_virtual_machine" "ips01-vm" {
   name                = "${var.prefix}-ips01-vm"
   location            = var.resourceGroup.location
   resource_group_name = var.resourceGroup.name
@@ -199,7 +199,7 @@ resource azurerm_linux_virtual_machine ips01-vm {
   tags = var.tags
 }
 
-resource local_file cloud_init_file {
+resource "local_file" "cloud_init_file" {
   content  = data.template_file.vm_onboard.rendered
   filename = "${path.module}/cloud-init.yml"
 }

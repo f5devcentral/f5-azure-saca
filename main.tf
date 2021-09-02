@@ -2,7 +2,7 @@
 #
 # Deploys on all use-cases as long as configured in variables.tf
 # deploy demo app
-module demo_app {
+module "demo_app" {
   count         = var.deployDemoApp == "deploy" ? 1 : 0
   source        = "./demo_app"
   location      = var.location
@@ -22,7 +22,7 @@ module demo_app {
 # Jump Boxes
 #
 # Deploys a Windows and Linux jumpbox
-module jump_one {
+module "jump_one" {
   source        = "./jumpboxes"
   resourceGroup = azurerm_resource_group.main
   sshPublicKey  = var.sshPublicKeyPath
@@ -43,7 +43,7 @@ module jump_one {
 # Single Tier
 #
 # Deploy firewall HA cluster
-module firewall_one {
+module "firewall_one" {
   count            = var.deploymentType == "one_tier" ? 1 : 0
   source           = "./one_tier/firewall"
   resourceGroup    = azurerm_resource_group.main
@@ -84,10 +84,15 @@ module firewall_one {
   dns_server       = var.dns_server
 }
 
+module "sslo" {
+  count = var.deploySSLO == "deploy" ? 1 : 0
+
+}
+
 # #
 # # Three Tier
 # # Deploy firewall HA cluster
-module firewall_three {
+module "firewall_three" {
   count            = var.deploymentType == "three_tier" ? 1 : 0
   source           = "./three_tier/firewall"
   resourceGroup    = azurerm_resource_group.main
@@ -135,7 +140,7 @@ module firewall_three {
   dns_server       = var.dns_server
 }
 # Deploy example ips
-module ips_three {
+module "ips_three" {
   count                = var.deploymentType == "three_tier" ? 1 : 0
   source               = "./three_tier/ips"
   prefix               = var.projectPrefix
@@ -164,7 +169,7 @@ module ips_three {
   timezone             = var.timezone
 }
 # # Deploy waf HA cluster
-module waf_three {
+module "waf_three" {
   count            = var.deploymentType == "three_tier" ? 1 : 0
   source           = "./three_tier/waf"
   resourceGroup    = azurerm_resource_group.main

@@ -1,5 +1,5 @@
 # Create a Network Security Group with some rules
-resource azurerm_network_security_group main {
+resource "azurerm_network_security_group" "main" {
   name                = "${var.projectPrefix}-nsg"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name

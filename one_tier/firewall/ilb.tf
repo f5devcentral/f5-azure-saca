@@ -1,5 +1,5 @@
 # Create the ILB for South LB and Egress
-resource azurerm_lb internalLoadBalancer {
+resource "azurerm_lb" "internalLoadBalancer" {
   name                = "${var.prefix}-internalloadbalancer"
   location            = var.location
   resource_group_name = var.resourceGroup.name
@@ -15,26 +15,26 @@ resource azurerm_lb internalLoadBalancer {
 }
 
 # Create the LB Pool for ILB
-resource azurerm_lb_backend_address_pool internal_backend_pool {
+resource "azurerm_lb_backend_address_pool" "internal_backend_pool" {
   name                = "InternalBackendPool1"
   resource_group_name = var.resourceGroup.name
   loadbalancer_id     = azurerm_lb.internalLoadBalancer.id
 }
 
 # attach interfaces to backend pool
-resource azurerm_network_interface_backend_address_pool_association int_bpool_assc_vm01 {
+resource "azurerm_network_interface_backend_address_pool_association" "int_bpool_assc_vm01" {
   network_interface_id    = azurerm_network_interface.vm01-int-nic.id
   ip_configuration_name   = "secondary"
   backend_address_pool_id = azurerm_lb_backend_address_pool.internal_backend_pool.id
 }
 
-resource azurerm_network_interface_backend_address_pool_association int_bpool_assc_vm02 {
+resource "azurerm_network_interface_backend_address_pool_association" "int_bpool_assc_vm02" {
   network_interface_id    = azurerm_network_interface.vm02-int-nic.id
   ip_configuration_name   = "secondary"
   backend_address_pool_id = azurerm_lb_backend_address_pool.internal_backend_pool.id
 }
 
-resource azurerm_lb_probe internal_tcp_probe {
+resource "azurerm_lb_probe" "internal_tcp_probe" {
   resource_group_name = var.resourceGroup.name
   loadbalancer_id     = azurerm_lb.internalLoadBalancer.id
   name                = "${var.prefix}-internal-tcp-probe"
@@ -44,7 +44,7 @@ resource azurerm_lb_probe internal_tcp_probe {
   number_of_probes    = 2
 }
 
-resource azurerm_lb_rule internal_all_rule {
+resource "azurerm_lb_rule" "internal_all_rule" {
   name                           = "all-protocol-ilb"
   resource_group_name            = var.resourceGroup.name
   loadbalancer_id                = azurerm_lb.internalLoadBalancer.id

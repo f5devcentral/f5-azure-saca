@@ -1,5 +1,5 @@
 # linuxJump
-resource azurerm_network_interface linuxJump-ext-nic {
+resource "azurerm_network_interface" "linuxJump-ext-nic" {
   name                = "${var.prefix}-linuxJump-ext-nic"
   location            = var.resourceGroup.location
   resource_group_name = var.resourceGroup.name
@@ -21,7 +21,7 @@ resource "azurerm_network_interface_security_group_association" "linuxJump-ext-n
   network_security_group_id = var.securityGroup.id
 }
 
-resource azurerm_virtual_machine linuxJump {
+resource "azurerm_virtual_machine" "linuxJump" {
   name                = "${var.prefix}-linuxJump"
   location            = var.resourceGroup.location
   resource_group_name = var.resourceGroup.name

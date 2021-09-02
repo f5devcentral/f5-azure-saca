@@ -1,21 +1,21 @@
 
-variable prefix {}
-variable resourceGroup {}
-variable location {}
-variable region {}
-variable securityGroup {
+variable "prefix" {}
+variable "resourceGroup" {}
+variable "location" {}
+variable "region" {}
+variable "securityGroup" {
   default = "none"
 }
 
-variable subnet {}
+variable "subnet" {}
 
-variable app01ip {}
-variable adminUserName {}
-variable adminPassword {}
+variable "app01ip" {}
+variable "adminUserName" {}
+variable "adminPassword" {}
 
-variable instanceType {}
+variable "instanceType" {}
 
 # TAGS
-variable tags {}
+variable "tags" {}
 
-variable timezone {}
+variable "timezone" {}

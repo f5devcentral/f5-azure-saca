@@ -1,5 +1,5 @@
 # network interface for app vm
-resource azurerm_network_interface app01-nic {
+resource "azurerm_network_interface" "app01-nic" {
   name                = "${var.prefix}-app01-nic"
   location            = var.resourceGroup.location
   resource_group_name = var.resourceGroup.name
@@ -15,13 +15,13 @@ resource azurerm_network_interface app01-nic {
   tags = var.tags
 }
 
-resource azurerm_network_interface_security_group_association app-nsg {
+resource "azurerm_network_interface_security_group_association" "app-nsg" {
   network_interface_id      = azurerm_network_interface.app01-nic.id
   network_security_group_id = var.securityGroup.id
 }
 
 # app01-VM
-resource azurerm_virtual_machine app01-vm {
+resource "azurerm_virtual_machine" "app01-vm" {
   count               = 1
   name                = "${var.prefix}-app01-vm"
   location            = var.resourceGroup.location

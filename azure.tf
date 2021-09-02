@@ -1,12 +1,12 @@
 # Create a Resource Group for the new Virtual Machines
-resource azurerm_resource_group main {
+resource "azurerm_resource_group" "main" {
   name     = "${var.projectPrefix}_rg"
   location = var.location
 }
 
 
 # Create Availability Set
-resource azurerm_availability_set avset {
+resource "azurerm_availability_set" "avset" {
   name                         = "${var.projectPrefix}-avset"
   location                     = azurerm_resource_group.main.location
   resource_group_name          = azurerm_resource_group.main.name
@@ -16,7 +16,7 @@ resource azurerm_availability_set avset {
 }
 
 # Create Availability Set 2 only for 3 tier tho
-resource azurerm_availability_set avset2 {
+resource "azurerm_availability_set" "avset2" {
   count                        = var.deploymentType == "three_tier" ? 1 : 0
   name                         = "${var.projectPrefix}-avset-2"
   location                     = azurerm_resource_group.main.location
@@ -27,7 +27,7 @@ resource azurerm_availability_set avset2 {
 }
 
 # Create Azure LB
-resource azurerm_lb lb {
+resource "azurerm_lb" "lb" {
   name                = "${var.projectPrefix}-alb"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
@@ -39,25 +39,25 @@ resource azurerm_lb lb {
   }
 }
 
-resource azurerm_lb_backend_address_pool backend_pool {
+resource "azurerm_lb_backend_address_pool" "backend_pool" {
   name                = "IngressBackendPool"
   resource_group_name = azurerm_resource_group.main.name
   loadbalancer_id     = azurerm_lb.lb.id
 }
 
-resource azurerm_lb_backend_address_pool management_pool {
+resource "azurerm_lb_backend_address_pool" "management_pool" {
   name                = "EgressManagementPool"
   resource_group_name = azurerm_resource_group.main.name
   loadbalancer_id     = azurerm_lb.lb.id
 }
 
-resource azurerm_lb_backend_address_pool primary_pool {
+resource "azurerm_lb_backend_address_pool" "primary_pool" {
   name                = "EgressPrimaryPool"
   resource_group_name = azurerm_resource_group.main.name
   loadbalancer_id     = azurerm_lb.lb.id
 }
 
-resource azurerm_lb_probe https_probe {
+resource "azurerm_lb_probe" "https_probe" {
   resource_group_name = azurerm_resource_group.main.name
   loadbalancer_id     = azurerm_lb.lb.id
   name                = "443Probe"
@@ -67,7 +67,7 @@ resource azurerm_lb_probe https_probe {
   number_of_probes    = 2
 }
 
-resource azurerm_lb_probe http_probe {
+resource "azurerm_lb_probe" "http_probe" {
   resource_group_name = azurerm_resource_group.main.name
   loadbalancer_id     = azurerm_lb.lb.id
   name                = "8080Probe"
@@ -77,7 +77,7 @@ resource azurerm_lb_probe http_probe {
   number_of_probes    = 2
 }
 
-resource azurerm_lb_probe ssh_probe {
+resource "azurerm_lb_probe" "ssh_probe" {
   resource_group_name = azurerm_resource_group.main.name
   loadbalancer_id     = azurerm_lb.lb.id
   name                = "sshProbe"
@@ -87,7 +87,7 @@ resource azurerm_lb_probe ssh_probe {
   number_of_probes    = 2
 }
 
-resource azurerm_lb_probe rdp_probe {
+resource "azurerm_lb_probe" "rdp_probe" {
   resource_group_name = azurerm_resource_group.main.name
   loadbalancer_id     = azurerm_lb.lb.id
   name                = "rdpProbe"
@@ -97,7 +97,7 @@ resource azurerm_lb_probe rdp_probe {
   number_of_probes    = 2
 }
 
-resource azurerm_lb_rule https_rule {
+resource "azurerm_lb_rule" "https_rule" {
   name                           = "HTTPS_Rule"
   resource_group_name            = azurerm_resource_group.main.name
   loadbalancer_id                = azurerm_lb.lb.id
@@ -113,7 +113,7 @@ resource azurerm_lb_rule https_rule {
   depends_on                     = [azurerm_lb_probe.https_probe]
 }
 
-resource azurerm_lb_rule http_rule {
+resource "azurerm_lb_rule" "http_rule" {
   name                           = "HTTPRule"
   resource_group_name            = azurerm_resource_group.main.name
   loadbalancer_id                = azurerm_lb.lb.id
@@ -129,7 +129,7 @@ resource azurerm_lb_rule http_rule {
   depends_on                     = [azurerm_lb_probe.http_probe]
 }
 
-resource azurerm_lb_rule ssh_rule {
+resource "azurerm_lb_rule" "ssh_rule" {
   name                           = "SSH_Rule"
   resource_group_name            = azurerm_resource_group.main.name
   loadbalancer_id                = azurerm_lb.lb.id
@@ -144,7 +144,7 @@ resource azurerm_lb_rule ssh_rule {
   probe_id                       = azurerm_lb_probe.ssh_probe.id
   depends_on                     = [azurerm_lb_probe.ssh_probe]
 }
-resource azurerm_lb_rule rdp_rule {
+resource "azurerm_lb_rule" "rdp_rule" {
   name                           = "RDP_Rule"
   resource_group_name            = azurerm_resource_group.main.name
   loadbalancer_id                = azurerm_lb.lb.id
@@ -160,7 +160,7 @@ resource azurerm_lb_rule rdp_rule {
   depends_on                     = [azurerm_lb_probe.rdp_probe]
 }
 
-resource azurerm_lb_outbound_rule egress_rule {
+resource "azurerm_lb_outbound_rule" "egress_rule" {
   name                     = "egress_rule"
   resource_group_name      = azurerm_resource_group.main.name
   loadbalancer_id          = azurerm_lb.lb.id
@@ -174,7 +174,7 @@ resource azurerm_lb_outbound_rule egress_rule {
 }
 
 # Create the ILB for South LB and Egress
-resource azurerm_lb internalLoadBalancer {
+resource "azurerm_lb" "internalLoadBalancer" {
   count               = var.deploymentType == "three_tier" ? 1 : 0
   name                = "${var.projectPrefix}-internal-loadbalancer"
   location            = var.location
@@ -215,7 +215,7 @@ resource azurerm_lb internalLoadBalancer {
 }
 
 # Create the LB Pool for Internal Egress
-resource azurerm_lb_backend_address_pool internal_backend_pool {
+resource "azurerm_lb_backend_address_pool" "internal_backend_pool" {
   count               = var.deploymentType == "three_tier" ? 1 : 0
   name                = "internal_egress_pool"
   resource_group_name = azurerm_resource_group.main.name
@@ -223,7 +223,7 @@ resource azurerm_lb_backend_address_pool internal_backend_pool {
 }
 
 # Create the LB Pool for Inspect Ingress
-resource azurerm_lb_backend_address_pool ips_backend_pool {
+resource "azurerm_lb_backend_address_pool" "ips_backend_pool" {
   count               = var.deploymentType == "three_tier" ? 1 : 0
   name                = "ips_ingress_pool"
   resource_group_name = azurerm_resource_group.main.name
@@ -231,21 +231,21 @@ resource azurerm_lb_backend_address_pool ips_backend_pool {
 }
 
 # Create the LB Pool for WAF Ingress
-resource azurerm_lb_backend_address_pool waf_ingress_pool {
+resource "azurerm_lb_backend_address_pool" "waf_ingress_pool" {
   count               = var.deploymentType == "three_tier" ? 1 : 0
   name                = "waf_ingress_pool"
   resource_group_name = azurerm_resource_group.main.name
   loadbalancer_id     = azurerm_lb.internalLoadBalancer[0].id
 }
 # Create the LB Pool for WAF Egress
-resource azurerm_lb_backend_address_pool waf_egress_pool {
+resource "azurerm_lb_backend_address_pool" "waf_egress_pool" {
   count               = var.deploymentType == "three_tier" ? 1 : 0
   name                = "waf_egress_pool"
   resource_group_name = azurerm_resource_group.main.name
   loadbalancer_id     = azurerm_lb.internalLoadBalancer[0].id
 }
 
-resource azurerm_lb_probe internal_Tcp_probe {
+resource "azurerm_lb_probe" "internal_Tcp_probe" {
   count               = var.deploymentType == "three_tier" ? 1 : 0
   resource_group_name = azurerm_resource_group.main.name
   loadbalancer_id     = azurerm_lb.internalLoadBalancer[0].id
@@ -256,7 +256,7 @@ resource azurerm_lb_probe internal_Tcp_probe {
   number_of_probes    = 2
 }
 
-resource azurerm_lb_probe waf_probe {
+resource "azurerm_lb_probe" "waf_probe" {
   count               = var.deploymentType == "three_tier" ? 1 : 0
   resource_group_name = azurerm_resource_group.main.name
   loadbalancer_id     = azurerm_lb.internalLoadBalancer[0].id
@@ -267,7 +267,7 @@ resource azurerm_lb_probe waf_probe {
   number_of_probes    = 2
 }
 
-resource azurerm_lb_rule internal_all_rule {
+resource "azurerm_lb_rule" "internal_all_rule" {
   count                          = var.deploymentType == "three_tier" ? 1 : 0
   name                           = "internal-all-protocol-ilb-egress"
   resource_group_name            = azurerm_resource_group.main.name
@@ -284,7 +284,7 @@ resource azurerm_lb_rule internal_all_rule {
   depends_on                     = [azurerm_lb_probe.internal_Tcp_probe[0]]
 }
 
-resource azurerm_lb_rule waf_ext_all_rule {
+resource "azurerm_lb_rule" "waf_ext_all_rule" {
   count                          = var.deploymentType == "three_tier" ? 1 : 0
   name                           = "waf-ext-all-protocol-ilb-egress"
   resource_group_name            = azurerm_resource_group.main.name
@@ -301,7 +301,7 @@ resource azurerm_lb_rule waf_ext_all_rule {
   depends_on                     = [azurerm_lb_probe.internal_Tcp_probe[0]]
 }
 
-resource azurerm_lb_rule waf_ext_ingress_rule {
+resource "azurerm_lb_rule" "waf_ext_ingress_rule" {
   count                          = var.deploymentType == "three_tier" ? 1 : 0
   name                           = "waf-ext-all-protocol-ilb-ingress"
   resource_group_name            = azurerm_resource_group.main.name

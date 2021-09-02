@@ -1,38 +1,38 @@
 # templates directory
-variable templates {
+variable "templates" {
   default = "/workspace/templates"
 }
-variable location {}
-variable region {}
-variable prefix {}
-variable resourceGroup {}
-variable securityGroup {
+variable "location" {}
+variable "region" {}
+variable "prefix" {}
+variable "resourceGroup" {}
+variable "securityGroup" {
   default = "none"
 }
 
-variable subnets {}
-variable subnetMgmt {}
-variable subnetInspectExt {}
-variable subnetInspectInt {}
-variable internalSubnet {}
-variable wafSubnet {}
-variable virtual_network_name {}
+variable "subnets" {}
+variable "subnetMgmt" {}
+variable "subnetInspectExt" {}
+variable "subnetInspectInt" {}
+variable "internalSubnet" {}
+variable "wafSubnet" {}
+variable "virtual_network_name" {}
 
-variable ips01ext {}
-variable ips01int {}
-variable ips01mgmt {}
-variable app01ip {}
-variable adminUserName {}
-variable adminPassword {}
+variable "ips01ext" {}
+variable "ips01int" {}
+variable "ips01mgmt" {}
+variable "app01ip" {}
+variable "adminUserName" {}
+variable "adminPassword" {}
 
-variable ipsIngressPool {}
-variable ipsEgressPool {}
-variable primaryPool {}
+variable "ipsIngressPool" {}
+variable "ipsEgressPool" {}
+variable "primaryPool" {}
 
 # device
-variable instanceType {}
+variable "instanceType" {}
 
 # TAGS
-variable tags {}
+variable "tags" {}
 
-variable timezone {}
+variable "timezone" {}

@@ -9,11 +9,11 @@
 #   description = "Network Security Group Name"
 # }
 
-output DemoApplication_443 {
+output "DemoApplication_443" {
   value       = "https://${azurerm_public_ip.lbpip.ip_address}"
   description = "Public IP for applications.  Https for example app, RDP for Windows Jumpbox, SSH for Linux Jumpbox"
 }
-output rSyslogdHttp_8080 {
+output "rSyslogdHttp_8080" {
   value       = "http://${azurerm_public_ip.lbpip.ip_address}:8080"
   description = "Public IP for applications.  Https for example app, RDP for Windows Jumpbox, SSH for Linux Jumpbox"
 }
@@ -57,12 +57,12 @@ locals {
 }
 
 # single tier
-output tier_one {
+output "tier_one" {
   value       = local.one_tier
   description = "One Tier Outputs:  VM IDs, VM Mgmt IPs, VM External Private IPs"
 }
 # three tier
-output tier_three {
+output "tier_three" {
   value       = local.three_tier
   description = "Three Tier Outputs:  VM IDs, VM Mgmt IPs, VM External Private IPs"
 }

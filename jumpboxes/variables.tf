@@ -1,29 +1,29 @@
 # Instance Type
 
-variable instanceType {}
+variable "instanceType" {}
 
 # winjump
-variable winjumpip {}
+variable "winjumpip" {}
 
 # linuxjump
-variable linuxjumpip {}
+variable "linuxjumpip" {}
 
-variable timezone { default = "UTC" }
+variable "timezone" { default = "UTC" }
 
 # cloud
-variable location {}
-variable region {}
-variable prefix {}
-variable resourceGroup {}
-variable securityGroup { default = "none" }
+variable "location" {}
+variable "region" {}
+variable "prefix" {}
+variable "resourceGroup" {}
+variable "securityGroup" { default = "none" }
 
 # network
-variable subnet {}
+variable "subnet" {}
 
 # creds
-variable adminUserName {}
-variable adminPassword {}
-variable sshPublicKey {}
+variable "adminUserName" {}
+variable "adminPassword" {}
+variable "sshPublicKey" {}
 
 # TAGS
-variable tags {}
+variable "tags" {}
