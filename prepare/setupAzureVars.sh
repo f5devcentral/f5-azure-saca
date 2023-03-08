@@ -33,6 +33,10 @@ elif [ $machine == "Linux" ]; then
   fi
 fi
 
+az cloud set --name AzureUSGovernment
+
+az login --use-device-code
+
 #Create ServicePrincipal for ClientID and Secret
 spn=`az ad sp create-for-rbac --name scaServicePrincipalName`
 
